@@ -1,0 +1,84 @@
+extends layout
+
+block content
+	div.tmenu.flex-row.test
+		div.tmenuleft
+		div.tmenuspace
+		div.tmenucounter
+		div.tmenubuttons
+			span.btn.btn-primary.file-input-span Add PDF Top
+				input.file-input#adddoctop(type='file')
+			span.btn.btn-primary.file-input-span Add PDF Next
+				input.file-input#adddocnext(type='file')
+			span.btn.btn-primary.file-input-span Add PDF Bottom
+				input.file-input#adddocbottom(type='file')
+			a.btn.btn-primary#removedoc(href='#') Remove PDF		
+		div.tmenuspace
+		div.tmenuright
+	div.mainwin.flex-row
+		div.sfviewwin.flex-col.test
+			div.sfviewmenu
+				div.sfviewmenubutton#sfviewrefresh
+				div.sfviewmenubutton#sfviewsave
+			div.sfviewbody.flex-col
+		div.subwin.flex-col
+			div.fldwin.flex-row.test
+				div.fldwinleft
+				div.fldwinbox.flex-col
+					div.fldtitle
+					div.fldentry
+					div.fldinstr
+				div.fldwinrightspacer
+				div.fldwinright
+			div.pdfwin.test
+
+	div.modal.fade.insrch(role='dialog' data-backdrop='static' data-keyboard='false')
+		div.modal-dialog
+			div.modal-content
+				div.modal-header.insrch-header
+					button.close(type='button' data-dismiss="modal") &times;
+					h4.modaltitle.insrch-title
+				div.modal-body.insrch-body
+				div.modal-footer.insrch-footer
+					button.btn.btn-default.insrch-create-btn(type='button' data-dismiss='modal') Create New
+
+	div.modal.fade.error(role='dialog')
+		div.modal-dialog
+			div.modal-content
+				div.modal-header.error-header
+					button.close(type='button' data-dismiss="modal") &times;
+					h4.modaltitle.error-title Error
+				div.modal-body.error-body
+				div.modal-footer.error-footer
+					button.btn.btn-default(type='button' data-dismiss='modal') Close
+
+	div.modal.fade.alert(role='dialog')
+		div.modal-dialog
+			div.modal-content
+				div.modal-header.error-header
+					button.close(type='button' data-dismiss="modal") &times;
+					h4.modaltitle.alert-title Alert
+				div.modal-body.alert-body
+				div.modal-footer.alert-footer
+					button.btn.btn-default.alert-execute(type='button' data-dismiss='modal') Proceed
+					button.btn.btn-default(type='button' data-dismiss='modal') Cancel
+
+	div.modal.fade.increate(role='dialog' data-backdrop='static' data-keyboard='false')
+		div.modal-dialog
+			div.modal-content
+				div.modal-header.increate-header
+					button.close(type='button' data-dismiss="modal") &times;
+					h4.modaltitle.increate-title
+				div.modal-body.increate-body
+				div.modal-footer
+					button.btn.btn-default.increate-create-btn(type='button') Create
+					button.btn.btn-default(type='button' data-dismiss='modal') Close
+
+	div.modal.hide.loading.modalcentered(role='dialog' data-backdrop='static' data-keyboard='false')
+		div.modal-dialog.modal-sm.loading.loading-dialog
+			div.modal-content.loading-content
+				div.loading-message
+					span.ld-msg
+
+			
+	script(type='text/javascript' src='/javascripts/init.js')
