@@ -1,56 +1,12 @@
-var renderTMenu = function() {
-
-  $(".tmenuleft").empty();
-  if (d.length > 1 && di != 0 ) {
-    $(".tmenuleft").append('<a class="btn btn-primary" href="#" id="prevdoclink"><</a>');
-    $("#prevdoclink").off().click(function() {
-      if( allUnchanged() ) {
-        di--;
-        renderTMenu();
-        renderDoc();
-        initR();
-      } else {
-        renderAlert('Switching documents now will erase all unsaved changes.', function() {
-          di--;
-          renderTMenu();
-          renderDoc();
-          initR();
-        });
-      }  
-    });
-  }
-
-  $(".tmenuright").empty();
-  if ( d.length > 1 && di != d.length-1 ) {
-    $(".tmenuright").append('<a class="btn btn-primary" href="#" id="nextdoclink">></a>');
-    $("#nextdoclink").off().click(function() {
-      if( allUnchanged() ) {
-        di++;
-        renderTMenu();
-        renderDoc();
-        initR();
-      } else {
-        renderAlert('Switching documents now will erase all unsaved changes.', function() {
-          di++;
-          renderTMenu();
-          renderDoc();
-          initR();
-        });
-      }
-    });
-  }
-
-}
-
-var renderDoc = function() {
+var renderDoc = function(site) {
 
   $('.pdfwin').empty();
 
-  if ( d.length < 1 ) { return; }
-
-  if ( di == null ) { di == d.length-1; }
-
-  $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc/get/'+d[di]+'"></iframe>');
+  if(site === undefined) {
+    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc/view"></iframe>');
+  } else {
+    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="'+site+'"></iframe>');
+  }
 
   $('#pdfiframe').on('load', function () {
     
@@ -89,14 +45,26 @@ var renderAlert = function(msg, callback) {
   });
 };
 
+var renderOpenUrl = function() {
+  $('.openurl-input').val('');
+  $('.openurlmodal').modal('show');
+  $('.openurl-open-btn').off().click(function () {
+    $('.openurlmodal').modal('hide');
+    renderDoc($('.openurl-input').val());
+    initR();
+    renderFldEntry();
+    renderSfView();
+  });
+};
+
 var renderLoadingStart = function(msg) {
 
   $('.ld-msg').empty();
   $('.ld-msg').append(msg);
   $('.loading').modal('show');
-  /*setTimeout(function () {
+  setTimeout(function () {
     renderLoadingEnd();
-  }, 10000);*/
+  }, 10000);
 
 }
 
@@ -222,11 +190,11 @@ var renderBaseSearch = function() {
 
 var renderSfView = function() {
 
-  if (init || d.length == 0) {
+  /*if (init) {
     $(".sfviewmenu").empty();
     $(".sfviewbody").empty();
     return;
-  }
+  }*/
 
   if (search) {
     return renderBaseSearch();
@@ -326,14 +294,14 @@ var convertDate = function(strin) {
 
 var renderFldEntry = function() {
 
-  if ( d.length == 0 ) {
+  /*if ( d.length == 0 ) {
     $(".fldwinleft").empty();
     $(".fldwinright").empty();
     $(".fldtitle").empty();
     $(".fldentry").empty();
     $(".fldinstr").empty();
     return;
-  }
+  }*/
 
   if( ri >= r.length ) ri = r.length-1;
   if( ri < 0 ) ri = 0;
@@ -558,3 +526,9 @@ var renderIndexCreate = function(rin, fin) {
   $('.increate').modal('show');
 
 };
+
+var renderAll = function() {
+  renderSfView();
+  renderFldEntry();
+  renderDoc();
+}

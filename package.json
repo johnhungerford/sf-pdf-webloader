@@ -16,6 +16,7 @@
     "jade": "^1.11.0",
     "jsforce": "^1.9.1",
     "morgan": "^1.9.1",
+    "pdfjs-dist": "^2.0.943",
     "pdftohtmljs": "^0.5.2",
     "request": "^2.88.0"
   }

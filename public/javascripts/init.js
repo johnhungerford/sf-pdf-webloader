@@ -1,48 +1,62 @@
 // Cache jQuery lookups for buttons to add and remove pdfs
-const $addoctop = $('#adddoctop');
-const $addocnext = $('#adddocnext');
-const $addocbottom = $('#adddocbottom');
+const $addoc = $('#adddoc');
+const $openurl = $('#openurl');
 const $removedoc = $('#removedoc');
+const $initentry = $('#initentry');
 
 /** 
  * Bind functions to document buttons (cached above). The buttons that add documents
  * are file type input elements, and the 'change' event means a file has been added.
  * The button to remove a document is just a button, so the function is bound to a click event.
  */
-$addoctop.change(function(){
-  const fd = new FormData();
-  fd.append('file', $addoctop[0].files[0]);
-  $addoctop.val(null);
-  return addDoc('top', fd);
+$initentry.click(function() {
+  if( !allUnchanged() ) {
+    renderAlert('Initiating data entry will end your current session, erasing any unsaved data. Are you sure you wish to continue?', 
+      () => {
+      initR();
+      renderAll();
+    });
+  } else {    
+    initR();
+    renderAll();
+  }
 });
 
-$addocnext.change(function(){
+$addoc.change(function(){
   const fd = new FormData();
-  fd.append('file', $addocnext[0].files[0]);
-  $addocnext.val(null);
-  return addDoc('next', fd);
+  fd.append('file', $addoc[0].files[0]);
+  $addoc.val(null);
+  return addDoc(fd);
 });
 
-$addocbottom.change(function(){
-  const fd = new FormData();
-  fd.append('file', $addocbottom[0].files[0]);
-  $addocbottom.val(null);
-  return addDoc('bottom', fd);
+$openurl.click(function(){
+  if( !allUnchanged() ) {
+    renderAlert('Removing document now will erase all unsaved changes.', () => {
+      renderOpenUrl(); 
+    });
+  } else {    
+    renderOpenUrl();
+  }
 });
 
 $removedoc.click(function(){
-  if( r.length == 0 ) { return; }
-
+  console.log('remove...');
   /** 
    * If any records have been edited, warn before proceeding (callback is executed by alert 
    * function upon confirmation)
    */
   if( !allUnchanged() ) {
     renderAlert('Removing document now will erase all unsaved changes.', () => {
-      removeDoc(d[di], function() {initR();});
+      removeDoc(function() {
+        initR();
+        renderAll();
+      });
     });
   } else {    
-    removeDoc(d[di], function() {initR();});
+    removeDoc(function() {
+      initR();
+      renderAll()
+    });
   }
 
 });
@@ -99,5 +113,5 @@ $.getJSON("/api/dm", function(data) {
 
   dm = data;
   // setting the parameter to 'true' ensures that r will be initalized after the docs are pulled
-  getDocs(updateDocCallback(true));
+
 });

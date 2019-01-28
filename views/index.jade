@@ -2,19 +2,12 @@ extends layout
 
 block content
 	div.tmenu.flex-row.test
-		div.tmenuleft
-		div.tmenuspace
-		div.tmenucounter
 		div.tmenubuttons
-			span.btn.btn-primary.file-input-span Add PDF Top
-				input.file-input#adddoctop(type='file')
-			span.btn.btn-primary.file-input-span Add PDF Next
-				input.file-input#adddocnext(type='file')
-			span.btn.btn-primary.file-input-span Add PDF Bottom
-				input.file-input#adddocbottom(type='file')
-			a.btn.btn-primary#removedoc(href='#') Remove PDF		
-		div.tmenuspace
-		div.tmenuright
+			a.btn.btn-primary.file-input-span#initentry(href='#') Init Data Entry
+			span.btn.btn-primary.file-input-span Add PDF
+				input.file-input#adddoc(type='file')
+			a.btn.btn-primary.file-input-span#removedoc(href='#') Remove PDF
+			a.btn.btn-primary.file-input-span#openurl(href='#') Open URL
 	div.mainwin.flex-row
 		div.sfviewwin.flex-col.test
 			div.sfviewmenu
@@ -73,6 +66,18 @@ block content
 				div.modal-footer
 					button.btn.btn-default.increate-create-btn(type='button') Create
 					button.btn.btn-default(type='button' data-dismiss='modal') Close
+
+	div.modal.fade.openurlmodal(role='dialog' data-backdrop='static' data-keyboard='false')
+		div.modal-dialog
+			div.modal-content
+				div.modal-header.openurlmodal-header
+					button.close(type='button' data-dismiss="modal") &times;
+					h4.modaltitle.openurlmodal-title Open URL for Data Entry
+				div.modal-body.openurlmodal-body
+					input.openurl-input(type='text')
+				div.modal-footer
+					button.btn.btn-default.openurl-open-btn(type='button') Open
+					button.btn.btn-default(type='button' data-dismiss='modal') Cancel
 
 	div.modal.hide.loading.modalcentered(role='dialog' data-backdrop='static' data-keyboard='false')
 		div.modal-dialog.modal-sm.loading.loading-dialog

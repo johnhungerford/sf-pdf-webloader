@@ -1,7 +1,7 @@
 body {
 	display: flex;
 	flex-direction: column;
-	background-color: DodgerBlue;
+	background-color: white;
 	height: 100vh;
 	margin: 0;
 	overflow-x: hidden;
@@ -41,6 +41,9 @@ body {
 
 .tmenu {
 	height: 40px
+}
+.tmenubuttons {
+	margin: auto;
 }
 
 .sfviewwin {
@@ -205,6 +208,10 @@ iframe {
     display: block;
 }
 
+.openurl-input {
+	width: 300px;
+}
+
 .tmenuleft {
 	width: 45px;
 	min-width: 45px;
@@ -217,8 +224,4 @@ iframe {
 	position: absolute;
 	right: 50px;
 	text-align: right;
-}
-
-.tmenuspace {
-	width: calc(50% - 308px);
 }
