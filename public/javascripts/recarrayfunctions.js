@@ -7,6 +7,7 @@ const initR = function() {
   ri = 0;
   addSearchRecords();
   search = true;
+  sdata = { empty: true };
   fi = r[ri].order[0];
   renderSfView();
   renderFldEntry();

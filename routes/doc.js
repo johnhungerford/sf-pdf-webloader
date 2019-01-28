@@ -15,20 +15,30 @@ router.get('/view', function(req, res, next) {
 
 	console.log('view (docs) router...');
 
-	fs.readFile(pdf, 'utf8', function( err, buffer ) {
-		if(err) {
-			res.render('blankdoc', {err: err});
-			return;
-		}
+	if(req.session.pdffilename) {
+		res.redirect(pdfviewer+'?file=/doc/'+req.session.pdffilename);
+		return
+	}
 
-		res.redirect(pdfviewer);
-	});
-
+	res.render('blankdoc');
 });
 
 
 /* GET home page. */
 router.post('/load', function(req, res, next) {
+
+	if(req.session.pdffilename) {
+		fs.unlink(path.join(doc,req.session.pdffilename), function(err) {
+			if(err) {
+				console.log('Error trying to delete pdf file cached in session cooke: '+err)
+				return;
+			}
+
+			delete req.session.pdffilename;
+		});
+	}
+
+	console.log('Going on to parse file upload');
 
 	var form = new formidable.IncomingForm();
 
@@ -53,7 +63,8 @@ router.post('/load', function(req, res, next) {
 		}
 
 		var file = files.file;
-		res.send({success: true, iframeurl: '/pdfviewer/web/viewer.html?file=/doc/'+file.path.split('\\').pop().split('/').pop()});
+		const fname = req.session.pdffilename = file.path.split('\\').pop().split('/').pop();
+		res.send({success: true, iframeurl: '/pdfviewer/web/viewer.html?file=/doc/'+fname});
 	});
 
 
@@ -85,16 +96,22 @@ router.get('/remove', function(req, res, next) {
 
 	console.log('remove (docs) router...');
 
-	fs.unlink(pdf, (err) => {
-		if(err) {
-			console.log(err);
-			res.send({err: 'Unable to delete pdf'});
-		} else {
-			res.send({success: true});
-		}
-	});
+	if(req.session.pdffilename) {
+		fs.unlink(path.join(doc,req.session.pdffilename), function(err) {
+			if(err) {
+				console.log('Error trying to delete pdf file cached in session cookie: '+err);
+				res.json({err: 'error deleting pdf file cached in session cookie'});
+			}
 
+			delete req.session.pdffilename;
+			res.json({success: true});
+			return;
+		});
 
+		return;
+	}
+
+	res.send({err: 'No document to remove'});
 });
 
 

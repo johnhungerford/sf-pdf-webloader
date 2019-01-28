@@ -52,7 +52,7 @@ router.post('/find', function(req, res, next) {
 			console.log(err);
 			if(err) { return next(err); }
 			console.log('find request executed with out errors. Records returned:');
-			console.log(records);
+			// console.log(records);
 			res.json(records);
 		});
   

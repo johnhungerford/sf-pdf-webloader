@@ -21,9 +21,10 @@ const searchBase = function(rin) {
   searchObj.sobject = bm.sobject;
   searchObj.conditions = {};
   searchObj.fields = {};
-  for (let i in bm.fields) {
-    searchObj.fields[bm.fields[i].sfname] = 1;
-    if (bm.fields[i].search && r[rin].f[i].value) {
+  for (let i in bm.fields) searchObj.fields[bm.fields[i].sfname] = 1;
+  for (let j = 0; j < bm.settings.searchorder.length; j++) {
+    let i = bm.settings.searchorder[j].field;
+    if (r[rin].f[i].value) {
       if (bm.fields[i].type == "text") {
         searchObj.conditions[bm.fields[i].sfname] = {
           $like: "%" + r[rin].f[i].value.replace(/\s+/g, "%") + "%"
@@ -77,11 +78,7 @@ const clearBaseSearch = function() {
 };
 
 const searchIndexRecord = function(rin, fin) {
-  if (r[rin].type != "record" ) {
-    return false;
-  }
-
-  var map = getBorR(rin, fin);
+  var map = getBorR(rin);
   var fm = map.fields[fin];
 
   if ( fm.type != 'index' ) { return false;}

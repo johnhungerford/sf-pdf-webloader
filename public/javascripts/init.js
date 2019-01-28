@@ -14,11 +14,13 @@ $initentry.click(function() {
     renderAlert('Initiating data entry will end your current session, erasing any unsaved data. Are you sure you wish to continue?', 
       () => {
       initR();
-      renderAll();
+      renderSfView();
+      renderFldEntry();
     });
   } else {    
     initR();
-    renderAll();
+    renderSfView();
+    renderFldEntry();
   }
 });
 
@@ -94,6 +96,7 @@ $(document).keydown((e) => {
 
   // Space focuses on fldinput, but only *after* fldinput is rendered
   if(e.which === 32) {
+    e.preventDefault();
     let $fldinput = $('.fldinput');
     if ($fldinput) $fldinput.focus();
   }

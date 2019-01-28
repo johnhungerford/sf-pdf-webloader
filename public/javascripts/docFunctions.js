@@ -18,9 +18,6 @@ var addDoc = function(fd, callback) {
             		return false;
             	} else {
             		renderDoc(data.iframeurl);
-            		initR();
-            		renderSfView();
-            		renderFldEntry();
             	}
             },
             cache: false,

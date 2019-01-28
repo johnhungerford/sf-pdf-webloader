@@ -51,9 +51,6 @@ var renderOpenUrl = function() {
   $('.openurl-open-btn').off().click(function () {
     $('.openurlmodal').modal('hide');
     renderDoc($('.openurl-input').val());
-    initR();
-    renderFldEntry();
-    renderSfView();
   });
 };
 
@@ -134,7 +131,9 @@ var renderBaseSearch = function() {
     );
 
     $(".createbase-button").off().click(function() {
+      renderLoadingStart();
       updateRecord(riloc, function(data, rin){
+        renderLoadingEnd();
         console.log('Created contact record!');
         console.log(data);
         console.log(rin);
@@ -354,6 +353,12 @@ var renderFldEntry = function() {
       }
       fldinput +=
         'class="fldinput" maxlength = "' + rmap.fields[fi].length + '" > ';
+      break;
+    case "phone":
+      var fldinput = '<input class="fldinput" type="text" size="45" maxlength="40">';
+      break;
+    case "url":
+      var fldinput = '<input class="fldinput" type="text" size="50">';
       break;
     case "email":
       var fldinput =
