@@ -700,6 +700,8 @@ const addRecord = function(rInd, rec) {
     if (r[i].new) {
       if (dm.r[rInd].fields[j].inherits) {
         r[i].f[j].value = r[dm.r[rInd].fields[j].inherits.base].f[dm.r[rInd].fields[j].inherits.field].value;
+      } else if(dm.r[rInd].fields[j].autofill) {
+        r[i].f[j].value = r[dm.r[rInd].fields[j].autofill.base].f[dm.r[rInd].fields[j].autofill.field].value;
       } else if (dm.r[rInd].fields[j].value) {
         r[i].f[j].value = dm.r[rInd].fields[j].value;
       } else if (dm.r[rInd].fields[j].default) {
