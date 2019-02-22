@@ -6,20 +6,27 @@ block content
 			div.container
 				h1 Salesforce PDF Webloader
 				p.
-					An application to easily enter data from PDF files into a Salesforce database. This app can be configured for any kind of Salesforce configuration with standard and custom record objects. This demo is configured to pull contact information from an employee or member roster for a business or organization. You first either create a new account for the business or search for that business in the database, and then you can add as many contacts as you wish from the document
+					An application to easily enter data from PDF files into a Salesforce database. This app can be configured for any kind of Salesforce configuration with standard and custom record objects. This demo is configured to pull contact information from an employee or member roster for a business or organization.
 				p.link-paragraph.
 					<a href="/webloader">CLICK HERE TO LAUNCH APPLICATION</a>
 		div.container
 			div.row
 				h2 How to Use
 				p.
-					Click <b>"Add PDF"</b> to upload a pdf document for data entry. <b>For demonstration purposes, we recommend that you <a href="/SampleRoster.pdf">download this sample document</a>, which contains a fictional roster</b>.
+					Click <b>Add PDF</b> to upload a pdf document for data entry. <b>For demonstration purposes, we recommend that you <a href="/SampleRoster.pdf">download this sample document</a>, which contains a fictional roster</b>.
 				p.
-					You can enter data with our without uploading a pdf document. Just click "Init Data Entry" to bring up the data entry panels. You will be prompted with a text input labeled "Account." You can enter the name of a business here to search for existing accounts in the Salesforce database, which will show up on the left hand column, or click "New" on the top left to create a new account.
+					You can enter data with our without uploading a pdf document. Just click <b>Init Data Entry</b> to bring up the data entry panels. You will be prompted with a text input labeled <em>"Account."</em> You can enter the name of a business here to search for existing accounts in the Salesforce database, which will show up on the left hand column, or click <b>New</b> on the top left to create a new account.
 				p.
+					All inputs can be automatically filled by selecting text on the open pdf document. This is true both for search for an account, for entering data into account fields, or for entering data into contact fields. It will automatically cycle to the next field.
+				p.
+					All inputs can be cycled through by clicking the <b><</b> and <b>></b> buttons, or by pressing the <em>left</em> and <em>right</em> keys. Press <em>space</em> to focus on the input if you want to type in a value manually, and press <em>enter</em> to enter any data and cycle to the next field.
+				p.
+					Once you have created or selected an account, you can create contacts for it by either cycling past all the account fields or pressing <em>down</em>. The <em>down</em> and <em>up</em> arrows will cycle between contacts, listed on the left-hand side. These can be selected by the mouse as well.
+				p.
+					New contacts will not be created until you click <b>Save All</b>, nor will any changes made to an existing account or any existing contacts. <b>Refresh</b> will reset all fields and contacts to the values on Salesforce, thereby erasing any unsaved changes.
 			hr
 			footer
-				p © John Hungerford 2018
+				p © John Hungerford 2019
 
 
 	script(src='/javascripts/index.js')
