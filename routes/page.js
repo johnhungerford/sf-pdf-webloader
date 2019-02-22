@@ -4,10 +4,15 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  res.render('index');
+});
+
+/* GET app page. */
+router.get('/webloader', function(req, res, next) {
 	if (!req.session.accessToken || !req.session.instanceUrl) { 
 		res.redirect('/auth/login'); 
 	} else {
-		res.render('index', { title: 'Express' });
+		res.render('app');
 	}
 });
 
