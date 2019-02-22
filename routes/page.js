@@ -39,7 +39,7 @@ router.get('/token', function(req, res, next) {
         req.session.refreshToken = conn.refreshToken;
 
 		var string = encodeURIComponent('true');
-	    res.redirect('https://sfwebloader.herokuapp.com/?valid=' + string);
+	    res.redirect('https://sfwebloader.herokuapp.com/webloader?valid=' + string);
 	});
 });
 
