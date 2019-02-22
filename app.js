@@ -26,7 +26,7 @@ oauth2 = new jsforce.OAuth2({
     clientId : '3MVG9KsVczVNcM8wWxTuGMVa0EwaCDVMhLWVSEPM5cIbkQwAv2daVYuNfqnA6D_KxXbPPRYxsOTsBiXiWhszc',
     clientSecret : '6646022498909279346',
     //redirectUri : 'http://localhost:' + port +'/token'
-    redirectUri : 'http://sfwebloader.herokuapp.com/token'
+    redirectUri : 'https://sfwebloader.herokuapp.com/token'
 });
 
 console.log(oauth2);
