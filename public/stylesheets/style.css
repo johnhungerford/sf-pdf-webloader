@@ -8,6 +8,11 @@ body {
 	overflow-y: hidden;
 }
 
+.subbody {
+	overflow-x: auto;
+	overflow-y: auto;
+}
+
 .test {
 	background-color: white;
 	margin: 0;

@@ -1,24 +1,25 @@
 extends layout
 
 block content
-	div.jumbotron
+	div.subbody
+		div.jumbotron
+			div.container
+				h1 Salesforce PDF Webloader
+				p.
+					An application to easily enter data from PDF files into a Salesforce database. This app can be configured for any kind of Salesforce configuration with standard and custom record objects. This demo is configured to pull contact information from an employee or member roster for a business or organization. You first either create a new account for the business or search for that business in the database, and then you can add as many contacts as you wish from the document
+				p.link-paragraph.
+					<a href="/webloader">CLICK HERE TO LAUNCH APPLICATION</a>
 		div.container
-			h1 Salesforce PDF Webloader
-			p.
-				An application to easily enter data from PDF files into a Salesforce database. This app can be configured for any kind of Salesforce configuration with standard and custom record objects. This demo is configured to pull contact information from an employee or member roster for a business or organization. You first either create a new account for the business or search for that business in the database, and then you can add as many contacts as you wish from the document
-			p.link-paragraph.
-				<a href="/webloader">CLICK HERE TO LAUNCH APPLICATION</a>
-	div.container
-		div.row
-			h2 How to Use
-			p.
-				Click <b>"Add PDF"</b> to upload a pdf document for data entry. <b>For demonstration purposes, we recommend that you <a href="">download this sample document</a>, which contains a fictional roster</b>.
-			p.
-				You can enter data with our without uploading a pdf document. Just click "Init Data Entry" to bring up the data entry panels. You will be prompted with a text input labeled "Account." You can enter the name of a business here to search for existing accounts in the Salesforce database, which will show up on the left hand column, or click "New" on the top left to create a new account.
-			p.
-		hr
-		footer
-			p © John Hungerford 2018
+			div.row
+				h2 How to Use
+				p.
+					Click <b>"Add PDF"</b> to upload a pdf document for data entry. <b>For demonstration purposes, we recommend that you <a href="">download this sample document</a>, which contains a fictional roster</b>.
+				p.
+					You can enter data with our without uploading a pdf document. Just click "Init Data Entry" to bring up the data entry panels. You will be prompted with a text input labeled "Account." You can enter the name of a business here to search for existing accounts in the Salesforce database, which will show up on the left hand column, or click "New" on the top left to create a new account.
+				p.
+			hr
+			footer
+				p © John Hungerford 2018
 
 
 	script(src='/javascripts/index.js')
