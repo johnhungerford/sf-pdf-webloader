@@ -59,6 +59,7 @@ body {
 
 .sfviewmenu {
 	padding-bottom: 5px;
+	margin: auto;
 }
 
 .sfviewbody {
@@ -112,8 +113,6 @@ body {
 .fldwinright {
 	width: 45px;
 	min-width: 45px;
-	position: absolute;
-	right: 100px;
 	text-align: right;
 }
 
