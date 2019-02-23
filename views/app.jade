@@ -1,13 +1,6 @@
 extends layout
 
 block content
-	div.tmenu.flex-row.test
-		div.tmenubuttons
-			a.btn.btn-primary.file-input-span#initentry(href='#') Init Data Entry
-			span.btn.btn-primary.file-input-span Add PDF
-				input.file-input#adddoc(type='file')
-			a.btn.btn-primary.file-input-span#removedoc(href='#') Remove PDF
-			a.btn.btn-primary.file-input-span#openurl(href='#') Open URL
 	div.mainwin.flex-row
 		div.sfviewwin.flex-col.test
 			div.sfviewmenu
@@ -15,6 +8,13 @@ block content
 				div.sfviewmenubutton#sfviewsave
 			div.sfviewbody.flex-col
 		div.subwin.flex-col
+			div.tmenu.flex-row.test
+				div.tmenubuttons
+					a.btn.btn-primary.file-input-span#initentry(href='#') Init Data Entry
+					span.btn.btn-primary.file-input-span Add PDF
+						input.file-input#adddoc(type='file')
+					a.btn.btn-primary.file-input-span#removedoc(href='#') Remove PDF
+					a.btn.btn-primary.file-input-span#openurl(href='#') Open URL
 			div.fldwin.flex-row.test
 				div.fldwinleft
 				div.fldwinbox.flex-col
