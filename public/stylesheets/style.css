@@ -98,20 +98,20 @@ body {
 	position: relative;
 	height: 25vh;
 	width: 100%;
-	padding-left: 100px;
-	padding-right: 100px;
+	padding-left: 8vw;
+	padding-right: 8vw;
 	align-items: center;
 }
 
 .fldwinleft {
-	width: 3.5vw;
-	min-width: 3.5vw;
+	width: 45px;
+	min-width: 45px;
 	text-align: left;
 }
 
 .fldwinright {
-	width: 3.5vw;
-	min-width: 3.5vw;
+	width: 45px;
+	min-width: 45px;
 	position: absolute;
 	right: 100px;
 	text-align: right;
