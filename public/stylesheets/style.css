@@ -104,14 +104,14 @@ body {
 }
 
 .fldwinleft {
-	width: 45px;
-	min-width: 45px;
+	width: 3.5vw;
+	min-width: 3.5vw;
 	text-align: left;
 }
 
 .fldwinright {
-	width: 45px;
-	min-width: 45px;
+	width: 3.5vw;
+	min-width: 3.5vw;
 	position: absolute;
 	right: 100px;
 	text-align: right;
