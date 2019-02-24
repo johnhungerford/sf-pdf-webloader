@@ -39,6 +39,7 @@ const renderDoc = function(site) {
     $('#pdfiframe').contents().find('body').mousedown(function (e) {
       mdownpos = [e.pageX, e.pageY];
       $('#selecpopup').remove();
+      $('.fldinput').focus();
     });
   
   });
