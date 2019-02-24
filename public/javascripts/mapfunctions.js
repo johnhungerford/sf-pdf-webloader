@@ -5,6 +5,7 @@ var fi = null;
 var search = true;
 var sdata = { empty: true };
 var init = true;
+var mdownpos = [];
 
 const getFieldsForLayout = function(rin) {
   let fout = {};

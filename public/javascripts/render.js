@@ -1,4 +1,4 @@
-var renderDoc = function(site) {
+const renderDoc = function(site) {
 
   $('.pdfwin').empty();
 
@@ -14,22 +14,46 @@ var renderDoc = function(site) {
       .contents()
       .find("body")
       .off()
-      .mouseup(function() {
+      .mouseup(function(e) {
         let doc = document.getElementById("pdfiframe").contentDocument;
-        let txt = doc.getSelection().toString();
+        let selec = doc.getSelection();
+        let txt = selec.toString();
         if(!txt) { return; }
+
+        if(mdownpos === []) mdownpos = [e.pageX, e.pageY];
         
-        if(!validateSelection(txt)) return;
+        if(!validateSelection(txt)) {
+          renderSelectionErr(selec);
+          return;
+        }
 
         $(".fldinput").val(txt);
         $(".fldinput").change();
-        doc.getSelection().collapseToStart();
+        selec.collapseToStart();
         $('.fldwin').attr("tabindex",-1).focus();
+        mdownpos = [];
       });
+
+    $('#pdfiframe').contents().find('body').mousedown(function (e) {
+      mdownpos = [e.pageX, e.pageY];
+    });
   
   });
   
 };
+
+const renderSelectionErr = function(selec) {
+  const $mainwin = $('.mainwin');
+  const $ifram = $('#pdfiframe');
+  $mainwin.append('<div id="selecpopup" style="position:absolute;display:none;z-index:100;background-color:light red;">Invalid selection for field: '+r[ri].f[fi].sfname+'</div>');
+  const $popup = $('#selecpopup');
+  $('#popup').offset({ top: $pdfiframe.position().top + mdownpos[1], left: $pdfiframe.position().mdownpos[0]}).show();
+  setTimeout(4000, ()=>{
+    $('#popup').remove();
+  });
+
+
+}
 
 var renderError = function(msg) {
   $(".error-body").empty();
