@@ -315,6 +315,7 @@ const setValue = function(rin, fin, value) {
 };
 
 const validateSelection = function(str) {
+  str = str.trim();
   const $fldinput = $('.fldinput');
   const type = getFm().type;
   let outval = true;
@@ -344,6 +345,12 @@ const validateSelection = function(str) {
     if(!/\d/.test(tr)) outval = false;
   } else if(type === 'date') {
     if(str.length > 19) outval = false;
+  } else if(type === 'email') {
+    const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    if (!re.test(str)) outval = false;
+  } else if(type === 'url') {
+    const re = /^[\s\"]*$/
+    if (re.test(str)) outval = false;
   }
 
   return outval;
