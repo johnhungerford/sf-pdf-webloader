@@ -346,10 +346,12 @@ const validateSelection = function(str) {
   } else if(type === 'date') {
     if(str.length > 19) outval = false;
   } else if(type === 'email') {
+    console.log('email');
     const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     if (!re.test(str)) outval = false;
   } else if(type === 'url') {
-    const re = /^[\s\"]*$/
+    console.log('url');
+    const re = /[\s\"]+/
     if (re.test(str)) outval = false;
   }
 
