@@ -346,10 +346,6 @@ const validateSelection = function(str) {
     if(str.length > 19) outval = false;
   }
 
-  if(!outval) {
-    renderAlert('Invalid selection for field type');
-  }
-
   return outval;
 }
 
