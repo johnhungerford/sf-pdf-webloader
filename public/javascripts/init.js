@@ -1,5 +1,6 @@
 // Cache jQuery lookups for buttons to add and remove pdfs
 const $addoc = $('#adddoc');
+const $loadsample = $('#loadsample')
 const $openurl = $('#openurl');
 const $removedoc = $('#removedoc');
 const $initentry = $('#initentry');
@@ -29,6 +30,10 @@ $addoc.change(function(){
   fd.append('file', $addoc[0].files[0]);
   $addoc.val(null);
   return addDoc(fd);
+});
+
+$loadsample.click(function() {
+  renderDoc('/pdfviewer/web/viewer.html?file=/doc/');
 });
 
 $openurl.click(function(){

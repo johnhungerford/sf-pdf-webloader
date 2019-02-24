@@ -26,7 +26,6 @@ router.get('/view', function(req, res, next) {
 
 /* GET home page. */
 router.post('/load', function(req, res, next) {
-
 	if(req.session.pdffilename) {
 		fs.unlink(path.join(doc,req.session.pdffilename), function(err) {
 			if(err) {
