@@ -332,7 +332,7 @@ const validateSelection = function(str) {
   // If fldinput is a <select> tag
   } else if($fldinput.prop('nodeName') === 'SELECT') {
     outval = false;
-    $('$fldinput option').each(function(){
+    $('.fldinput option').each(function(){
       if (this.value == str) {
         outval = true;
       }

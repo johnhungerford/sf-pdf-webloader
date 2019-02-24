@@ -78,7 +78,7 @@ $(document).keydown((e) => {
   } 
 
   // Disregard all other key values if the focus is on any text input or textarea
-  if( $('input').is(':focus') || $('textarea').is(':focus') ) {
+  if( $('select').is(':focus') || $('input').is(':focus') || $('textarea').is(':focus') ) {
     return;
   }
 
