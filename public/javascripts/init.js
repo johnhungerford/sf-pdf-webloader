@@ -33,7 +33,7 @@ $addoc.change(function(){
 });
 
 $loadsample.click(function() {
-  renderDoc('/pdfviewer/web/viewer.html?file=/doc/');
+  renderDoc('/pdfviewer/web/viewer.html?file=/doc/SampleRoster.pdf');
 });
 
 $openurl.click(function(){
