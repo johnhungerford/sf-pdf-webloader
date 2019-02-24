@@ -24,6 +24,7 @@ const renderDoc = function(site) {
         
         if(!validateSelection(txt)) {
           renderSelectionErr(selec);
+          selec.collapseToStart();
           return;
         }
 
@@ -36,6 +37,7 @@ const renderDoc = function(site) {
 
     $('#pdfiframe').contents().find('body').mousedown(function (e) {
       mdownpos = [e.pageX, e.pageY];
+      $('#selecpopup').remove();
     });
   
   });
