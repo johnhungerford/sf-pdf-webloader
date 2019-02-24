@@ -25,6 +25,7 @@ const renderDoc = function(site) {
         if(!validateSelection(txt)) {
           renderSelectionErr(selec);
           selec.collapseToStart();
+          $('.fldinput').focus();
           return;
         }
 
