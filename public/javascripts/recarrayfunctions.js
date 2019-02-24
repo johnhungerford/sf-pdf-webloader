@@ -338,7 +338,7 @@ const validateSelection = function(str) {
       }
     });
   } 
-  1 (758) 758 8162 
+
   if(type === 'phone') {
     if(txt.length > 20) outval = false;
   } else if(type === 'date') {
