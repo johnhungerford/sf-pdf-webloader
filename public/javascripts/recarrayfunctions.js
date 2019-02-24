@@ -324,9 +324,9 @@ const validateSelection = function(str) {
     // If fldinput is of type "text"
     if($fldinput.attr('type') === 'text') {
       // Reject if there are any line breaks
-      if(txt.indexOf('\n') > -1) outval = false;
+      if(str.indexOf('\n') > -1) outval = false;
       // Reject if it is longer than the 'size' attribute of the input
-      if(txt.length > $fldinput.attr('size')) outval = false;
+      if(str.length > $fldinput.attr('size')) outval = false;
     } 
 
   // If fldinput is a <select> tag
@@ -340,9 +340,9 @@ const validateSelection = function(str) {
   } 
 
   if(type === 'phone') {
-    if(txt.length > 20) outval = false;
+    if(str.length > 20) outval = false;
   } else if(type === 'date') {
-    if(txt.length > 19) outval = false;
+    if(str.length > 19) outval = false;
   }
 
   if(!outval) {
