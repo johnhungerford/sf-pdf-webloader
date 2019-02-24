@@ -50,7 +50,7 @@ const renderSelectionErr = function(selec) {
   $('#selecpopup').offset({ top: $iframe.position().top + mdownpos[1], left: $iframe.position().left + mdownpos[0]}).show();
   setTimeout(4000, ()=>{
     $('#selecpopup').remove();
-  });*/
+  });
 
 
 }
