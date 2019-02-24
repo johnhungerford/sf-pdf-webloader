@@ -34,6 +34,11 @@ $addoc.change(function(){
 
 $loadsample.click(function() {
   renderDoc('/pdfviewer/web/viewer.html?file=/doc/SampleRoster.pdf');
+  if(r=[]) {
+    initR();
+    renderSfView();
+    renderFldEntry();
+  }
 });
 
 $openurl.click(function(){
