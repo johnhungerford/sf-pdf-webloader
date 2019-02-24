@@ -352,7 +352,9 @@ const validateSelection = function(str) {
   } else if(type === 'url') {
     console.log('url');
     const re = /[\s\"]+/
+    const re2 = /\.+/
     if (re.test(str)) outval = false;
+    if (!re2.test(str)) outval = false;
   }
 
   return outval;
