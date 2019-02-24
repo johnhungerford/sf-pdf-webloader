@@ -25,7 +25,7 @@ const renderDoc = function(site) {
         if(!validateSelection(txt)) {
           renderSelectionErr(selec);
           selec.collapseToStart();
-          $('.fldinput').focus();
+          $('.fldwin').attr("tabindex",-1).focus();
           return;
         }
 
@@ -39,7 +39,6 @@ const renderDoc = function(site) {
     $('#pdfiframe').contents().find('body').mousedown(function (e) {
       mdownpos = [e.pageX, e.pageY];
       $('#selecpopup').remove();
-      $('.fldinput').focus();
     });
   
   });
