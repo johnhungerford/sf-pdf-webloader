@@ -342,7 +342,7 @@ const validateSelection = function(str) {
 
   if(type === 'phone') {
     if(str.length > 20) outval = false;
-    if(/[\d\&\@\$\%\^\{\}]/.test(str)) outval = false;
+    if(/[\&\@\$\%\^\{\}]/.test(str)) outval = false;
     if(!/\d/.test(str)) outval = false;
   } else if(type === 'date') {
     if(str.length > 19) outval = false;
