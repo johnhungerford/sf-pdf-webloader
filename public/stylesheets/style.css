@@ -46,10 +46,10 @@ body {
 
 .tmenu {
 	height: 40px;
-	overflow-x: auto;
 }
 .tmenubuttons {
 	margin: auto;
+	overflow-x: auto;
 }
 
 .sfviewwin {
@@ -189,8 +189,6 @@ iframe {
 
 .tmenu {
 	position: relative;
-	padding-left: 50px;
-	padding-right: 50px;
 }
 
 .file-input-span {
