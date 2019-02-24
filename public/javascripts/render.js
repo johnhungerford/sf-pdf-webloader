@@ -44,13 +44,13 @@ const renderDoc = function(site) {
 
 const renderSelectionErr = function(selec) {
   const $mainwin = $('.mainwin');
-  const $iframe = $('#pdfiframe');
+  const $iframe = $('.pdfwin');
   $mainwin.append('<div id="selecpopup" style="position:absolute;display:none;z-index:100;background-color:light red;">Invalid selection for field: '+r[ri].f[fi].sfname+'</div>');
   const $popup = $('#selecpopup');
   $('#popup').offset({ top: $iframe.position().top + mdownpos[1], left: $iframe.position().left + mdownpos[0]}).show();
-  setTimeout(4000, ()=>{
+  /*setTimeout(4000, ()=>{
     $('#popup').remove();
-  });
+  });*/
 
 
 }
