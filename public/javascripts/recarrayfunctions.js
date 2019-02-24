@@ -314,6 +314,44 @@ const setValue = function(rin, fin, value) {
   return true;
 };
 
+const validateSelection = function(str) {
+  const $fldinput = $('.fldinput');
+  const type = getFm().type;
+  let outval = true;
+
+  // If fldinput is an <input> tag
+  if($fldinput.prop('nodeName') === 'INPUT') {
+    // If fldinput is of type "text"
+    if($fldinput.attr('type') === 'text') {
+      // Reject if there are any line breaks
+      if(txt.indexOf('\n') > -1) outval = false;
+      // Reject if it is longer than the 'size' attribute of the input
+      if(txt.length > $fldinput.attr('size')) outval = false;
+    } 
+
+  // If fldinput is a <select> tag
+  } else if($fldinput.prop('nodeName') === 'SELECT') {
+    outval = false;
+    $('$fldinput option').each(function(){
+      if (this.value == str) {
+        outval = true;
+      }
+    });
+  } 
+  1 (758) 758 8162 
+  if(type === 'phone') {
+    if(txt.length > 20) outval = false;
+  } else if(type === 'date') {
+    if(txt.length > 19) outval = false;
+  }
+
+  if(!outval) {
+    renderAlert('Invalid selection for field type');
+  }
+
+  return outval;
+}
+
 // Cycle to the next ri up the record array (r), but add a new record of type dm.r[rin]
 const nextrAndAdd = function(rin) {
   if( rin < 0 || rin >= dm.r.length && r[ri].type == 'record' ) return false;

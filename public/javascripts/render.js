@@ -19,6 +19,8 @@ var renderDoc = function(site) {
         let txt = doc.getSelection().toString();
         if(!txt) { return; }
         
+        if(!validateSelection(txt)) return;
+
         $(".fldinput").val(txt);
         $(".fldinput").change();
         doc.getSelection().collapseToStart();

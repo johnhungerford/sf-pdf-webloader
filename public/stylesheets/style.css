@@ -189,6 +189,8 @@ iframe {
 
 .tmenu {
 	position: relative;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 .file-input-span {
@@ -215,18 +217,4 @@ iframe {
 
 .openurl-input {
 	width: 300px;
-}
-
-.tmenuleft {
-	width: 45px;
-	min-width: 45px;
-	text-align: left;
-}
-
-.tmenuright {
-	width: 45px;
-	min-width: 45px;
-	position: absolute;
-	right: 50px;
-	text-align: right;
 }
