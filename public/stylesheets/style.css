@@ -249,7 +249,7 @@ iframe {
 }
 
 .instructions {
-	position: relative;
+	position: absolute;
 	max-width: 600px;
 	max-height: 100%;
 	margin: auto;
