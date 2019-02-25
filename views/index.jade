@@ -12,20 +12,20 @@ block content
 				p.
 					Login with <b>username: guest@sfwebloader.com</b> and <b>password: testpwd</b>. This demo is connected with a Salesforce developer account.
 		div.container
-			div.row
-				h2 How to Use
-				p.
-					Click <b>Add PDF</b> to upload a pdf document for data entry. <b>For demonstration purposes, we recommend that you <a href="/SampleRoster.pdf" download>download this sample document</a>, which contains a fictional roster</b>.
-				p.
-					You can enter data with our without uploading a pdf document. Just click <b>Init Data Entry</b> to bring up the data entry panels. You will be prompted with a text input labeled <em>"Account."</em> You can enter the name of a business here to search for existing accounts in the Salesforce database, which will show up on the left hand column, or click <b>New</b> on the top left to create a new account.
-				p.
-					All inputs can be automatically filled by selecting text on the open pdf document. This is true both for search for an account, for entering data into account fields, or for entering data into contact fields. It will automatically cycle to the next field.
-				p.
-					All inputs can be cycled through by clicking the <b><</b> and <b>></b> buttons, or by pressing the <em>left</em> and <em>right</em> keys. Press <em>space</em> to focus on the input if you want to type in a value manually, and press <em>enter</em> to enter any data and cycle to the next field.
-				p.
-					Once you have created or selected an account, you can create contacts for it by either cycling past all the account fields or pressing <em>down</em>. The <em>down</em> and <em>up</em> arrows will cycle between contacts, listed on the left-hand side. These can be selected by the mouse as well.
-				p.
-					New contacts will not be created until you click <b>Save All</b>, nor will any changes made to an existing account or any existing contacts. <b>Refresh</b> will reset all fields and contacts to the values on Salesforce, thereby erasing any unsaved changes.
+			h2 How to Use
+			ul
+				li. 
+					<span class='instrbtnspan'>Init Data Entry</span> initializes the data entry process. It will prompt you to search for an account in the Salesforce database and will give you the option to create a new account.
+				li.
+					Search for the account, or create a new account, based on the business or organization in your pdf. To load an example document into the pdf viewer, click <span class='instrbtnspan'>Load Sample PDF</span>. Click <span class='instrbtnspan'>Upload PDF</span> to use a document from your own computer. <span class='instrbtnspan'>Remove PDF</span> will remove an uploaded pdf.
+				li.
+					Once an account is chosen or created, you will be prompted to edit its fields. <b>IMPORTANT:</b> To enter data, you may either type data directly into the field input box on the top right-hand side, or <b style='background-color: yellow; padding: 2px;'>simply select any text you want to input on the pdf</b>. Text selected on the pdf will be automatically entered into the active field, which will then cycle to the next field.
+				li.
+					Navigate through fields by clicking <span class='instrbtnspan'><</span> or <span class='instrbtnspan'>></span>.
+				li.
+					When you have finished with the account, press the <b>Down</b> key to move on to your first contact. An empty contact record will be generated and you will be prompted with its fields. Once you have made changes to the record, you can press <b>Down</b> again to add a new contact, and so on.
+				li.
+					Click <span class='instrbtnspan'>Save All</span> to save any new or modified records. <span class='instrbtnspan'>Refresh</span> reloads all records from Salesforce, erasing any new unsaved records or unsaved changes.
 			hr
 			footer
 				p © John Hungerford 2019
