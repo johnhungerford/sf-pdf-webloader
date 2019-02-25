@@ -246,6 +246,7 @@ iframe {
 	padding-top: 5vh;
 	padding-bottom: 5vh;
 	z-index: 1000;
+	background-color: rgba(2, 2, 2, 0.4);
 }
 
 .instructions {
