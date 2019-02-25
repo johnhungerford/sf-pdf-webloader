@@ -256,10 +256,6 @@ iframe {
 	padding: 15px;
 	background-color: white;
 	border: 2px solid black;
-}
-
-.instructions:hover {
-	cursor: pointer;
 	overflow-y: scroll;
 }
 
@@ -272,4 +268,8 @@ iframe {
 
 .close-button {
 	font-weight: bold;
+}
+
+.close-button:hover {
+	cursor: pointer;
 }
