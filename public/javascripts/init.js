@@ -63,8 +63,6 @@ const bindEvents = function() {
 
   });
 
-  $('.instructions').off().click((e)=>{e.stopPropagation()});
-
   $instr.off().click(function() {
     renderInstructions();
   });
@@ -133,6 +131,8 @@ $.getJSON("/api/dm", function(data) {
 
   dm = data;
   bindEvents();
+
+  $('.instructions').off().click((e)=>{e.stopPropagation()});
   $('.modal').on('hidden.bs.modal', function () {
     bindEvents();
   });
