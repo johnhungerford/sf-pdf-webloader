@@ -219,9 +219,10 @@ iframe {
 	position: absolute;
 	font-size: 50%;
 	border-radius: 50%;
+	border: 1px solid black;
 	top: 0;
 	right: 0;
-	background-color: yellow
+	background-color: yellow;
 	font-weight: bold;
 }
 
