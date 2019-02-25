@@ -478,12 +478,12 @@ var renderFldEntry = function() {
 var renderIndexSearch = function(rin, fin, records) {
   var fm = getFm(rin, fin);
 
+  unbindEvents();
   $(".insrch-title").empty();
   $(".insrch-body").empty();
 
   $(".insrch-title").prepend('Searching for ' + fm.indexto );
   $('.insrch').modal('show');
-  unbindEvents();
 
   for (let i = 0; i < records.length; i++) {
     $(".insrch-body").append('<div class="insresult" id="insresult' + i + '"></div>');
@@ -524,6 +524,7 @@ var renderIndexCreate = function(rin, fin) {
     }
   }
   $('.increate-create-btn').off().click(function() {
+    unbindEvents();
 
     var apiObj = {
       sobject: fm.indexto,
@@ -570,7 +571,6 @@ var renderIndexCreate = function(rin, fin) {
   });
 
   $('.increate').modal('show');
-  unbindEvents();
 
 };
 
