@@ -6,107 +6,119 @@ const $initentry = $('#initentry');
 const $instr = $('#instr-button');
 
 /** 
- * Bind functions to document buttons (cached above). The buttons that add documents
+ * Bind functions to document buttons (cached above) and keypresses. The buttons that add documents
  * are file type input elements, and the 'change' event means a file has been added.
  * The button to remove a document is just a button, so the function is bound to a click event.
  */
-$initentry.click(function() {
-  if( !allUnchanged() ) {
-    renderAlert('Initiating data entry will end your current session, erasing any unsaved data. Are you sure you wish to continue?', 
-      () => {
+const bindEvents = function() {
+  $initentry.off().click(function() {
+    if( !allUnchanged() ) {
+      renderAlert('Initiating data entry will end your current session, erasing any unsaved data. Are you sure you wish to continue?', 
+        () => {
+        initR();
+        renderSfView();
+        renderFldEntry();
+      });
+    } else {    
       initR();
       renderSfView();
       renderFldEntry();
-    });
-  } else {    
-    initR();
-    renderSfView();
-    renderFldEntry();
-  }
-});
+    }
+  });
 
-$addoc.change(function(){
-  const fd = new FormData();
-  fd.append('file', $addoc[0].files[0]);
-  $addoc.val(null);
-  return addDoc(fd);
-});
+  $addoc.off().change(function(){
+    const fd = new FormData();
+    fd.append('file', $addoc[0].files[0]);
+    $addoc.val(null);
+    return addDoc(fd);
+  });
 
-$loadsample.click(function() {
-  renderDoc('/pdfviewer/web/viewer.html?file=/doc/SampleRoster.pdf');
-  if(r=[]) {
-    initR();
-    renderSfView();
-    renderFldEntry();
-  }
-});
+  $loadsample.off().click(function() {
+    renderDoc('/pdfviewer/web/viewer.html?file=/doc/SampleRoster.pdf');
+    if(r=[]) {
+      initR();
+      renderSfView();
+      renderFldEntry();
+    }
+  });
 
-$removedoc.click(function(){
-  /** 
-   * If any records have been edited, warn before proceeding (callback is executed by alert 
-   * function upon confirmation)
-   */
-  if( !allUnchanged() ) {
-    renderAlert('Removing document now will erase all unsaved changes.', () => {
+  $removedoc.off().click(function(){
+    /** 
+     * If any records have been edited, warn before proceeding (callback is executed by alert 
+     * function upon confirmation)
+     */
+    if( !allUnchanged() ) {
+      renderAlert('Removing document now will erase all unsaved changes.', () => {
+        removeDoc(function() {
+          initR();
+          renderAll();
+        });
+      });
+    } else {    
       removeDoc(function() {
         initR();
-        renderAll();
+        renderAll()
       });
-    });
-  } else {    
-    removeDoc(function() {
-      initR();
-      renderAll()
-    });
-  }
+    }
 
-});
+  });
 
-$('.instructions').click((e)=>{e.stopPropagation()});
+  $('.instructions').off().click((e)=>{e.stopPropagation()});
 
-$instr.click(function() {
-  renderInstructions();
-});
+  $instr.off().click(function() {
+    renderInstructions();
+  });
 
-// Handle keydown events to cycle through fields and records
-$(document).keydown((e) => {
-  let $fldinput = $('.fldinput');
-
-  // Enter triggers 'change' event on fldinput element. See renderFldEntry() for handler
-  if(e.which === 13) {
-    if($fldinput) $fldinput.change();
-  } 
-
-  // Disregard all other key values if the focus is on any text input or textarea
-  if( $('select').is(':focus') || $('input').is(':focus') || $('textarea').is(':focus') ) {
-    return;
-  }
-
-  if(e.which === 39) { // 39: right
-    if( !nextf() ) { return; }
-  } else if(e.which === 37) { // 37: left
-    if( !prevf() ) { return; }
-  } else if(e.which === 40) { // 40: down
-    if( !nextr() ) { return; }
-  } else if(e.which === 38) { // 38: right
-    if( !prevr() ) { return; }
-  } else if(e.which === 32) { // 32: space
-    // see below (skip the return)
-  } else {
-    return;
-  }
-
-  renderFldEntry();
-  renderSfView();
-
-  // Space focuses on fldinput, but only *after* fldinput is rendered
-  if(e.which === 32) {
-    e.preventDefault();
+  // Handle keydown events to cycle through fields and records
+  $(document).off('keydown').keydown((e) => {
     let $fldinput = $('.fldinput');
-    if ($fldinput) $fldinput.focus();
-  }
-  
-});
+
+    // Enter triggers 'change' event on fldinput element. See renderFldEntry() for handler
+    if(e.which === 13) {
+      if($fldinput) $fldinput.change();
+    } 
+
+    // Disregard all other key values if the focus is on any text input or textarea
+    if( $('select').is(':focus') || $('input').is(':focus') || $('textarea').is(':focus') ) {
+      return;
+    }
+
+    if(e.which === 39) { // 39: right
+      if( !nextf() ) { return; }
+    } else if(e.which === 37) { // 37: left
+      if( !prevf() ) { return; }
+    } else if(e.which === 40) { // 40: down
+      if( !nextr() ) { return; }
+    } else if(e.which === 38) { // 38: right
+      if( !prevr() ) { return; }
+    } else if(e.which === 32) { // 32: space
+      // see below (skip the return)
+    } else {
+      return;
+    }
+
+    renderFldEntry();
+    renderSfView();
+
+    // Space focuses on fldinput, but only *after* fldinput is rendered
+    if(e.which === 32) {
+      e.preventDefault();
+      let $fldinput = $('.fldinput');
+      if ($fldinput) $fldinput.focus();
+    }
+    
+  });
+}
+
+const unbindEvents = function() {
+  $initentry.off();
+  $addoc.off();
+  $loadsample.off();
+  $removedoc.off();
+  $('.instructions').off();
+  $instr.off();
+  $(document).off('keydown');
+}
 
 /**
  * This ajax call gets everything started: it pulls the document map (a json config file) from
@@ -120,6 +132,9 @@ $.getJSON("/api/dm", function(data) {
   }
 
   dm = data;
+  $('.modal').on('hidden.bs.modal', function () {
+    bindEvents();
+  });
   // setting the parameter to 'true' ensures that r will be initalized after the docs are pulled
 
 });

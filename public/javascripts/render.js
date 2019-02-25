@@ -71,8 +71,10 @@ var renderAlert = function(msg, callback) {
   $(".alert-body").empty();
   $(".alert-body").append(msg);
   $(".alert").modal("show");
+  unbindEvents();
   $('.alert-execute').off().click(function () {
     $('.alert').modal('hide');
+    bindEvents();
     if(callback) { callback(); }
   });
 };
@@ -80,8 +82,10 @@ var renderAlert = function(msg, callback) {
 var renderOpenUrl = function() {
   $('.openurl-input').val('');
   $('.openurlmodal').modal('show');
+  unbindEvents();
   $('.openurl-open-btn').off().click(function () {
     $('.openurlmodal').modal('hide');
+    bindEvents();
     renderDoc($('.openurl-input').val());
   });
 };
@@ -91,6 +95,7 @@ var renderLoadingStart = function(msg) {
   $('.ld-msg').empty();
   $('.ld-msg').append(msg);
   $('.loading').modal('show');
+  unbindEvents();
   setTimeout(function () {
     renderLoadingEnd();
   }, 10000);
@@ -101,6 +106,7 @@ var renderLoadingEnd = function() {
 
   setTimeout(function() {
     $('.loading').modal('hide');
+    bindEvents();
   }, 200);
   $('.ld-msg').empty();
   
@@ -477,6 +483,7 @@ var renderIndexSearch = function(rin, fin, records) {
 
   $(".insrch-title").prepend('Searching for ' + fm.indexto );
   $('.insrch').modal('show');
+  unbindEvents();
 
   for (let i = 0; i < records.length; i++) {
     $(".insrch-body").append('<div class="insresult" id="insresult' + i + '"></div>');
@@ -486,6 +493,7 @@ var renderIndexSearch = function(rin, fin, records) {
     $('#insresult' + i).off().click( function () {
       indexSearchSelected( rin, fin, records[i] );
       $('.insrch').modal('hide');
+      bindEvents();
     });
   }
   $('.insrch-create-btn').off().click(function() {
@@ -551,6 +559,7 @@ var renderIndexCreate = function(rin, fin) {
         }
 
         $('.increate').modal('hide');
+        bindEvents();
         setValue(rin, fin, data[0].id);
         r[rin].f[fin].showval = apiObj.records[0][fm.indexshow];
         renderFldEntry();
@@ -561,6 +570,7 @@ var renderIndexCreate = function(rin, fin) {
   });
 
   $('.increate').modal('show');
+  unbindEvents();
 
 };
 
@@ -572,8 +582,10 @@ var renderAll = function() {
 
 const renderInstructions = function () {
   $('.instructions-frame').show();
+  unbindEvents();
 }
 
 const renderInstructionsHide = function () {
   $('.instructions-frame').hide();
+  bindEvents();
 }
