@@ -135,6 +135,9 @@ $.getJSON("/api/dm", function(data) {
   $('.modal').on('hidden.bs.modal', function () {
     bindEvents();
   });
+  $('.modal').on('shown.bs.modal', function () {
+    unbindEvents();
+  });
   // setting the parameter to 'true' ensures that r will be initalized after the docs are pulled
 
 });

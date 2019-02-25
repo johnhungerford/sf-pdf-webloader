@@ -71,10 +71,8 @@ var renderAlert = function(msg, callback) {
   $(".alert-body").empty();
   $(".alert-body").append(msg);
   $(".alert").modal("show");
-  unbindEvents();
   $('.alert-execute').off().click(function () {
     $('.alert').modal('hide');
-    bindEvents();
     if(callback) { callback(); }
   });
 };
@@ -82,10 +80,8 @@ var renderAlert = function(msg, callback) {
 var renderOpenUrl = function() {
   $('.openurl-input').val('');
   $('.openurlmodal').modal('show');
-  unbindEvents();
   $('.openurl-open-btn').off().click(function () {
     $('.openurlmodal').modal('hide');
-    bindEvents();
     renderDoc($('.openurl-input').val());
   });
 };
@@ -95,7 +91,6 @@ var renderLoadingStart = function(msg) {
   $('.ld-msg').empty();
   $('.ld-msg').append(msg);
   $('.loading').modal('show');
-  unbindEvents();
   setTimeout(function () {
     renderLoadingEnd();
   }, 10000);
@@ -106,7 +101,6 @@ var renderLoadingEnd = function() {
 
   setTimeout(function() {
     $('.loading').modal('hide');
-    bindEvents();
   }, 200);
   $('.ld-msg').empty();
   
@@ -478,7 +472,6 @@ var renderFldEntry = function() {
 var renderIndexSearch = function(rin, fin, records) {
   var fm = getFm(rin, fin);
 
-  unbindEvents();
   $(".insrch-title").empty();
   $(".insrch-body").empty();
 
@@ -493,7 +486,6 @@ var renderIndexSearch = function(rin, fin, records) {
     $('#insresult' + i).off().click( function () {
       indexSearchSelected( rin, fin, records[i] );
       $('.insrch').modal('hide');
-      bindEvents();
     });
   }
   $('.insrch-create-btn').off().click(function() {
@@ -524,7 +516,6 @@ var renderIndexCreate = function(rin, fin) {
     }
   }
   $('.increate-create-btn').off().click(function() {
-    unbindEvents();
 
     var apiObj = {
       sobject: fm.indexto,
@@ -560,7 +551,6 @@ var renderIndexCreate = function(rin, fin) {
         }
 
         $('.increate').modal('hide');
-        bindEvents();
         setValue(rin, fin, data[0].id);
         r[rin].f[fin].showval = apiObj.records[0][fm.indexshow];
         renderFldEntry();
