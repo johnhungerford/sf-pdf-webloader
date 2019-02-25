@@ -237,7 +237,7 @@ iframe {
 	padding-right: 12.5vw;
 	padding-top: 5vh;
 	padding-bottom: 5vh;
-	z-index: -1;
+	z-index: 1000;
 }
 
 .instructions {
@@ -246,5 +246,15 @@ iframe {
 	overflow-x: wrap;
 	overflow-y: scroll;
 	background-color: white;
-	z-index: 1000;
+}
+
+.exit {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 3px;
+}
+
+.close-button {
+	font-weight: bold;
 }
