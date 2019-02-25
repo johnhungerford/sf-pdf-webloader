@@ -295,4 +295,5 @@ iframe {
 	background-color: #007bff;
 	border-radius: 3px;
 	font-size: 70%;
+	white-space: nowrap;
 }
