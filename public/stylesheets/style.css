@@ -254,7 +254,7 @@ iframe {
 	max-width: 600px;
 	max-height: 100%;
 	margin: auto;
-	padding: 15px;
+	padding: 0px;
 	padding-top: 25px;
 	background-color: white;
 	border: 2px solid black;
@@ -263,6 +263,9 @@ iframe {
 .instructions-content {
 	position: relative;
 	height: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+	padding-bottom: 15px;
 	overflow-y: scroll;
 }
 
