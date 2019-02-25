@@ -6,20 +6,22 @@ block content
 			div.container
 				h1 Salesforce PDF Webloader
 				p.
-					An application to easily enter data from PDF files into a Salesforce database. This app can be configured for any kind of Salesforce configuration with standard and custom record objects. This demo is configured to pull contact information from an employee or member roster for a business or organization.
+					An application to enter data easily from PDF files into a Salesforce database. It can be customized for any kind of Salesforce configuration with standard and custom record objects. This demo is configured to pull contact information from an employee or member roster for a business or organization.
 				p.link-paragraph.
-					<a href="/webloader">CLICK HERE TO LAUNCH APPLICATION</a>
+					<a href="/webloader"><b><u>CLICK HERE TO LAUNCH APPLICATION</u></b></a>
 				p.
-					Login with <b>username: guest@sfwebloader.com</b> and <b>password: testpwd</b>. This demo is connected with a Salesforce developer account.
+					Login with <b>username: guest@sfwebloader.com</b> and <b>password: testpwd</b>. This demo is connected to a Salesforce developer account.
 		div.container
-			h2 How to Use
+			h5 How to Use
 			ul
 				li. 
-					<span class='instrbtnspan'>Init Data Entry</span> initializes the data entry process. It will prompt you to search for an account in the Salesforce database and will give you the option to create a new account.
+					Click <span class='instrbtnspan'>Init Data Entry</span> to initialize the data entry process. It will prompt you to search for an account in the Salesforce database and will give you the option to create a new account. The account corresponds to the business or organization of the roster document (pdf) you use.
 				li.
-					Search for the account, or create a new account, based on the business or organization in your pdf. To load an example document into the pdf viewer, click <span class='instrbtnspan'>Load Sample PDF</span>. Click <span class='instrbtnspan'>Upload PDF</span> to use a document from your own computer. <span class='instrbtnspan'>Remove PDF</span> will remove an uploaded pdf.
+					To load an example roster document into the pdf viewer, click <span class='instrbtnspan'>Load Sample PDF</span>. Click <span class='instrbtnspan'>Upload PDF</span> to use a document from your own computer. <span class='instrbtnspan'>Remove PDF</span> will remove an uploaded pdf.
 				li.
-					Once an account is chosen or created, you will be prompted to edit its fields. <b>IMPORTANT:</b> To enter data, you may either type data directly into the field input box on the top right-hand side, or <b style='background-color: yellow; padding: 2px;'>simply select any text you want to input on the pdf</b>. Text selected on the pdf will be automatically entered into the active field, which will then cycle to the next field.
+					Search for the account by entering the name of the business or organization into the field and pressing <b>Enter</b>. If it is not already in the Salesforce database, click <span class='instrbtnspan'>New</span> to create a new account.
+				li.
+					Once an existing account is selected or a new account is created, you will be prompted to edit its fields. <b>IMPORTANT:</b> To enter data, you may either type data directly into the field input box on the top right-hand side, or <b style='background-color: yellow; padding: 2px;'>simply select any text you want to input on the pdf</b>. Text selected on the pdf will be automatically entered into the active field, which will then cycle to the next field.
 				li.
 					Navigate through fields by clicking <span class='instrbtnspan'><</span> or <span class='instrbtnspan'>></span>.
 				li.
