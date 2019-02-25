@@ -62,6 +62,8 @@ $removedoc.click(function(){
 
 });
 
+$('.instructions').click((e)=>{e.stopPropagation()});
+
 $instr.click(function() {
   renderInstructions();
 });
