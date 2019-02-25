@@ -1,9 +1,9 @@
 // Cache jQuery lookups for buttons to add and remove pdfs
 const $addoc = $('#adddoc');
 const $loadsample = $('#loadsample')
-const $openurl = $('#openurl');
 const $removedoc = $('#removedoc');
 const $initentry = $('#initentry');
+const $instr = $('#instr-button');
 
 /** 
  * Bind functions to document buttons (cached above). The buttons that add documents
@@ -41,18 +41,7 @@ $loadsample.click(function() {
   }
 });
 
-$openurl.click(function(){
-  if( !allUnchanged() ) {
-    renderAlert('Removing document now will erase all unsaved changes.', () => {
-      renderOpenUrl(); 
-    });
-  } else {    
-    renderOpenUrl();
-  }
-});
-
 $removedoc.click(function(){
-  console.log('remove...');
   /** 
    * If any records have been edited, warn before proceeding (callback is executed by alert 
    * function upon confirmation)
@@ -71,6 +60,10 @@ $removedoc.click(function(){
     });
   }
 
+});
+
+$instr.click(function() {
+  renderInstructions();
 });
 
 // Handle keydown events to cycle through fields and records
