@@ -137,6 +137,8 @@ $.getJSON("/api/dm", function(data) {
     bindEvents();
   });
   $('.modal').on('shown.bs.modal', function () {
+    // Make sure focus is not on fldentry, where damage can be done...
+    $('.fldwin').attr("tabindex",-1).focus();
     unbindEvents();
   });
   // setting the parameter to 'true' ensures that r will be initalized after the docs are pulled

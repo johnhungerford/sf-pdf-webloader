@@ -266,7 +266,7 @@ iframe {
 	padding-right: 15px;
 	padding-left: 15px;
 	padding-bottom: 15px;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .exit {
