@@ -25,7 +25,7 @@ block content
 				div.fldwinright
 			div.pdfwin.test
 		div.instructions-frame(onclick='renderInstructionsHide()')
-			div.instructions
+			div.instructions(onclick='(e)=>{e.stopPropagation();}')
 				div.exit
 					span.close-button(onclick='renderInstructionsHide()') x
 				h4 Instructions
