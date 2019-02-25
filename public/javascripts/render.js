@@ -569,3 +569,11 @@ var renderAll = function() {
   renderFldEntry();
   renderDoc();
 }
+
+const renderInstructions = function () {
+  $('.instructions-frame').show();
+}
+
+const renderInstructionsHide = function () {
+  $('.instructions-frame').hide();
+}

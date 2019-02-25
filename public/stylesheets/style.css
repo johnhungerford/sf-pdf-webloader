@@ -228,6 +228,7 @@ iframe {
 }
 
 .instructions-frame {
+	display: hidden;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -241,18 +242,20 @@ iframe {
 }
 
 .instructions {
-	width: 100%;
-	height: 100%;
+	position: relative;
+	max-width: 600px;
+	margin: auto;
 	overflow-x: wrap;
 	overflow-y: scroll;
 	background-color: white;
+	border: 2px solid black;
 }
 
 .exit {
 	position: absolute;
 	top: 0;
 	right: 0;
-	padding: 3px;
+	padding-right: 10px;
 }
 
 .close-button {
