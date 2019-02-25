@@ -71,13 +71,13 @@ const bindEvents = function() {
   $(document).off('keydown').keydown((e) => {
     let $fldinput = $('.fldinput');
 
-    // Enter triggers 'change' event on fldinput element. See renderFldEntry() for handler
-    if(e.which === 13) {
-      if($fldinput) $fldinput.change();
-    } 
-
-    // Disregard all other key values if the focus is on any text input or textarea
+    // If the focus is on any text input or textarea, disregard any other keystrokes, but 
+    // make the "enter" key enter the data
     if( $('select').is(':focus') || $('input').is(':focus') || $('textarea').is(':focus') ) {
+      // Enter triggers 'change' event on fldinput element. See renderFldEntry() for handler
+      if(e.which === 13) {
+        if($fldinput) $fldinput.change();
+      } 
       return;
     }
 
