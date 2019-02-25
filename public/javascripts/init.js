@@ -113,7 +113,6 @@ const unbindEvents = function() {
   $addoc.off();
   $loadsample.off();
   $removedoc.off();
-  $('.instructions').off();
   $instr.off();
   $(document).off('keydown');
 }
