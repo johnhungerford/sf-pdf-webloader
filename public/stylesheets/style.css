@@ -8,6 +8,10 @@ body {
 	overflow-y: hidden;
 }
 
+li {
+	margin-bottom: 10px;
+}
+
 .subbody {
 	overflow-x: auto;
 	overflow-y: auto;
@@ -291,8 +295,4 @@ iframe {
 	background-color: #007bff;
 	border-radius: 3px;
 	font-size: 70%;
-}
-
-.li {
-	margin-bottom: 10px;
 }
