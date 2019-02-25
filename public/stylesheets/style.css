@@ -254,8 +254,14 @@ iframe {
 	max-height: 100%;
 	margin: auto;
 	padding: 15px;
+	padding-top: 25px;
 	background-color: white;
 	border: 2px solid black;
+}
+
+.instructions-content {
+	width: 100%;
+	height: 100%;
 	overflow-y: scroll;
 }
 

@@ -27,30 +27,31 @@ block content
 		div.instructions-frame(onclick='renderInstructionsHide()')
 			div.instructions
 				div.exit
-					span.close-button(onclick='renderInstructionsHide()') x
-				h4 Instructions
-				ul
-					li. 
-						<b>Init Data Entry</b> initializes data entry process: begins with searching for an account or creating a new account in the Salesforce database. Once an account is chosen or created, you are able create new contacts or edit existing contacts. To create a contact, press the <b>Down</b> key, or cycle past all of the account fields by clicking the <b>></b> button or pressing <b>Right</b>.
-					li.
-						<b>Load Sample PDF</b> Loads a sample pdf to use for data entry.
-					li.
-						<b>Upload PDF</b> Upload your own pdf for data entry. For this configuration, it should be a roster of members of an organization.
-					li.
-						<b>Remove PDF</b> Removes an uploaded pdf.
-					li.
-						To enter data, you can either type data in the field input box on the top right-hand side, or <b>select text in the pdf viewer</b>. Text selected in the viewer will be automatically inserted into the field input, which will cycle to the next field.
-					li.
-						<b>Save All</b> saves all new or modified records. <b>Refresh</b> reloads all records from Salesforce, erasing any new unsaved records or unsaved changes.
-				h5 Keyboard Shortcuts
-				ul
-					li.
-						<b>Up</b> and <b>Down</b> move up and down the list of contacts and the account record displayed in the left-hand column. You can also click on any of these records to access their fields.
-						<b>Left</b> and <b>Right</b> cycle through fields for any record. You can also click the <b><</b> and <b>></b> buttons.
-					li.
-						<b>Space</b> will bring the focus to the field input, so you don't have to use the mouse to enter data by typing.
-					li.
-						<b>Enter</b> will enter the data in the field input and cycle to the next field.
+						span.close-button(onclick='renderInstructionsHide()') x
+				div.instructions-content
+					h4 Instructions
+					ul
+						li. 
+							<b>Init Data Entry</b> initializes data entry process: begins with searching for an account or creating a new account in the Salesforce database. Once an account is chosen or created, you are able create new contacts or edit existing contacts. To create a contact, press the <b>Down</b> key, or cycle past all of the account fields by clicking the <b>></b> button or pressing <b>Right</b>.
+						li.
+							<b>Load Sample PDF</b> Loads a sample pdf to use for data entry.
+						li.
+							<b>Upload PDF</b> Upload your own pdf for data entry. For this configuration, it should be a roster of members of an organization.
+						li.
+							<b>Remove PDF</b> Removes an uploaded pdf.
+						li.
+							To enter data, you can either type data in the field input box on the top right-hand side, or <b>select text in the pdf viewer</b>. Text selected in the viewer will be automatically inserted into the field input, which will cycle to the next field.
+						li.
+							<b>Save All</b> saves all new or modified records. <b>Refresh</b> reloads all records from Salesforce, erasing any new unsaved records or unsaved changes.
+					h5 Keyboard Shortcuts
+					ul
+						li.
+							<b>Up</b> and <b>Down</b> move up and down the list of contacts and the account record displayed in the left-hand column. You can also click on any of these records to access their fields.
+							<b>Left</b> and <b>Right</b> cycle through fields for any record. You can also click the <b><</b> and <b>></b> buttons.
+						li.
+							<b>Space</b> will bring the focus to the field input, so you don't have to use the mouse to enter data by typing.
+						li.
+							<b>Enter</b> will enter the data in the field input and cycle to the next field.
 
 
 	div.modal.fade.insrch(role='dialog' data-backdrop='static' data-keyboard='false')
