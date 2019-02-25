@@ -218,10 +218,10 @@ iframe {
 .instr-button {
 	position: absolute;
 	font-size: 50%;
-	border-radius: 50%;
-	border: 1px solid black;
-	top: 0;
-	right: 0;
+	padding: 10px;
+	border-radius: 24px;
+	top: 10px;
+	right: 10px;
 	background-color: yellow;
 	font-weight: bold;
 }
@@ -235,7 +235,7 @@ iframe {
 }
 
 .instructions-frame {
-	display: hidden;
+	display: none;
 	position: absolute;
 	top: 0;
 	left: 0;
