@@ -11,7 +11,6 @@ const initR = function() {
   fi = r[ri].order[0];
   renderSfView();
   renderFldEntry();
-  bindEvents();
 }
 
 /**

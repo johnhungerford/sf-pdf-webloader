@@ -132,6 +132,7 @@ $.getJSON("/api/dm", function(data) {
   }
 
   dm = data;
+  bindEvents();
   $('.modal').on('hidden.bs.modal', function () {
     bindEvents();
   });
