@@ -80,13 +80,13 @@ const bindEvents = function() {
       }
   
       if(e.which === 39) { // 39: right
-        if( !nextf() ) { return; }
+        if( !rf.nextf() ) { return; }
       } else if(e.which === 37) { // 37: left
-        if( !prevf() ) { return; }
+        if( !rf.prevf() ) { return; }
       } else if(e.which === 40) { // 40: down
-        if( !nextr() ) { return; }
+        if( !rf.rf.nextr() ) { return; }
       } else if(e.which === 38) { // 38: right
-        if( !prevr() ) { return; }
+        if( !rf.prevr() ) { return; }
       } else if(e.which === 32) { // 32: space
         // see below (skip the return)
       } else {
