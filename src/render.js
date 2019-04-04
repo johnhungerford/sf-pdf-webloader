@@ -127,7 +127,7 @@ var renderBaseSearch = function() {
 
     $(".newbase-button").off().click(function() {
       d.r[riloc].type = 'base';
-      setOrder(riloc);
+      rf.setOrder(riloc);
       d.fi = d.r[riloc].order[0];
       renderFldEntry();
       renderSfView();
