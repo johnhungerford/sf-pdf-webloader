@@ -84,7 +84,7 @@ const bindEvents = function() {
       } else if(e.which === 37) { // 37: left
         if( !rf.prevf() ) { return; }
       } else if(e.which === 40) { // 40: down
-        if( !rf.rf.nextr() ) { return; }
+        if( !rf.nextr() ) { return; }
       } else if(e.which === 38) { // 38: right
         if( !rf.prevr() ) { return; }
       } else if(e.which === 32) { // 32: space
