@@ -826,7 +826,7 @@ const updateIndexFields = function (callback, rin) {
   total = 0;
   ctr = 0;
 
-  for(let i in r) {
+  for(let i in d.r) {
     let map = mf.getBorR(i);
     for( let j in d.r[i].f ) {
       if ( map.fields[j].type == 'index' && d.r[i].f[j].value ) total += 1;
@@ -839,7 +839,7 @@ const updateIndexFields = function (callback, rin) {
     return;
   }
 
-  for(let i in r) {
+  for(let i in d.r) {
     let map = mf.getBorR(i);
     for(let j in d.r[i].f) {
       if ( map.fields[j].type == 'index' && d.r[i].f[j].value ) {
