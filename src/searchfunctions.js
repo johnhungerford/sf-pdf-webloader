@@ -189,7 +189,7 @@ const loadAllRecords = function(callback) {
         searchObj.conditions[d.dm.r[i].fields[j].sfname] =
           d.dm.r[i].fields[j].value;
       } else if (d.dm.r[i].fields[j].inherits) {
-        for (let k in r) {
+        for (let k in d.r) {
           if (d.r[k].bi == d.dm.r[i].fields[j].inherits.base) {
             searchObj.conditions[d.dm.r[i].fields[j].sfname] =
               d.r[k].f[d.dm.r[i].fields[j].inherits.field].value;
