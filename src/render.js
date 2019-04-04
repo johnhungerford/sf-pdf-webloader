@@ -128,7 +128,7 @@ var renderBaseSearch = function() {
     $(".newbase-button").off().click(function() {
       d.r[riloc].type = 'base';
       setOrder(riloc);
-      d.fi = r[riloc].order[0];
+      d.fi = d.r[riloc].order[0];
       renderFldEntry();
       renderSfView();
     });
@@ -396,7 +396,7 @@ var renderFldEntry = function() {
   $(".fldentry").append(fldinput);
   if (d.r[d.ri].f[d.fi].value) {
     if ( rmap.fields[d.fi].type == 'index' ) {
-      if (d.r[ri].f[fi].showval ) {
+      if (d.r[ri].f[d.fi].showval ) {
         $('.fldinput').val(d.r[d.ri].f[d.fi].showval);
       }
     } else if ( rmap.fields[d.fi].type == 'date' ) {
@@ -410,7 +410,7 @@ var renderFldEntry = function() {
 
   let rin = d.ri;
   let fin = d.fi;
-  let so = rmap.fields[d.fin].indexto;
+  let so = rmap.fields[fin].indexto;
 
   $(".fldinput").off().change(function() {
     if (rmap.fields[fin].type == "index") {

@@ -214,7 +214,7 @@ const loadAllRecords = function(callback) {
           }
         }
 
-        if (loaded === dm.b.length + dm.r.length) {
+        if (loaded === d.dm.b.length + d.dm.r.length) {
           rf.orderR();
           rf.updateIndexFields(() => {
             rn.renderFldEntry();

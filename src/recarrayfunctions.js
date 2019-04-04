@@ -789,7 +789,7 @@ const updateIndexFields = function (callback, rin) {
       return;
     }
 
-    for(let j in r[rin].f) {
+    for(let j in d.r[rin].f) {
       if (map.fields[j].type === 'index' && d.r[rin].f[j].value) {
         let fieldsvar = {};
         let callback;
@@ -830,8 +830,8 @@ const updateIndexFields = function (callback, rin) {
 
   for(let i in r) {
     let map = mf.getBorR(i);
-    for( let j in r[i].f ) {
-      if ( map.fields[j].type == 'index' && r[i].f[j].value ) total += 1;
+    for( let j in d.r[i].f ) {
+      if ( map.fields[j].type == 'index' && d.r[i].f[j].value ) total += 1;
     }
   }
 
@@ -843,8 +843,8 @@ const updateIndexFields = function (callback, rin) {
 
   for(let i in r) {
     let map = mf.getBorR(i);
-    for(let j in r[i].f) {
-      if ( map.fields[j].type == 'index' && r[i].f[j].value ) {
+    for(let j in d.r[i].f) {
+      if ( map.fields[j].type == 'index' && d.r[i].f[j].value ) {
         let fieldsvar = {};
         fieldsvar[map.fields[j].indexshow] = 1;
         $.ajax({
