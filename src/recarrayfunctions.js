@@ -414,7 +414,7 @@ const nextr = function() {
       }
     }
   } else if (d.ri < d.r.length - 1) {
-    if ( d.r[d.ri+1].d.ri === d.r[d.ri].ri || d.r[ri].type === 'base' ) {      
+    if ( d.r[d.ri+1].d.ri === d.r[d.ri].ri || d.r[d.ri].type === 'base' ) {      
       return nextrNoAdd();
     } else if (!isNew(d.ri) || (isNew(d.ri) && isChanged(d.ri)) ) {
       return nextrAndAdd(d.r[d.ri].ri);
@@ -642,7 +642,7 @@ const addSearchRecords = function() {
   }
 
   d.ri = 0;
-  d.fi = d.r[ri].order[0];
+  d.fi = d.r[d.ri].order[0];
 };
 
 const addBaseRecord = function(bInd, bRec) {
