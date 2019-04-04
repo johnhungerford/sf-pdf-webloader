@@ -178,7 +178,6 @@ const parseLayout = function (layStr, fieldsArray) {
             }
 
             i -= 1;
-            console.log(layStr[i]);
             outStr += parseLayoutIf(condition, trueresult, falseresult);
           }
         }

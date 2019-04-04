@@ -171,9 +171,6 @@ var renderBaseSearch = function() {
       renderLoadingStart();
       uf.updateRecord(riloc, function(data, rin){
         renderLoadingEnd();
-        console.log('Created contact record!');
-        console.log(data);
-        console.log(rin);
         if(data[0]) {
           if(data[0].id) {
             rf.setValue(rin, 'Id', data[0].id);
