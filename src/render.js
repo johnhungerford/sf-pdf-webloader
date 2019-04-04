@@ -176,7 +176,7 @@ var renderBaseSearch = function() {
         console.log(rin);
         if(data[0]) {
           if(data[0].id) {
-            setValue(rin, 'Id', data[0].id);
+            rf.setValue(rin, 'Id', data[0].id);
             d.r[rin].new = false;
             sf.loadAllRecords();
           }
@@ -432,7 +432,7 @@ var renderFldEntry = function() {
       d.r[rin].f[fin].value = $(".fldinput").prop('checked');
       return
     }
-    if (setValue(rin, fin, $(".fldinput").val())) {
+    if (rf.setValue(rin, fin, $(".fldinput").val())) {
       rf.updateR();
       rf.setOrder();
       rf.nextf();
