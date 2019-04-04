@@ -22,6 +22,8 @@ $.getJSON("/api/dm", function(data) {
 
   d.dm = data;
   ef.bindEvents();
+  $('.instructions-frame').click(rn.renderInstructionsHide);
+  $('.close-button').click(rn.renderInstructionsHide);
 
   $('.instructions').off().click((e)=>{e.stopPropagation()});
   $('.modal').on('hidden.bs.modal', function () {
