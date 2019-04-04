@@ -53,7 +53,7 @@ const orderR = function() {
     for (j = d.dm.b.length; j < d.r.length && d.r[j].ri < i; j++);
 
     // If we get to the last field, there is no ordering to do; we're finished
-    if (j == r.length -1 ) break;
+    if (j == d.r.length -1 ) break;
 
     /** 
      * For each record type, this next loop iterates through every level of ordering, starting with
@@ -430,7 +430,7 @@ const nextr = function() {
 
 // 
 const prevrAndAdd = function(rin) {
-  if(rin < 0 || rin >= dm.r.length) return false;
+  if(rin < 0 || rin >= d.dm.r.length) return false;
 
   addRecord(rin);
   if (isNew(d.ri + 1) && !isChanged(d.ri + 1)) { 
@@ -597,7 +597,7 @@ const pushNewRec = function(rInd) {
     }
   }
 
-  r.push({
+  d.r.push({
     type: "record",
     ri: rInd,
     new: true,
@@ -684,7 +684,7 @@ const addBaseRecord = function(bInd, bRec) {
 
       if(d.search) { 
         sf.clearBaseSearch();
-        d.fi = r[i].order[0];
+        d.fi = d.r[i].order[0];
         sf.loadAllRecords(); 
       }
 
@@ -777,7 +777,7 @@ const updateIndexFields = function (callback, rin) {
   renderLoadingStart('Looking up index fields');
   let ctr = 0;
   let total = 0;
-  if( rin !== undefined && rin < r.length ) {
+  if( rin !== undefined && rin < d.r.length ) {
     let map = rf.getBorR(rin);
     for(let j in d.r[rin].f) {
       if ( map.fields[j].type === 'index' && d.r[rin].f[j].value ) total += 1;
