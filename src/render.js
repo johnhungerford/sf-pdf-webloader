@@ -1,7 +1,12 @@
+const d = require('./data.js');
+const mf = require('./mapfunctions.js');
+const sf = require('./searchfunctions.js');
+const rf = require('./recarrayfunctions.js');
+const uf = require('./upsertfunctions.js');
+const ef = require('./eventfunctions.js');
+
 const renderDoc = function(site) {
-
   $('.pdfwin').empty();
-
   if(site === undefined) {
     $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc/view"></iframe>');
   } else {
@@ -108,22 +113,22 @@ var renderLoadingEnd = function() {
 }
 
 var renderBaseSearch = function() {
-  var map = getBorR();
+  var map = mf.getBorR();
 
-  var riloc = ri;
-  var filoc = fi;
+  var riloc = d.ri;
+  var filoc = d.fi;
 
   $(".sfviewmenu").empty();
 
-  if ( r[ri].type == 'search' ) {
+  if ( d.r[ri].type == 'search' ) {
     $(".sfviewmenu").append(
       '<button type="button" class="btn btn-primary newbase-button">New</button'
     );
 
     $(".newbase-button").off().click(function() {
-      r[riloc].type = 'base';
+      d.r[riloc].type = 'base';
       setOrder(riloc);
-      fi = r[riloc].order[0];
+      d.fi = r[riloc].order[0];
       renderFldEntry();
       renderSfView();
     });
@@ -133,27 +138,27 @@ var renderBaseSearch = function() {
       "<h4>Find or Create " + map.appname + " (" + map.sobject + ")</h4>"
     );
 
-    if (sdata.empty) {
+    if (d.sdata.empty) {
       return false;
     }
 
-    for (let i = 0; i < sdata.records.length; i++) {
+    for (let i = 0; i < d.sdata.records.length; i++) {
       $(".sfviewbody").append(
         '<div class="search-result" data-id="' +
-          sdata.records[i]["Id"] +
+          d.sdata.records[i]["Id"] +
           '" id="sresult' +
           i +
           '"></div>'
       );
-      for (var j in sdata.layout) {
+      for (var j in d.sdata.layout) {
         $("#sresult" + i).append(
-          "<div>" + parseLayout(sdata.layout[j], sdata.records[i]) + "</div>"
+          "<div>" + parseLayout(d.sdata.layout[j], d.sdata.records[i]) + "</div>"
         );
       }
       $("#sresult" + i).off().click(function() {
         $.event.trigger({
           type: "searchSelect",
-          Id: sdata.records[i]["Id"]
+          Id: d.sdata.records[i]["Id"]
         });
       });
     }
@@ -164,7 +169,7 @@ var renderBaseSearch = function() {
 
     $(".createbase-button").off().click(function() {
       renderLoadingStart();
-      updateRecord(riloc, function(data, rin){
+      uf.updateRecord(riloc, function(data, rin){
         renderLoadingEnd();
         console.log('Created contact record!');
         console.log(data);
@@ -172,8 +177,8 @@ var renderBaseSearch = function() {
         if(data[0]) {
           if(data[0].id) {
             setValue(rin, 'Id', data[0].id);
-            r[rin].new = false;
-            loadAllRecords();
+            d.r[rin].new = false;
+            sf.loadAllRecords();
           }
         }
       });
@@ -187,38 +192,6 @@ var renderBaseSearch = function() {
   
 };
 
-/*var renderSfViewDocs = function() {
-
-  $(".sfviewmenu").empty();
-
-  $(".sfviewmenu").append(
-    '<span class="btn btn-primary file-input-span" style="margin-right:5px">Upload PDF<input type="file" class="file-input></span>'
-  );
-
-  $('.file-input').change(function() {
-    addDoc('top',function() {
-      di = d.length-1;
-      addSearchRecords();
-      renderDoc();
-      renderSfView();
-      renderFldEntry();
-    });
-  });
-
-  $(".sfviewbody").empty();
-
-  for( var i = 0; i < d.length; i++ ) {
-    $(".sfviewbody").append('<div class="doclist-entry"><span class="span-link" id="doc-' + i + '">Document '+ i+1 +'</div>');
-    $('#doc-'+i).click(function() {
-      di = i;
-      renderDoc();
-      renderSfView();
-      renderFldEntry();
-    });
-  }
-
-}*/
-
 var renderSfView = function() {
 
   /*if (init) {
@@ -227,12 +200,12 @@ var renderSfView = function() {
     return;
   }*/
 
-  if (search) {
+  if (d.search) {
     return renderBaseSearch();
   }
 
-  if( ri >= r.length ) ri = r.length-1;
-  if( ri < 0 ) ri = 0;
+  if( d.ri >= d.r.length ) d.ri = d.r.length-1;
+  if( d.ri < 0 ) d.ri = 0;
 
   $(".sfviewmenu").empty();
 
@@ -240,62 +213,62 @@ var renderSfView = function() {
     '<button type="button" class="btn btn-primary saveall-button" style="margin-right:5px;">Save All</button'
   );
   $('.saveall-button').off().click(function(){
-    updateAll();
+    uf.updateAll();
   });
 
   $(".sfviewmenu").append(
     '<button type="button" class="btn btn-primary refresh-button">Refresh</button'
   );
   $('.refresh-button').off().click(function(){
-    loadAllRecords();
+    sf.loadAllRecords();
   });
 
   $(".sfviewbody").empty();
 
-  for (let i = 0; i < dm.b.length; i++) {
+  for (let i = 0; i < d.dm.b.length; i++) {
     $(".sfviewbody").append(
       '<div class="sfview-header sfview-base-box" id="sfview-hdr-b-' + i + '"></div>'
     );
-    $("#sfview-hdr-b-" + i).append("<h4>" + dm.b[i].appname + "</h4>");
-    for( var j = 0; j < dm.b[i].settings.layout.length; j++ ) {
-      $("#sfview-hdr-b-" + i).append('<div>'+parseLayout( dm.b[i].settings.layout[j], getFieldsForLayout(i) )+'</div>');
+    $("#sfview-hdr-b-" + i).append("<h4>" + d.dm.b[i].appname + "</h4>");
+    for( var j = 0; j < d.dm.b[i].settings.layout.length; j++ ) {
+      $("#sfview-hdr-b-" + i).append('<div>'+parseLayout( d.dm.b[i].settings.layout[j], mf.getFieldsForLayout(i) )+'</div>');
     }
     $("#sfview-hdr-b-" + i).attr('style','cursor:pointer');
     $("#sfview-hdr-b-" + i).off().click(function() {
-      jumpTo(i);
+      rf.jumpTo(i);
       renderFldEntry();
       renderSfView();
     });
-    if( ri == i ) {
+    if( d.ri == i ) {
       $('#sfview-hdr-b-' + i).attr('style','border:2px solid red;');
     }
   }
 
-  for (let i = 0; i < dm.r.length; i++) {
+  for (let i = 0; i < d.dm.r.length; i++) {
     $(".sfviewbody").append(
       '<div class="sfview-header" id="sfview-hdr-r-' + i + '"></div>'
     );
-    $("#sfview-hdr-r-" + i).append("<h4>" + dm.r[i].appname + "</h4>");
+    $("#sfview-hdr-r-" + i).append("<h4>" + d.dm.r[i].appname + "</h4>");
   }
 
-  for (let i = dm.b.length; i < r.length; i++) {
-    $("#sfview-hdr-r-" + r[i].ri).append('<div class="sfview-record" id="sfview-rec-' + i + '"></div>');
-    for ( let j = 0; j < dm.r[r[i].ri].settings.layout.length; j++ ) {
-      $("#sfview-rec-" + i).append('<div>'+parseLayout( dm.r[r[i].ri].settings.layout[j], getFieldsForLayout(i) )+'</div>');
+  for (let i = d.dm.b.length; i < d.r.length; i++) {
+    $("#sfview-hdr-r-" + d.r[i].ri).append('<div class="sfview-record" id="sfview-rec-' + i + '"></div>');
+    for ( let j = 0; j < d.dm.r[d.r[i].ri].settings.layout.length; j++ ) {
+      $("#sfview-rec-" + i).append('<div>'+parseLayout( d.dm.r[d.r[i].ri].settings.layout[j], getFieldsForLayout(i) )+'</div>');
     }
     $('#sfview-rec-'+i).off().click(function(){
       jumpTo(i);
       renderFldEntry();
       renderSfView();
     });
-    if( ri == i ) {
+    if( d.ri == i ) {
       $('#sfview-rec-' + i).attr('style','border: 2px solid red;');
     }
   }
 
   var currentScrollTop = $('.sfviewbody').scrollTop();
 
-  if( ri < dm.b.length ) {
+  if( d.ri < d.dm.b.length ) {
     var selElement = $('#sfview-hdr-b-' + ri);
   } else {
     var selElement = $('#sfview-rec-' + ri);
@@ -334,16 +307,16 @@ var renderFldEntry = function() {
     return;
   }*/
 
-  if( ri >= r.length ) ri = r.length-1;
-  if( ri < 0 ) ri = 0;
+  if( d.ri >= d.r.length ) d.ri = d.r.length-1;
+  if( d.ri < 0 ) d.ri = 0;
 
   $(".fldwinleft").empty();
-  if (ri != 0 || fi != r[0].order[0]) {
+  if (d.ri != 0 || d.fi != d.r[0].order[0]) {
     $(".fldwinleft").append('<a class="btn btn-primary" href="#" id="prevlink"><</a>');
     $("#prevlink").off().click(function() {
-      updateR();
-      setOrder();
-      prevf();
+      rf.updateR();
+      rf.setOrder();
+      rf.prevf();
       renderFldEntry();
       renderSfView();
     });
@@ -351,40 +324,40 @@ var renderFldEntry = function() {
 
   $(".fldwinright").empty();
   if (
-    ri < r.length - 1 ||
-    fi != r[r.length - 1].order[r[r.length - 1].order.length - 1]
+    d.ri < d.r.length - 1 ||
+    d.fi != d.r[d.r.length - 1].order[d.r[d.r.length - 1].order.length - 1]
   ) {
     $(".fldwinright").append('<a class="btn btn-primary" href="#" id="nextlink">></a>');
     $("#nextlink").off().click(function() {
-      updateR();
-      setOrder();
-      nextf();
+      rf.updateR();
+      rf.setOrder();
+      rf.nextf();
       renderFldEntry();
       renderSfView();
     });
   }
 
-  var rec = r[ri];
-  var rmap = getBorR();
+  var rec = d.r[d.ri];
+  var rmap = fm.getBorR();
 
   $(".fldtitle").empty();
-  $(".fldtitle").append("<h4>" + rmap.fields[fi].appname + "</h4>");
+  $(".fldtitle").append("<h4>" + rmap.fields[d.fi].appname + "</h4>");
 
   $(".fldinstr").empty();
-  if (rmap.fields[fi].instructions) {
-    $(".fldinstr").append("<p>" + rmap.fields[fi].instructions + "</p>");
+  if (rmap.fields[d.fi].instructions) {
+    $(".fldinstr").append("<p>" + rmap.fields[d.fi].instructions + "</p>");
   }
 
   $(".fldentry").empty();
-  switch (rmap.fields[fi].type) {
+  switch (rmap.fields[d.fi].type) {
     case "text":
-      if (rmap.fields[fi].length > 260) {
+      if (rmap.fields[d.fi].length > 260) {
         var fldinput = '<textarea style="resize: none" rows="5" cols="45" ';
       } else {
         var fldinput = '<input type="text" size="45" ';
       }
       fldinput +=
-        'class="fldinput" maxlength = "' + rmap.fields[fi].length + '" > ';
+        'class="fldinput" maxlength = "' + rmap.fields[d.fi].length + '" > ';
       break;
     case "phone":
       var fldinput = '<input class="fldinput" type="text" size="45" maxlength="40">';
@@ -395,14 +368,14 @@ var renderFldEntry = function() {
     case "email":
       var fldinput =
         '<input class="fldinput" type="text" size="45" maxlength="' +
-        rmap.fields[fi].length +
+        rmap.fields[d.fi].length +
         '">';
       break;
     case "picklist":
       var fldinput = '<select class="fldinput">';
       fldinput += '<option value="">None</option>';
-      for (var i = 0; i < rmap.fields[fi].values.length; i++) {
-        fldinput += "<option>" + rmap.fields[fi].values[i] + "</option>";
+      for (var i = 0; i < rmap.fields[d.fi].values.length; i++) {
+        fldinput += "<option>" + rmap.fields[d.fi].values[i] + "</option>";
       }
       fldinput += "</select>";
       break;
@@ -421,48 +394,48 @@ var renderFldEntry = function() {
       break;
   }
   $(".fldentry").append(fldinput);
-  if (r[ri].f[fi].value) {
-    if ( rmap.fields[fi].type == 'index' ) {
-      if (r[ri].f[fi].showval ) {
-        $('.fldinput').val(r[ri].f[fi].showval);
+  if (d.r[d.ri].f[d.fi].value) {
+    if ( rmap.fields[d.fi].type == 'index' ) {
+      if (d.r[ri].f[fi].showval ) {
+        $('.fldinput').val(d.r[d.ri].f[d.fi].showval);
       }
-    } else if ( rmap.fields[fi].type == 'date' ) {
-      $('.fldinput').val(convertDate(r[ri].f[fi].value));
-    } else if(rmap.fields[fi].type == 'boolean' ) {
-      if ( r[ri].f[fi].value ) { $('.fldinput').prop('checked',true); } else { $('.fldinput').prop('checked',false); }
+    } else if ( rmap.fields[d.fi].type == 'date' ) {
+      $('.fldinput').val(convertDate(d.r[d.ri].f[d.fi].value));
+    } else if(rmap.fields[d.fi].type == 'boolean' ) {
+      if ( d.r[d.ri].f[d.fi].value ) { $('.fldinput').prop('checked',true); } else { $('.fldinput').prop('checked',false); }
     } else {
-      $(".fldinput").val(r[ri].f[fi].value);
+      $(".fldinput").val(d.r[d.ri].f[d.fi].value);
     }
   }
 
-  let rin = ri;
-  let fin = fi;
-  let so = rmap.fields[fin].indexto;
+  let rin = d.ri;
+  let fin = d.fi;
+  let so = rmap.fields[d.fin].indexto;
 
   $(".fldinput").off().change(function() {
     if (rmap.fields[fin].type == "index") {
       if ($('.fldinput').val() == '') {
-        r[rin].f[fin].showval = null;
-        r[rin].f[fin].value = null;
-        updateR();
-        setOrder();
-        nextf();
+        d.r[rin].f[fin].showval = null;
+        d.r[rin].f[fin].value = null;
+        rf.updateR();
+        rf.setOrder();
+        rf.nextf();
         renderFldEntry();
         renderSfView();
         return;
       }
-      r[rin].f[fin].showval = $('.fldinput').val();
-      searchIndexRecord(rin, fin);
+      d.r[rin].f[fin].showval = $('.fldinput').val();
+      sf.searchIndexRecord(rin, fin);
       return;
     }
     if(rmap.fields[fin].type == "boolean") {
-      r[rin].f[fin].value = $(".fldinput").prop('checked');
+      d.r[rin].f[fin].value = $(".fldinput").prop('checked');
       return
     }
     if (setValue(rin, fin, $(".fldinput").val())) {
-      updateR();
-      setOrder();
-      nextf();
+      rf.updateR();
+      rf.setOrder();
+      rf.nextf();
       renderFldEntry();
       renderSfView();
     }
@@ -470,7 +443,7 @@ var renderFldEntry = function() {
 };
 
 var renderIndexSearch = function(rin, fin, records) {
-  var fm = getFm(rin, fin);
+  var fm = mf.getFm(rin, fin);
 
   $(".insrch-title").empty();
   $(".insrch-body").empty();
@@ -494,8 +467,8 @@ var renderIndexSearch = function(rin, fin, records) {
 };
 
 var renderIndexCreate = function(rin, fin) {
-  var map = getBorR(rin);
-  var fm = getFm(rin, fin);
+  var map = fm.getBorR(rin);
+  var fm = fm.getFm(rin, fin);
 
   $(".increate-title").empty();
   $('.increate-body').empty();
@@ -551,8 +524,8 @@ var renderIndexCreate = function(rin, fin) {
         }
 
         $('.increate').modal('hide');
-        setValue(rin, fin, data[0].id);
-        r[rin].f[fin].showval = apiObj.records[0][fm.indexshow];
+        rf.setValue(rin, fin, data[0].id);
+        d.r[rin].f[fin].showval = apiObj.records[0][fm.indexshow];
         renderFldEntry();
         renderSfView();
       }
@@ -572,10 +545,27 @@ var renderAll = function() {
 
 const renderInstructions = function () {
   $('.instructions-frame').show();
-  unbindEvents();
+  ef.unbindEvents();
 }
 
 const renderInstructionsHide = function () {
   $('.instructions-frame').hide();
-  bindEvents();
+  ef.bindEvents();
 }
+
+module.exports.renderDoc =renderDoc;
+module.exports.renderSelectionErr = renderSelectionErr;
+module.exports.renderError = renderError;
+module.exports.renderAlert = renderAlert;
+module.exports.renderOpenUrl = renderOpenUrl;
+module.exports.renderLoadingStart = renderLoadingStart;
+module.exports.renderLoadingEnd = renderLoadingEnd;
+module.exports.renderBaseSearch = renderBaseSearch;
+module.exports.renderSfView = renderSfView;
+module.exports.convertDate = convertDate;
+module.exports.renderFldEntry = renderFldEntry;
+module.exports.renderIndexSearch = renderIndexSearch;
+module.exports.renderIndexCreate = renderIndexCreate;
+module.exports.renderAll = renderAll;
+module.exports.renderInstructions = renderInstructions;
+module.exports.renderInstructionsHide = renderInstructionsHide;

@@ -1,20 +1,13 @@
-var dm = {};
-var r = [];
-var ri = 0;
-var fi = null;
-var search = true;
-var sdata = { empty: true };
-var init = true;
-var mdownpos = [];
+const d = require('./data.js');
 
 const getFieldsForLayout = function(rin) {
   let fout = {};
   let map = getBorR(rin);
-  for (let i in r[rin].f) {
-    if (map.fields[i].type === 'index' && r[rin].f[i].showval) {
-      fout[i] = r[rin].f[i].showval;
+  for (let i in d.r[rin].f) {
+    if (map.fields[i].type === 'index' && d.r[rin].f[i].showval) {
+      fout[i] = d.r[rin].f[i].showval;
     } else {
-      fout[i] = r[rin].f[i].value;
+      fout[i] = d.r[rin].f[i].value;
     }
   }
 
@@ -23,7 +16,7 @@ const getFieldsForLayout = function(rin) {
 
 const convRecSA = function(type, index, records) {
   const conv = function (record) {
-    let fm = type === 'record' ? dm.r[index].fields : dm.b[index].fields;
+    let fm = type === 'record' ? d.dm.r[index].fields : d.dm.b[index].fields;
     let recout = {};
     for (let j in record) {
       for (let k in fm) {
@@ -47,14 +40,14 @@ const convRecSA = function(type, index, records) {
 };
 
 const getBorR = function(rin) {
-  if (rin === undefined) rin = ri;
+  if (rin === undefined) rin = d.ri;
 
-  if (r[rin].type == 'record') {
-    return dm.r[r[rin].ri];
-  } else if (r[rin].type == 'base') {
-    return dm.b[r[rin].bi];
-  } else if (r[rin].type == 'search') {
-    return dm.b[r[rin].bi];
+  if (d.r[rin].type == 'record') {
+    return d.dm.r[d.r[rin].ri];
+  } else if (d.r[rin].type == 'base') {
+    return d.dm.b[d.r[rin].bi];
+  } else if (d.r[rin].type == 'search') {
+    return d.dm.b[d.r[rin].bi];
   } else {
     return false;
   }
@@ -62,16 +55,16 @@ const getBorR = function(rin) {
 
 const getFm = function(rin, fin) {
   if (fin == undefined) {
-    rin = ri;
-    fin = fi;
+    rin = d.ri;
+    fin = d.fi;
   }
 
-  if (r[rin].type == 'record') {
-    return dm.r[r[rin].ri].fields[fin];
-  } else if (r[rin].type == 'base') {
-    return dm.b[r[rin].bi].fields[fin];
-  } else if (r[rin].type == 'search') {
-    return dm.b[r[rin].bi].fields[fin];
+  if (d.r[rin].type == 'record') {
+    return d.dm.r[d.r[rin].ri].fields[fin];
+  } else if (d.r[rin].type == 'base') {
+    return d.dm.b[d.r[rin].bi].fields[fin];
+  } else if (d.r[rin].type == 'search') {
+    return d.dm.b[d.r[rin].bi].fields[fin];
   } else {
     return false;
   }
@@ -160,9 +153,7 @@ const parseLayout = function (layStr, fieldsArray) {
             }
 
             trueresult = layStr.slice(i, k);
-            console.log('trueresult: '+trueresult)
             i = k + 1;
-            console.log('after true: '+ layStr[i]);
             if (layStr[i] === "{") {
               i += 1;
               l = i;
@@ -181,9 +172,7 @@ const parseLayout = function (layStr, fieldsArray) {
               }
 
               falseresult = layStr.slice(i, l);
-              console.log('falseresult: '+falseresult);
               i = l + 1;
-              console.log('after false: '+layStr[i]);
             } else {
               falseresult = '';
             }
@@ -223,3 +212,10 @@ const parseLayout = function (layStr, fieldsArray) {
 
   return outStr;
 };
+
+module.exports.convRecSA = convRecSA
+module.exports.getFieldsForLayout = getFieldsForLayout;
+module.exports.getBorR = getBorR;
+module.exports.getFm = getFm;
+module.exports.parseLayout = parseLayout;
+

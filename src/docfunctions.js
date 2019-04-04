@@ -1,7 +1,7 @@
+const rn = require('./render.js');
 
-var addDoc = function(fd, callback) {
-
-	renderLoadingStart('Loading document');
+const addDoc = function(fd, callback) {
+	rn.renderLoadingStart('Loading document');
 
 	if( !fd ) { return false; }
 
@@ -29,21 +29,23 @@ var addDoc = function(fd, callback) {
 
 }
 
-var removeDoc = function(callback) {
-
+const removeDoc = function(callback) {
 	renderLoadingStart('Removing Document');
 	$.getJSON('/doc/remove', function(data) {
 		renderLoadingEnd();
 		if( data.err ) {
-			renderError(data.err);
+			rn.renderError(data.err);
 			return;
 		}
 		if( callback ) {
 			callback();
 		} else {
-			renderDoc();
+			rn.renderDoc();
 		}
 
 	});
 
 }
+
+module.exports.addDoc = addDoc;
+module.exports.removeDoc = removeDoc;

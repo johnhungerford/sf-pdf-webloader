@@ -1,16 +1,21 @@
+const d = require('./data.js');
+const mf = require('./mapfunctions.js');
+const sf = require('./searchfunctions.js');
+const rn = require('./render.js');
+
 /** 
 /* Resets the global record array and its index tracker, initializing it with base records set to
  * 'search.'
  */
 const initR = function() {
-  r = [];
-  ri = 0;
+  d.r = [];
+  d.ri = 0;
   addSearchRecords();
-  search = true;
-  sdata = { empty: true };
-  fi = r[ri].order[0];
-  renderSfView();
-  renderFldEntry();
+  d.search = true;
+  d.sdata = { empty: true };
+  d.fi = d.r[d.ri].order[0];
+  rn.renderSfView();
+  rn.renderFldEntry();
 }
 
 /**
@@ -25,17 +30,17 @@ const orderR = function() {
   const rMove = function (from, to) {
     if( !from || !to || from === to ) { return; }
 
-    r.splice( to, 0, r.splice(from, 1)[0] );
+    d.r.splice( to, 0, d.r.splice(from, 1)[0] );
   }
 
   
   // Main iterator loop: goes through each of the record types
-  for (let i = 0; i < dm.r.length; i++) {
+  for (let i = 0; i < d.dm.r.length; i++) {
     // j will tell us which element in r is where the records of type r[i] begin
     let j = 0;
     // fmlist will be an array of fieldmaps (taken from dm) for the fields of each level of ordering
     let fmlist = [];
-    const map = dm.r[i];
+    const map = d.dm.r[i];
     // order is an array of objects that have all necessary information about each level of ordering
     const order = map.settings.listorder;
 
@@ -45,7 +50,7 @@ const orderR = function() {
     }
     
     // Advance j until we get to record type r[i]
-    for (j = dm.b.length; j < r.length && r[j].ri < i; j++);
+    for (j = d.dm.b.length; j < d.r.length && d.r[j].ri < i; j++);
 
     // If we get to the last field, there is no ordering to do; we're finished
     if (j == r.length -1 ) break;
@@ -58,17 +63,17 @@ const orderR = function() {
       const type = fmlist[m].type;
 
       // Climb up the record array dealing with each record until we hit the next record type
-      for (let k = j; k < r.length && r[k].ri === i; k++) {
+      for (let k = j; k < d.r.length && d.r[k].ri === i; k++) {
         // Get the value of the ordering field of the current record in our climb, depending on
         // whether it is an index field, a regular field.
         if (type === 'index') {
-          if(r[k].f[order[m].field].showval) {
-            var value1 = r[k].f[order[m].field].showval;
+          if(d.r[k].f[order[m].field].showval) {
+            var value1 = d.r[k].f[order[m].field].showval;
           } else {
             var value1 = '';
           }
         } else {
-          var value1 = r[k].f[order[m].field].value;
+          var value1 = d.r[k].f[order[m].field].value;
         }
 
         // Now search back down the record array for the right place to move the current record
@@ -80,14 +85,14 @@ const orderR = function() {
             // This time, we make a note of what the type of index field is, storing it in 
             // 'typetmp'
             var typetmp = fmlist[m].indexfields[fmlist[m].indexshow].type;
-            if(r[l].f[order[m].field].showval) {
-              var value2 = r[l].f[order[m].field].showval;
+            if(d.r[l].f[order[m].field].showval) {
+              var value2 = d.r[l].f[order[m].field].showval;
             } else {
               var value2 = '';
             }
           } else {
             var typetmp = type;
-            var value2 = r[l].f[order[m].field].value;
+            var value2 = d.r[l].f[order[m].field].value;
           }
 
           // For any empty values, we have to consult the 'empty' field in the ordering settings of
@@ -190,7 +195,7 @@ const orderR = function() {
 
 // Check whether a record in r at index rin (i.e., r[rin]) is new or not
 const isNew = function(rin) {
-  if(r[rin].new) {
+  if(d.r[rin].new) {
     return true;
   } else {
     return false;
@@ -363,60 +368,60 @@ const validateSelection = function(str) {
 
 // Cycle to the next ri up the record array (r), but add a new record of type dm.r[rin]
 const nextrAndAdd = function(rin) {
-  if( rin < 0 || rin >= dm.r.length && r[ri].type == 'record' ) return false;
+  if( rin < 0 || rin >= dm.r.length && d.r[d.ri].type == 'record' ) return false;
 
   addRecord(rin);
-  if (isNew(ri) && !isChanged(ri)) { 
-    r.splice(ri,1); 
+  if (isNew(d.ri) && !isChanged(d.ri)) { 
+    r.splice(d.ri,1); 
   } else {
-    ri += 1;
+    d.ri += 1;
   }
 
-  fi = r[ri].order[0];
+  d.fi = d.r[d.ri].order[0];
   return true;
 }
 
 // Cycle to the next record without adding a new record
 const nextrNoAdd = function() {
-  if (isNew(ri) && !isChanged(ri)) { 
-    r.splice(ri, 1); 
+  if (isNew(d.ri) && !isChanged(d.ri)) { 
+    d.r.splice(d.ri, 1); 
   } else {
-    ri += 1;
+    d.ri += 1;
   }
 
-  fi = r[ri].order[0];
+  d.fi = d.r[d.ri].order[0];
   return true;
 }
 
 // Cycle to the next record (called when one presses the 'down' key -- see init.js)
 const nextr = function() {
-  if (ri === r.length - 1) {
-    if ( ri >= dm.b.length ) {
-      if (!isNew(ri) || (isNew(ri) && isChanged(ri)) ) {
-        return nextrAndAdd(r[ri].ri)
-      } else if (r[ri].ri < dm.r.length - 1) {
-        return nextrAndAdd(r[ri].ri + 1);
+  if (d.ri === d.r.length - 1) {
+    if ( d.ri >= d.dm.b.length ) {
+      if (!isNew(d.ri) || (isNew(d.ri) && isChanged(d.ri)) ) {
+        return nextrAndAdd(d.r[d.ri].ri)
+      } else if (d.r[d.ri].ri < d.dm.r.length - 1) {
+        return nextrAndAdd(d.r[d.ri].ri + 1);
       } else {
         return false;
       }
-    } else if (ri < dm.b.length - 1) {
+    } else if (d.ri < d.dm.b.length - 1) {
       return false;
-    } else if (ri === dm.b.length - 1) {
-      if ( isNew(ri) ) { 
+    } else if (d.ri === d.dm.b.length - 1) {
+      if ( isNew(d.ri) ) { 
         return false;
       } else { 
         return nextrAndAdd(0); 
       }
     }
-  } else if (ri < r.length - 1) {
-    if ( r[ri+1].ri === r[ri].ri || r[ri].type === 'base' ) {      
+  } else if (d.ri < d.r.length - 1) {
+    if ( d.r[d.ri+1].d.ri === d.r[d.ri].ri || d.r[ri].type === 'base' ) {      
       return nextrNoAdd();
-    } else if (!isNew(ri) || (isNew(ri) && isChanged(ri)) ) {
-      return nextrAndAdd(r[ri].ri);
-    } else if (r[ri + 1].ri === r[ri].ri + 1) {
+    } else if (!isNew(d.ri) || (isNew(d.ri) && isChanged(d.ri)) ) {
+      return nextrAndAdd(d.r[d.ri].ri);
+    } else if (d.r[d.ri + 1].ri === d.r[d.ri].ri + 1) {
       return nextrNoAdd(); 
     } else {
-      return nextrAndAdd(r[ri].ri + 1);
+      return nextrAndAdd(d.r[d.ri].ri + 1);
     }
   }
 
@@ -428,36 +433,36 @@ const prevrAndAdd = function(rin) {
   if(rin < 0 || rin >= dm.r.length) return false;
 
   addRecord(rin);
-  if (isNew(ri + 1) && !isChanged(ri + 1)) { 
-    r.splice(ri + 1, 1); 
+  if (isNew(d.ri + 1) && !isChanged(d.ri + 1)) { 
+    d.r.splice(d.ri + 1, 1); 
   }
 
-  fi = r[ri].order[0];
+  d.fi = d.r[d.ri].order[0];
   return true;
 }
 
 //
 const prevrNoAdd = function() {
-  if (isNew(ri) && !isChanged(ri) && r[ri].type === 'record') { 
-    r.splice(ri, 1); 
+  if (isNew(d.ri) && !isChanged(d.ri) && d.r[d.ri].type === 'record') { 
+    d.r.splice(d.ri, 1); 
   }
 
-  ri -= 1;
-  fi = r[ri].order[0];
+  d.ri -= 1;
+  d.fi = d.r[d.ri].order[0];
   return true;
 }
 
 // 
 const prevr = function() {
-  if(ri === 0) {
+  if(d.ri === 0) {
     return false;
-  } else if ( ri < dm.b.length ) {
+  } else if ( d.ri < d.dm.b.length ) {
     prevrNoAdd();
   } else {
-    if(r[ri].ri === 0 || r[ri - 1].ri === r[ri].ri || (isNew(ri - 1) && !isChanged(ri - 1))) {
+    if(d.r[d.ri].ri === 0 || d.r[d.ri - 1].ri === d.r[d.ri].ri || (isNew(d.ri - 1) && !isChanged(d.ri - 1))) {
       prevrNoAdd();
     } else {
-      prevrAndAdd(r[ri].ri - 1);
+      prevrAndAdd(d.r[d.ri].ri - 1);
     }
   }
 
@@ -466,12 +471,12 @@ const prevr = function() {
 
 // 
 const nextf = function() {
-  if (fi === r[ri].order[r[ri].order.length - 1]) {
+  if (fi === d.r[d.ri].order[d.r[d.ri].order.length - 1]) {
     return nextr();
   } else {
-    for (var i = 0; i < r[ri].order.length; i++) {
-      if (fi === r[ri].order[i]) {
-        fi = r[ri].order[i + 1];
+    for (var i = 0; i < d.r[d.ri].order.length; i++) {
+      if (d.fi === d.r[d.ri].order[i]) {
+        d.fi = d.r[d.ri].order[i + 1];
         break;
       }
     }
@@ -481,17 +486,17 @@ const nextf = function() {
 };
 
 const prevf = function() {
-  if (fi === r[ri].order[0]) {
+  if (d.fi === d.r[d.ri].order[0]) {
     if (!prevr()) {
       return false;
     } else {
-      fi = r[ri].order[r[ri].order.length - 1];
+      d.fi = d.r[d.ri].order[d.r[d.ri].order.length - 1];
       return true;
     }
   } else {
-    for (var i = 0; i < r[ri].order.length; i++) {
-      if (fi === r[ri].order[i]) {
-        fi = r[ri].order[i - 1];
+    for (var i = 0; i < d.r[d.ri].order.length; i++) {
+      if (d.fi === d.r[d.ri].order[i]) {
+        d.fi = d.r[d.ri].order[i - 1];
         break;
       }
     }
@@ -501,15 +506,15 @@ const prevf = function() {
 };
 
 const jumpTo = function(rin) {
-  if(!r[rin]) return false;
+  if(!d.r[rin]) return false;
 
-  ri = rin;
-  fi = r[rin].order[0];
+  d.ri = rin;
+  d.fi = d.r[rin].order[0];
   return true;
 }
 
 const setOrder = function(rInd) {
-  if( rInd == undefined ) rInd = ri;
+  if( rInd == undefined ) rInd = d.ri;
 
   let makeOrderArray = function(om, f) {
     let out = [];
@@ -550,28 +555,28 @@ const setOrder = function(rInd) {
     return out;
   };
 
-  let rec = r[rInd];
+  let rec = d.r[rInd];
   let recm;
   let order;
   if (rec.type === "base") {
-    recm = dm.b[rec.bi];
+    recm = d.dm.b[rec.bi];
     orderm = recm.settings.order;
   } else if (rec.type === "search") {
-    recm = dm.b[rec.bi];
+    recm = d.dm.b[rec.bi];
     orderm = recm.settings.searchorder;
   } else if (rec.type === "record") {
-    recm = dm.r[rec.ri];
+    recm = d.dm.r[rec.ri];
     orderm = recm.settings.order;
   }
 
-  rec.order = makeOrderArray(orderm, r[rInd].f);
+  rec.order = makeOrderArray(orderm, d.r[rInd].f);
 };
 
 const pushNewRec = function(rInd) {
-  for (let i = 0; i < r.length; i++) {
-    if (r[i].ri) {
-      if (r[i].ri > i) {
-        r.splice(i, 0, {
+  for (let i = 0; i < d.r.length; i++) {
+    if (d.r[i].ri) {
+      if (d.r[i].ri > i) {
+        d.r.splice(i, 0, {
           type: "record",
           ri: rInd,
           new: true,
@@ -579,9 +584,9 @@ const pushNewRec = function(rInd) {
           f: {}
         });
 
-        for (let j in dm.r[i].fields) {
-          r[i].f[j] = {
-            sfname: dm.r[i].fields[j].sfname,
+        for (let j in d.dm.r[i].fields) {
+          d.r[i].f[j] = {
+            sfname: d.dm.r[i].fields[j].sfname,
             value: null
           };
         }
@@ -600,19 +605,19 @@ const pushNewRec = function(rInd) {
     f: {}
   });
 
-  for (let j in dm.r[rInd].fields) {
-    r[r.length - 1].f[j] = {
-      sfname: dm.r[r.length - 1].fields[j].sfname,
+  for (let j in d.dm.r[rInd].fields) {
+    d.r[d.r.length - 1].f[j] = {
+      sfname: d.dm.r[d.r.length - 1].fields[j].sfname,
       value: null
     };
   }
 
-  setOrder(r.length - 1);
-  return r.length - 1;
+  setOrder(d.r.length - 1);
+  return d.r.length - 1;
 };
 
 const addSearchRecords = function() {
-  for (let i = 0; i < dm.b.length; i++) {
+  for (let i = 0; i < d.dm.b.length; i++) {
     r.push({
       type: "search",
       bi: i,
@@ -621,30 +626,30 @@ const addSearchRecords = function() {
       f: {}
     });
 
-    for (let j in dm.b[i].fields) {
-      r[i].f[j] = {
-        sfname: dm.b[i].fields[j].sfname,
+    for (let j in d.dm.b[i].fields) {
+      d.r[i].f[j] = {
+        sfname: d.dm.b[i].fields[j].sfname,
       };
-      if(dm.b[i].fields[j].value) {
-        r[i].f[j].value = dm.b[i].fields[j].value;
+      if(d.dm.b[i].fields[j].value) {
+        d.r[i].f[j].value = d.dm.b[i].fields[j].value;
       } else {
-        r[i].f[j].value = null;
-        r[i].f[j].origval = null;
+        d.r[i].f[j].value = null;
+        d.r[i].f[j].origval = null;
       }
     }
 
     setOrder(i);
   }
 
-  ri = 0;
-  fi = r[ri].order[0];
+  d.ri = 0;
+  d.fi = d.r[ri].order[0];
 };
 
 const addBaseRecord = function(bInd, bRec) {
-  for (let i = 0; i < r.length; i++) {
-    if (r[i].bi == bInd) {
+  for (let i = 0; i < d.r.length; i++) {
+    if (d.r[i].bi == bInd) {
       // use Array.splice() to replace the base record with one that's filled out
-      r.splice(i, 1, {
+      d.r.splice(i, 1, {
         type: "base",
         bi: i,
         new: false,
@@ -652,35 +657,35 @@ const addBaseRecord = function(bInd, bRec) {
         f: {},
       });
       
-      for (let j in dm.b[i].fields) {
-        r[i].f[j] = {
-          sfname: dm.b[i].fields[j].sfname,
+      for (let j in d.dm.b[i].fields) {
+        d.r[i].f[j] = {
+          sfname: d.dm.b[i].fields[j].sfname,
         };
         if(bRec) {
-          r[i].f[j].value = bRec[dm.b[i].fields[j].sfname];
-          r[i].f[j].origval = bRec[dm.b[i].fields[j].sfname];
-        } else if (dm.b[i].fields[j].value) {
-          r[i].f[j].value = dm.b[i].fields[j].value;
+          d.r[i].f[j].value = bRec[d.dm.b[i].fields[j].sfname];
+          d.r[i].f[j].origval = bRec[d.dm.b[i].fields[j].sfname];
+        } else if (d.dm.b[i].fields[j].value) {
+          d.r[i].f[j].value = d.dm.b[i].fields[j].value;
         } else {
-          r[i].f[j].value = null;
-          r[i].f[j].origval = null;
+          d.r[i].f[j].value = null;
+          d.r[i].f[j].origval = null;
         }
       };
 
       setOrder(i);
-      for (let j = 0; j < r.length; j++) {
-        if (r[j].type === "search") {
-          ri = j;
-          fi = r[j].order[0];
+      for (let j = 0; j < d.r.length; j++) {
+        if (d.r[j].type === "search") {
+          d.ri = j;
+          d.fi = d.r[j].order[0];
 
           return true;
         }
       }
 
-      if(search) { 
-        clearBaseSearch();
-        fi = r[i].order[0];
-        loadAllRecords(); 
+      if(d.search) { 
+        sf.clearBaseSearch();
+        d.fi = r[i].order[0];
+        sf.loadAllRecords(); 
       }
 
       return true;
@@ -691,40 +696,40 @@ const addBaseRecord = function(bInd, bRec) {
 };
 
 const addRecord = function(rInd, rec) {
-  let i = dm.b.length;
+  let i = d.dm.b.length;
   // Decide where in the r array we will insert the new record. This loop keeps counting up until
   // a) we exceed the length of the array, b) we reach the next higher record type, or c) we get to
   // a record in the array of the same type and with the same sf Id as the record to be inserted.
-  while( i < r.length ) {
+  while( i < d.r.length ) {
     if ( !rec ) {
-      if (r[i].ri <= rInd) {
+      if (d.r[i].ri <= rInd) {
         i += 1;
       } else {
         break;
       }
-    } else if (r[i].ri <= rInd && !( r[i].ri === rInd && r[i].f.Id.value === rec.Id ) ) {
+    } else if (d.r[i].ri <= rInd && !( d.r[i].ri === rInd && d.r[i].f.Id.value === rec.Id ) ) {
       i++;
     } else {
       break;
     }
   }  
 
-  if ( i === r.length ) { 
-    r.push({
+  if ( i === d.r.length ) { 
+    d.r.push({
       type: "record",
       ri: rInd,
       order: [],
       f: {},
     }); 
-  } else if( r[i].ri === rInd && r[i].f.Id.value === rec.Id ) {
-    r.splice(i, 1, { // replace the record, if it has the same id
+  } else if( d.r[i].ri === rInd && d.r[i].f.Id.value === rec.Id ) {
+    d.r.splice(i, 1, { // replace the record, if it has the same id
       type: "record",
       ri: rInd,
       order: [],
       f: {},
     });
   } else {
-    r.splice(i, 0, { // otherwise, insert without deleting anything
+    d.r.splice(i, 0, { // otherwise, insert without deleting anything
       type: "record",
       ri: rInd,
       order: [],
@@ -734,31 +739,31 @@ const addRecord = function(rInd, rec) {
   
 
   if (!rec) {
-    r[i].new = true;
+    d.r[i].new = true;
   } else {
-    r[i].new = false;
+    d.r[i].new = false;
   }
 
-  for (let j in dm.r[rInd].fields) {
-    r[i].f[j] = {};
+  for (let j in d.dm.r[rInd].fields) {
+    d.r[i].f[j] = {};
 
-    r[i].f[j].sfname = dm.r[rInd].fields[j].sfname;
+    d.r[i].f[j].sfname = d.dm.r[rInd].fields[j].sfname;
 
-    if (r[i].new) {
-      if (dm.r[rInd].fields[j].inherits) {
-        r[i].f[j].value = r[dm.r[rInd].fields[j].inherits.base].f[dm.r[rInd].fields[j].inherits.field].value;
-      } else if(dm.r[rInd].fields[j].autofill) {
-        r[i].f[j].value = r[dm.r[rInd].fields[j].autofill.base].f[dm.r[rInd].fields[j].autofill.field].value;
-      } else if (dm.r[rInd].fields[j].value) {
-        r[i].f[j].value = dm.r[rInd].fields[j].value;
-      } else if (dm.r[rInd].fields[j].default) {
-        r[i].f[j].value = dm.r[rInd].fields[j].default;
+    if (d.r[i].new) {
+      if (d.dm.r[rInd].fields[j].inherits) {
+        d.r[i].f[j].value = d.r[d.dm.r[rInd].fields[j].inherits.base].f[d.dm.r[rInd].fields[j].inherits.field].value;
+      } else if(d.dm.r[rInd].fields[j].autofill) {
+        d.r[i].f[j].value = d.r[d.dm.r[rInd].fields[j].autofill.base].f[d.dm.r[rInd].fields[j].autofill.field].value;
+      } else if (d.dm.r[rInd].fields[j].value) {
+        d.r[i].f[j].value = d.dm.r[rInd].fields[j].value;
+      } else if (d.dm.r[rInd].fields[j].default) {
+        d.r[i].f[j].value = d.dm.r[rInd].fields[j].default;
       } else {
-        r[i].f[j].value = null;
+        d.r[i].f[j].value = null;
       }
     } else {
-      r[i].f[j].value = rec[dm.r[rInd].fields[j].sfname];
-      r[i].f[j].origval = rec[dm.r[rInd].fields[j].sfname];
+      d.r[i].f[j].value = rec[d.dm.r[rInd].fields[j].sfname];
+      d.r[i].f[j].origval = rec[d.dm.r[rInd].fields[j].sfname];
     }
   }
   
@@ -773,19 +778,19 @@ const updateIndexFields = function (callback, rin) {
   let ctr = 0;
   let total = 0;
   if( rin !== undefined && rin < r.length ) {
-    let map = getBorR(rin);
-    for(let j in r[rin].f) {
-      if ( map.fields[j].type === 'index' && r[rin].f[j].value ) total += 1;
+    let map = rf.getBorR(rin);
+    for(let j in d.r[rin].f) {
+      if ( map.fields[j].type === 'index' && d.r[rin].f[j].value ) total += 1;
     }
 
     if (total === 0) { 
-      renderLoadingEnd();
+      rn.renderLoadingEnd();
       callback();
       return;
     }
 
     for(let j in r[rin].f) {
-      if (map.fields[j].type === 'index' && r[rin].f[j].value) {
+      if (map.fields[j].type === 'index' && d.r[rin].f[j].value) {
         let fieldsvar = {};
         let callback;
         fieldsvar[map.fields[j].indexshow] = 1;
@@ -798,18 +803,18 @@ const updateIndexFields = function (callback, rin) {
           //json object to sent to the authentication url
           data: JSON.stringify({
             sobject: map.fields[j].indexto,
-            conditions: { Id: r[i].f[j].value },
+            conditions: { Id: d.r[i].f[j].value },
             fields: fieldsvar,
           }),
           success: (data) => {
             ctr += 1;
 
             if(data[0]) {
-              r[i].f[j].showval = data[0][map.fields[j].indexshow];
+              d.r[i].f[j].showval = data[0][map.fields[j].indexshow];
             }
 
             if (ctr === total) {
-              renderLoadingEnd();
+              rn.renderLoadingEnd();
               callback();
             }
           },
@@ -824,20 +829,20 @@ const updateIndexFields = function (callback, rin) {
   ctr = 0;
 
   for(let i in r) {
-    let map = getBorR(i);
+    let map = mf.getBorR(i);
     for( let j in r[i].f ) {
       if ( map.fields[j].type == 'index' && r[i].f[j].value ) total += 1;
     }
   }
 
   if (total === 0) { 
-    renderLoadingEnd();
+    rn.renderLoadingEnd();
     callback();
     return;
   }
 
   for(let i in r) {
-    let map = getBorR(i);
+    let map = mf.getBorR(i);
     for(let j in r[i].f) {
       if ( map.fields[j].type == 'index' && r[i].f[j].value ) {
         let fieldsvar = {};
@@ -851,18 +856,18 @@ const updateIndexFields = function (callback, rin) {
           //json object to sent to the authentication url
           data: JSON.stringify({
             sobject: map.fields[j].indexto,
-            conditions: { Id: r[i].f[j].value },
+            conditions: { Id: d.r[i].f[j].value },
             fields: fieldsvar,
           }),
           success: (data) => {
             ctr += 1;
 
             if(data[0]) {
-              r[i].f[j].showval = data[0][map.fields[j].indexshow];
+              d.r[i].f[j].showval = data[0][map.fields[j].indexshow];
             }
 
             if (ctr === total) {
-              renderLoadingEnd();
+              rn.renderLoadingEnd();
               callback();
             }
           }
@@ -876,12 +881,36 @@ const updateIndexFields = function (callback, rin) {
 }
 
 const updateR = function() {
-  fm = getFm();
-  if (!r[ri].f[fi].origval || r[ri].f[fi].value != r[ri].f[fi].origval) {
-    if (r[ri].type === "search" && r[ri].new) {
-      return searchBase(ri);
+  fm = mf.getFm();
+  if (!d.r[d.ri].f[d.fi].origval || d.r[d.ri].f[d.fi].value != d.r[d.ri].f[d.fi].origval) {
+    if (d.r[d.ri].type === "search" && d.r[d.ri].new) {
+      return sf.searchBase(d.ri);
     }
   }
 
   return true;
 };
+
+module.exports.initR = initR;
+module.exports.orderR = orderR;
+module.exports.isNew = isNew;
+module.exports.isChanged = isChanged;
+module.exports.allUnchanged = allUnchanged;
+module.exports.basesUpToDate = basesUpToDate;
+module.exports.setValue = setValue;
+module.exports.validateSelection = validateSelection;
+module.exports.nextrAndAdd = nextrAndAdd;
+module.exports.nextrNoAdd = nextrNoAdd;
+module.exports.nextr = nextr;
+module.exports.prevrAndAdd = prevrAndAdd;
+module.exports.prevrNoAdd = prevrNoAdd;
+module.exports.prevr = prevf;
+module.exports.nextf = nextf;
+module.exports.prevf = prevf;
+module.exports.jumpTo = jumpTo;
+module.exports.setOrder = setOrder;
+module.exports.addSearchRecords = addSearchRecords;
+module.exports.addBaseRecord = addBaseRecord;
+module.exports.addRecord = addRecord;
+module.exports.updateIndexFields = updateIndexFields;
+module.exports.updateR = updateR;

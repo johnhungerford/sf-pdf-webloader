@@ -1,8 +1,13 @@
-var updateRecord = function(rin, callback) {
+const d = require('./data.js');
+const mf = require('./mapfunctions.js');
+const rf = require('./recarrayfunctions.js');
+const rn = require('./render.js');
+
+const updateRecord = function(rin, callback) {
   if ( !isChanged(rin) ) { return false; }
 
-  let map = getBorR(rin);
-  let rec = r[rin];
+  let map = mf.getBorR(rin);
+  let rec = d.r[rin];
   if ( rec.new && !rec.f.Id.value ) {
     let apiObj = {
       sobject: map.sobject,
@@ -62,23 +67,23 @@ var updateRecord = function(rin, callback) {
 
 
   } else {
-    renderErr('Record is labelled new but has salesforce Id');
+    rn.renderErr('Record is labelled new but has salesforce Id');
     return false;
   }
 
   return true;
 }
 
-var updateAll = function() {
+const updateAll = function() {
   if( allUnchanged() ) { 
-    renderError('Nothing to update!');
+    rn.renderError('Nothing to update!');
     return false; 
   }
 
   var ctr = 0;
   var total = 0;
-  renderLoadingStart();
-  for( let i = 0; i < r.length; i++ ) {
+  rn.renderLoadingStart();
+  for( let i = 0; i < d.r.length; i++ ) {
     if ( !isChanged(i) ) { 
       continue; 
     } else {
@@ -86,15 +91,18 @@ var updateAll = function() {
     }
   }
   
-  for ( let i = 0; i < r.length; i++ ) {
+  for ( let i = 0; i < d.r.length; i++ ) {
     updateRecord(i, function(){
       ctr += 1;
       if(ctr === total) {
-        renderLoadingEnd();
-        loadAllRecords();
+        rn.renderLoadingEnd();
+        rn.loadAllRecords();
       }
     });
   }
 
   return true;
 };
+
+module.exports.updateRecord = updateRecord;
+module.exports.updateAll = updateAll;
