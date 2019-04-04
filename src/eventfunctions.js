@@ -10,8 +10,8 @@ const rn = require('./render.js');
  */
 const bindEvents = function() {
     d.$initentry.off().click(function() {
-      if( !allUnchanged() ) {
-        renderAlert('Initiating data entry will end your current session, erasing any unsaved data. Are you sure you wish to continue?', 
+      if( !rf.allUnchanged() ) {
+        rn.renderAlert('Initiating data entry will end your current session, erasing any unsaved data. Are you sure you wish to continue?', 
           () => {
           rf.initR();
           rn.renderSfView();
@@ -45,7 +45,7 @@ const bindEvents = function() {
        * If any records have been edited, warn before proceeding (callback is executed by alert 
        * function upon confirmation)
        */
-      if( !allUnchanged() ) {
+      if( !rf.allUnchanged() ) {
         rn.renderAlert('Removing document now will erase all unsaved changes.', () => {
           df.removeDoc(function() {
             rf.initR();
