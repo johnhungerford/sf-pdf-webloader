@@ -269,9 +269,9 @@ var renderSfView = function() {
   var currentScrollTop = $('.sfviewbody').scrollTop();
 
   if( d.ri < d.dm.b.length ) {
-    var selElement = $('#sfview-hdr-b-' + ri);
+    var selElement = $('#sfview-hdr-b-' + d.ri);
   } else {
-    var selElement = $('#sfview-rec-' + ri);
+    var selElement = $('#sfview-rec-' + d.ri);
   }
 
   var offsettop = selElement.offset().top - $('.sfviewbody').offset().top;
