@@ -618,7 +618,7 @@ const pushNewRec = function(rInd) {
 
 const addSearchRecords = function() {
   for (let i = 0; i < d.dm.b.length; i++) {
-    r.push({
+    d.r.push({
       type: "search",
       bi: i,
       new: true,
