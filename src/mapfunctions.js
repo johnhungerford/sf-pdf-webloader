@@ -1,0 +1,225 @@
+var dm = {};
+var r = [];
+var ri = 0;
+var fi = null;
+var search = true;
+var sdata = { empty: true };
+var init = true;
+var mdownpos = [];
+
+const getFieldsForLayout = function(rin) {
+  let fout = {};
+  let map = getBorR(rin);
+  for (let i in r[rin].f) {
+    if (map.fields[i].type === 'index' && r[rin].f[i].showval) {
+      fout[i] = r[rin].f[i].showval;
+    } else {
+      fout[i] = r[rin].f[i].value;
+    }
+  }
+
+  return fout;
+};
+
+const convRecSA = function(type, index, records) {
+  const conv = function (record) {
+    let fm = type === 'record' ? dm.r[index].fields : dm.b[index].fields;
+    let recout = {};
+    for (let j in record) {
+      for (let k in fm) {
+        if (fm[k].sfname === j) {
+          recout[k] = record[j];
+        }
+      }
+    }
+
+    return recout;
+  }
+
+  let recsout = [];
+  if (Array.isArray(records)) {
+    for (let i = 0; i < records.length; i++) {
+      recsout.push(conv(records[i]));
+    }
+  }
+
+  return recsout;
+};
+
+const getBorR = function(rin) {
+  if (rin === undefined) rin = ri;
+
+  if (r[rin].type == 'record') {
+    return dm.r[r[rin].ri];
+  } else if (r[rin].type == 'base') {
+    return dm.b[r[rin].bi];
+  } else if (r[rin].type == 'search') {
+    return dm.b[r[rin].bi];
+  } else {
+    return false;
+  }
+};
+
+const getFm = function(rin, fin) {
+  if (fin == undefined) {
+    rin = ri;
+    fin = fi;
+  }
+
+  if (r[rin].type == 'record') {
+    return dm.r[r[rin].ri].fields[fin];
+  } else if (r[rin].type == 'base') {
+    return dm.b[r[rin].bi].fields[fin];
+  } else if (r[rin].type == 'search') {
+    return dm.b[r[rin].bi].fields[fin];
+  } else {
+    return false;
+  }
+};
+
+
+const parseLayout = function (layStr, fieldsArray) {
+  const parseLayoutIf = function (condition, trueresult, falseresult) {
+    let conditionArray = $.trim(condition).split('=');
+    if (!fieldsArray[conditionArray[0]]) {
+      return parseLayout(falseresult, fieldsArray);
+    }
+
+    if (conditionArray.length == 1) {
+      if ( fieldsArray[conditionArray[0]] ) {
+        return parseLayout(trueresult, fieldsArray);
+      } else {
+        return parseLayout(falseresult, fieldsArray);
+      }
+    } else if (conditionArray.length > 1) {
+      if (fieldsArray[conditionArray[0]] == conditionArray[1]) {
+        return parseLayout(trueresult, fieldsArray);
+      } else {
+        return parseLayout(falseresult, fieldsArray);
+      }
+    } else {
+      return "#BAD CONDITION (else)#";
+    }
+  };
+
+  let outStr = '';
+  let i;
+  let j;
+  let k;
+  let l;
+  let condition;
+  let hashctr;
+  let trueresult;
+  let falseresult;
+  for (i = 0; i < layStr.length; i++) {
+    if (layStr[i] === "#") {
+      i += 1;
+      if (layStr.slice(i, i + 2) === "IF") {
+        i += 2;
+        if (layStr[i] != "(") {
+          outStr += "#BAD CONDITIONAL! (no opening parentheses)#";
+          i -= 1;
+          continue;
+        } else {
+          j = i + 1;
+          while (j < layStr.length && layStr[j] != ")") {
+            j += 1;
+          }
+
+          if (j === layStr.length) {
+            outStr+= "#BAD CONDITIONAL! (no closing parentheses)#";
+            i -= 1;
+            continue;
+          }
+
+          condition = layStr.slice(i + 1, j);
+          i = j + 1;
+          if (layStr[i] != "{") {
+            outStr+= "#BAD CONDITIONAL! (no opening brackets for true)#";
+            i -= 1;
+          } else {
+            i += 1;
+            k = i;
+            hashctr = 0;
+            while (k < layStr.length && (layStr[k] != "}" || hashctr > 0)) {
+              if (layStr[k] == "#") {
+                hashctr += 1;
+              }
+
+              if (layStr[k] == "}" && layStr[k + 1] != "{") {
+                hashctr -= 1;
+              }
+
+              k += 1;
+            }
+
+            if (k === layStr.length) {
+              outStr += "#BAD CONDITIONAL! (no closing brackets for true)#";
+              i -= 1;
+              continue;
+            }
+
+            trueresult = layStr.slice(i, k);
+            console.log('trueresult: '+trueresult)
+            i = k + 1;
+            console.log('after true: '+ layStr[i]);
+            if (layStr[i] === "{") {
+              i += 1;
+              l = i;
+              hashctr = 0;
+
+              while (l < layStr.length && (layStr[l] != "}" || hashctr > 0)) {
+                if (layStr[l] == "#") {
+                  hashctr += 1;
+                }
+
+                if (layStr[l] == "}" && layStr[l + 1] != "{") {
+                  hashctr -= 1;
+                }
+
+                l += 1;
+              }
+
+              falseresult = layStr.slice(i, l);
+              console.log('falseresult: '+falseresult);
+              i = l + 1;
+              console.log('after false: '+layStr[i]);
+            } else {
+              falseresult = '';
+            }
+
+            i -= 1;
+            console.log(layStr[i]);
+            outStr += parseLayoutIf(condition, trueresult, falseresult);
+          }
+        }
+      } else if (layStr[i] === "{") {
+        i += 1;
+        j = i;
+        while (j < layStr.length && layStr[j] != "}") {
+          j += 1;
+        }
+
+        if (j === layStr.length) {
+          outStr+="#BAD FIELD#";
+          i -= 1;
+          continue;
+        }
+
+        if (fieldsArray[layStr.slice(i, j)]) {
+          outStr += fieldsArray[layStr.slice(i, j)];
+        } else {
+          outStr += "#BAD FIELD#";
+        }
+
+        i = j;
+      } else {
+        outStr += "#";
+      }
+    } else {
+      outStr += layStr[i];
+    }
+  }
+
+  return outStr;
+};
