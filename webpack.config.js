@@ -4,6 +4,6 @@ module.exports = {
         path: __dirname + '/public/javascripts/',
         filename: "sf-pdf-webloader.js"
     },
-    watch: 'true',
+    watch: true,
     mode: 'development'
   }
