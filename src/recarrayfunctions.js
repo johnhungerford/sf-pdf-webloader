@@ -471,7 +471,7 @@ const prevr = function() {
 
 // 
 const nextf = function() {
-  if (fi === d.r[d.ri].order[d.r[d.ri].order.length - 1]) {
+  if (d.fi === d.r[d.ri].order[d.r[d.ri].order.length - 1]) {
     return nextr();
   } else {
     for (var i = 0; i < d.r[d.ri].order.length; i++) {
