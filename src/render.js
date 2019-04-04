@@ -27,7 +27,7 @@ const renderDoc = function(site) {
 
         if(mdownpos === []) mdownpos = [e.pageX, e.pageY];
         
-        if(!validateSelection(txt)) {
+        if(!rf.validateSelection(txt)) {
           renderSelectionErr(selec);
           selec.collapseToStart();
           $('.fldwin').attr("tabindex",-1).focus();
