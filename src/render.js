@@ -120,7 +120,7 @@ var renderBaseSearch = function() {
 
   $(".sfviewmenu").empty();
 
-  if ( d.r[ri].type == 'search' ) {
+  if ( d.r[d.ri].type == 'search' ) {
     $(".sfviewmenu").append(
       '<button type="button" class="btn btn-primary newbase-button">New</button'
     );
@@ -396,7 +396,7 @@ var renderFldEntry = function() {
   $(".fldentry").append(fldinput);
   if (d.r[d.ri].f[d.fi].value) {
     if ( rmap.fields[d.fi].type == 'index' ) {
-      if (d.r[ri].f[d.fi].showval ) {
+      if (d.r[d.ri].f[d.fi].showval ) {
         $('.fldinput').val(d.r[d.ri].f[d.fi].showval);
       }
     } else if ( rmap.fields[d.fi].type == 'date' ) {
