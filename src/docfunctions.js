@@ -12,12 +12,12 @@ const addDoc = function(fd, callback) {
             type: 'POST',
             data: fd,
             success:function(data){
-            	renderLoadingEnd();
+            	rn.renderLoadingEnd();
             	if ( data.err || !data.iframeurl) {
-            		renderError(data.err);
+            		rn.renderError(data.err);
             		return false;
             	} else {
-            		renderDoc(data.iframeurl);
+            		rn.renderDoc(data.iframeurl);
             	}
             },
             cache: false,
@@ -30,9 +30,9 @@ const addDoc = function(fd, callback) {
 }
 
 const removeDoc = function(callback) {
-	renderLoadingStart('Removing Document');
+	rn.LoadingStart('Removing Document');
 	$.getJSON('/doc/remove', function(data) {
-		renderLoadingEnd();
+		rn.renderLoadingEnd();
 		if( data.err ) {
 			rn.renderError(data.err);
 			return;

@@ -774,7 +774,7 @@ const addRecord = function(rInd, rec) {
 const updateIndexFields = function (callback, rin) {
   if (!callback || typeof(callback) !== 'function') return false;
 
-  renderLoadingStart('Looking up index fields');
+  rn.renderLoadingStart('Looking up index fields');
   let ctr = 0;
   let total = 0;
   if( rin !== undefined && rin < d.r.length ) {

@@ -40,7 +40,7 @@ const searchBase = function(rin) {
     }
   }
 
-  renderLoadingStart("Searching for " + bm.appname);
+  rn.renderLoadingStart("Searching for " + bm.appname);
   $.ajax({
     type: "POST",
     contentType: "application/json",
@@ -104,7 +104,7 @@ const searchIndexRecord = function(rin, fin) {
     searchObj.fields[i] = 1;
   }
 
-  renderLoadingStart("Searching for " + map.fields[fin].indexto);
+  rn.renderLoadingStart("Searching for " + map.fields[fin].indexto);
   $.ajax({
     type: "POST",
     contentType: "application/json",
@@ -121,7 +121,7 @@ const searchIndexRecord = function(rin, fin) {
 };
 
 const loadAllRecords = function(callback) {
-  renderLoadingStart("Loading all records");
+  rn.renderLoadingStart("Loading all records");
   let loaded = 0;
   if(d.r.length > d.dm.b.length) {
     let len = d.r.length;
