@@ -152,7 +152,7 @@ var renderBaseSearch = function() {
       );
       for (var j in d.sdata.layout) {
         $("#sresult" + i).append(
-          "<div>" + parseLayout(d.sdata.layout[j], d.sdata.records[i]) + "</div>"
+          "<div>" + mf.parseLayout(d.sdata.layout[j], d.sdata.records[i]) + "</div>"
         );
       }
       $("#sresult" + i).off().click(function() {
@@ -231,7 +231,7 @@ var renderSfView = function() {
     );
     $("#sfview-hdr-b-" + i).append("<h4>" + d.dm.b[i].appname + "</h4>");
     for( var j = 0; j < d.dm.b[i].settings.layout.length; j++ ) {
-      $("#sfview-hdr-b-" + i).append('<div>'+parseLayout( d.dm.b[i].settings.layout[j], mf.getFieldsForLayout(i) )+'</div>');
+      $("#sfview-hdr-b-" + i).append('<div>'+mf.parseLayout( d.dm.b[i].settings.layout[j], mf.getFieldsForLayout(i) )+'</div>');
     }
     $("#sfview-hdr-b-" + i).attr('style','cursor:pointer');
     $("#sfview-hdr-b-" + i).off().click(function() {
@@ -254,7 +254,7 @@ var renderSfView = function() {
   for (let i = d.dm.b.length; i < d.r.length; i++) {
     $("#sfview-hdr-r-" + d.r[i].ri).append('<div class="sfview-record" id="sfview-rec-' + i + '"></div>');
     for ( let j = 0; j < d.dm.r[d.r[i].ri].settings.layout.length; j++ ) {
-      $("#sfview-rec-" + i).append('<div>'+parseLayout( d.dm.r[d.r[i].ri].settings.layout[j], getFieldsForLayout(i) )+'</div>');
+      $("#sfview-rec-" + i).append('<div>'+mf.parseLayout( d.dm.r[d.r[i].ri].settings.layout[j], getFieldsForLayout(i) )+'</div>');
     }
     $('#sfview-rec-'+i).off().click(function(){
       jumpTo(i);
@@ -454,7 +454,7 @@ var renderIndexSearch = function(rin, fin, records) {
   for (let i = 0; i < records.length; i++) {
     $(".insrch-body").append('<div class="insresult" id="insresult' + i + '"></div>');
     for ( let j = 0; j < fm.searchlayout.length; j++ ) {
-      $("#insresult" + i).append('<span>'+parseLayout(fm.searchlayout[j], records[i])+'</span>');
+      $("#insresult" + i).append('<span>'+mf.parseLayout(fm.searchlayout[j], records[i])+'</span>');
     }
     $('#insresult' + i).off().click( function () {
       indexSearchSelected( rin, fin, records[i] );
