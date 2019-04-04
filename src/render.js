@@ -51,7 +51,7 @@ const renderDoc = function(site) {
 };
 
 const renderSelectionErr = function(selec) {
-  const fname = getFm().appname;
+  const fname = mf.getFm().appname;
   const $mainwin = $('.mainwin');
   const $iframe = $('.pdfwin');
   $mainwin.append('<div id="selecpopup" style="position:absolute;display:none;z-index:100;background-color:yellow;"><b>Invalid selection for field: "'+fname+'"</b></div>');
