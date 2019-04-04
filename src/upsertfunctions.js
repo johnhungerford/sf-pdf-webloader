@@ -75,7 +75,7 @@ const updateRecord = function(rin, callback) {
 }
 
 const updateAll = function() {
-  if( allUnchanged() ) { 
+  if( rf.allUnchanged() ) { 
     rn.renderError('Nothing to update!');
     return false; 
   }
