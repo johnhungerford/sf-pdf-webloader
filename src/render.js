@@ -254,7 +254,7 @@ var renderSfView = function() {
       $("#sfview-rec-" + i).append('<div>'+mf.parseLayout( d.dm.r[d.r[i].ri].settings.layout[j], mf.getFieldsForLayout(i) )+'</div>');
     }
     $('#sfview-rec-'+i).off().click(function(){
-      jumpTo(i);
+      rf.jumpTo(i);
       renderFldEntry();
       renderSfView();
     });
