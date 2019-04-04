@@ -251,7 +251,7 @@ var renderSfView = function() {
   for (let i = d.dm.b.length; i < d.r.length; i++) {
     $("#sfview-hdr-r-" + d.r[i].ri).append('<div class="sfview-record" id="sfview-rec-' + i + '"></div>');
     for ( let j = 0; j < d.dm.r[d.r[i].ri].settings.layout.length; j++ ) {
-      $("#sfview-rec-" + i).append('<div>'+mf.parseLayout( d.dm.r[d.r[i].ri].settings.layout[j], getFieldsForLayout(i) )+'</div>');
+      $("#sfview-rec-" + i).append('<div>'+mf.parseLayout( d.dm.r[d.r[i].ri].settings.layout[j], mf.getFieldsForLayout(i) )+'</div>');
     }
     $('#sfview-rec-'+i).off().click(function(){
       jumpTo(i);
