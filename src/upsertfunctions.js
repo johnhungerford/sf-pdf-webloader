@@ -96,7 +96,7 @@ const updateAll = function() {
       ctr += 1;
       if(ctr === total) {
         rn.renderLoadingEnd();
-        rn.loadAllRecords();
+        sf.loadAllRecords();
       }
     });
   }
