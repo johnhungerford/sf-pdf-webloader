@@ -205,11 +205,11 @@ const isNew = function(rin) {
 // Check whether a record in r at index rin has been changed from the original value pulled
 // from salesforce
 const isChanged = function(rin) {
-  const map = getBorR(rin);
+  const map = mf.getBorR(rin);
 
-  if (r[rin].new || !r[rin].f.Id) { 
-    for (let i in r[rin].f) {
-      if(r[rin].f[i].changed) {
+  if (d.r[rin].new || !d.r[rin].f.Id) { 
+    for (let i in d.r[rin].f) {
+      if(d.r[rin].f[i].changed) {
         return true;
       }
     }
@@ -217,9 +217,9 @@ const isChanged = function(rin) {
     return false;
   }
 
-  for (let i in r[rin].f) {
-    if (r[rin].f[i].changed) {
-      if(r[rin].f[i].value != r[rin].f[i].origval) {
+  for (let i in d.r[rin].f) {
+    if (d.r[rin].f[i].changed) {
+      if(d.r[rin].f[i].value != d.r[rin].f[i].origval) {
         return true;
       }
     }
@@ -230,7 +230,7 @@ const isChanged = function(rin) {
 
 // Check whether none of the records have been changed from their original values
 const allUnchanged = function() {
-  for (let i in r) {
+  for (let i in d.r) {
     if (isChanged(i)) return false;
   }
 
@@ -238,7 +238,7 @@ const allUnchanged = function() {
 }
 
 const basesUpToDate = function() {
-  for (let i in dm.b) {
+  for (let i in d.dm.b) {
     if(isChanged(i)) return false;
   }
 
@@ -246,7 +246,7 @@ const basesUpToDate = function() {
 }
 
 const setValue = function(rin, fin, value) {
-  const fm = getFm(rin, fin);
+  const fm = mf.getFm(rin, fin);
   let valout;
 
   switch (fm.type) {
@@ -265,32 +265,32 @@ const setValue = function(rin, fin, value) {
       }
 
       const darr = value.split(" ");
-      let d;
+      let dt;
       if (darr.length == 1) {
         if (value < 9999 && value > 1000) {
-          d = new Date("Jan. 1, " + value);
+          dt = new Date("Jan. 1, " + value);
         } else {
-          d = new Date(value);
+          dt = new Date(value);
         }
       } else if (darr.length == 2) {
         if (darr[0].toUpperCase() == "SPRING") {
-          d = new Date("May 30, " + darr[1]);
+          dt = new Date("May 30, " + darr[1]);
         } else if (darr[0].toUpperCase() == "SUMMER") {
-          d = new Date("July 15, " + darr[1]);
+          dt = new Date("July 15, " + darr[1]);
         } else if (darr[0].toUpperCase() == "FALL") {
-          d = new Date("September 1, " + darr[1]);
+          dt = new Date("September 1, " + darr[1]);
         } else if (darr[0].toUpperCase() == "WINTER") {
-          d = new Date("December 15, " + darr[1]);
+          dt = new Date("December 15, " + darr[1]);
         }
       } else {
-        d = new Date(value);
+        dt = new Date(value);
       }
 
-      if ( !d || isNaN(d.getTime())) {
-        renderError("Not a valid date!");
+      if ( !dt || isNaN(dt.getTime())) {
+        rn.renderError("Not a valid date!");
         return false;
       } else {
-        valout = d.toISOString();
+        valout = dt.toISOString();
       }
 
       break;
@@ -301,7 +301,7 @@ const setValue = function(rin, fin, value) {
       if (re.test(value)) {
         valout = value;
       } else {
-        renderError("Not a valid email address!");
+        rn.renderError("Not a valid email address!");
         return false;
       }
 
@@ -313,8 +313,8 @@ const setValue = function(rin, fin, value) {
       break;
   }
 
-  r[rin].f[fin].value = valout;
-  r[rin].f[fin].changed = true;
+  d.r[rin].f[fin].value = valout;
+  d.r[rin].f[fin].changed = true;
   setOrder(rin);
   return true;
 };
@@ -322,7 +322,7 @@ const setValue = function(rin, fin, value) {
 const validateSelection = function(str) {
   str = str.trim();
   const $fldinput = $('.fldinput');
-  const type = getFm().type;
+  const type = mf.getFm().type;
   let outval = true;
 
   // If fldinput is an <input> tag
@@ -368,11 +368,11 @@ const validateSelection = function(str) {
 
 // Cycle to the next ri up the record array (r), but add a new record of type dm.r[rin]
 const nextrAndAdd = function(rin) {
-  if( rin < 0 || rin >= dm.r.length && d.r[d.ri].type == 'record' ) return false;
+  if( rin < 0 || rin >= d.dm.r.length && d.r[d.ri].type == 'record' ) return false;
 
   addRecord(rin);
   if (isNew(d.ri) && !isChanged(d.ri)) { 
-    r.splice(d.ri,1); 
+    d.r.splice(d.ri,1); 
   } else {
     d.ri += 1;
   }
