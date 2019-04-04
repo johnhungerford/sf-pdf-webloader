@@ -19,5 +19,9 @@
     "pdfjs-dist": "^2.0.943",
     "pdftohtmljs": "^0.5.2",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
   }
 }
