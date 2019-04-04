@@ -4,7 +4,7 @@ const rf = require('./recarrayfunctions.js');
 const rn = require('./render.js');
 
 const updateRecord = function(rin, callback) {
-  if ( !isChanged(rin) ) { return false; }
+  if ( !rf.isChanged(rin) ) { return false; }
 
   let map = mf.getBorR(rin);
   let rec = d.r[rin];
@@ -84,7 +84,7 @@ const updateAll = function() {
   var total = 0;
   rn.renderLoadingStart();
   for( let i = 0; i < d.r.length; i++ ) {
-    if ( !isChanged(i) ) { 
+    if ( !rf.isChanged(i) ) { 
       continue; 
     } else {
       total += 1;
