@@ -338,7 +338,7 @@ var renderFldEntry = function() {
   }
 
   var rec = d.r[d.ri];
-  var rmap = fm.getBorR();
+  var rmap = mf.getBorR();
 
   $(".fldtitle").empty();
   $(".fldtitle").append("<h4>" + rmap.fields[d.fi].appname + "</h4>");
@@ -467,8 +467,8 @@ var renderIndexSearch = function(rin, fin, records) {
 };
 
 var renderIndexCreate = function(rin, fin) {
-  var map = fm.getBorR(rin);
-  var fm = fm.getFm(rin, fin);
+  var map = mf.getBorR(rin);
+  var fm = mf.getFm(rin, fin);
 
   $(".increate-title").empty();
   $('.increate-body').empty();
