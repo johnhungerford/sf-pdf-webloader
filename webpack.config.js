@@ -5,5 +5,5 @@ module.exports = {
         filename: "sf-pdf-webloader.js"
     },
     watch: true,
-    mode: 'development'
+    mode: 'production'
   }
