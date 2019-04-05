@@ -30,13 +30,13 @@ const addDoc = function(fd, callback) {
 }
 
 const removeDoc = function(callback) {
-	rn.LoadingStart('Removing Document');
+	rn.renderLoadingStart('Removing Document');
 	$.getJSON('/doc/remove', function(data) {
 		rn.renderLoadingEnd();
-		if( data.err ) {
+		/*if( data.err ) {
 			rn.renderError(data.err);
 			return;
-		}
+		}*/
 		if( callback ) {
 			callback();
 		} else {
