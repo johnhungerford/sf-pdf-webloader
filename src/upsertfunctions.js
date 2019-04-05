@@ -2,6 +2,7 @@ const d = require('./data.js');
 const mf = require('./mapfunctions.js');
 const rf = require('./recarrayfunctions.js');
 const rn = require('./render.js');
+const sf = require('./searchfunctions.js');
 
 const updateRecord = function(rin, callback) {
   if ( !rf.isChanged(rin) ) { return false; }
