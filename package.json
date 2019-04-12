@@ -8,6 +8,7 @@
     "test": "npx mocha --require @babel/register",
     "dev-server": "npx nodemon",
     "dev-client": "npx webpack-dev-server",
+    "dev": "npx concurrently --kill-others \"npm:watch\" \"npm:dev-server\"",
     "start": "node ./bin/www"
   },
   "dependencies": {
