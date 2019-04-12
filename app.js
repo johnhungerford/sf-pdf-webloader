@@ -4,12 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
-var httpClient = require('request');
 var jsforce = require('jsforce');
-var minimist = require('minimist');
 
 global.appRoot = path.resolve(__dirname);
-
 
 var pageRouter = require('./routes/page');
 var apiRouter = require('./routes/api');
