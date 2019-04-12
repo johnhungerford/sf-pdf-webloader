@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "npx webpack",
-    "watch": "npx webpack --watch",
+    "build": "npx webpack --mode production",
+    "watch": "npx webpack --mode development --watch",
+    "test": "npx mocha --require @babel/register",
+    "dev-server": "npx nodemon",
+    "dev-client": "npx webpack-dev-server",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -28,8 +31,13 @@
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.4.0",
     "babel-loader": "^8.0.5",
+    "chai": "^4.2.0",
+    "concurrently": "^4.1.0",
     "jsdom": "^14.0.0",
+    "mocha": "^6.1.3",
+    "nodemon": "^1.18.11",
     "react-addons-test-utils": "^15.6.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
