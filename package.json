@@ -6,10 +6,10 @@
     "build": "npx webpack --mode production",
     "watch": "npx webpack --mode development --watch",
     "test": "npx mocha --require @babel/register",
-    "dev-server": "npx nodemon",
+    "dev-server": "npx nodemon ./bin/www sf.config.json",
     "dev-client": "npx webpack-dev-server",
     "dev": "npx concurrently --kill-others \"npm:watch\" \"npm:dev-server\"",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www sf.config.json"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -21,6 +21,7 @@
     "http-errors": "~1.6.2",
     "jade": "^1.11.0",
     "jsforce": "^1.9.1",
+    "minimist": "^1.2.0",
     "morgan": "^1.9.1",
     "pdfjs-dist": "^2.0.943",
     "pdftohtmljs": "^0.5.2",
