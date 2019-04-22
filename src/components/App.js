@@ -14,6 +14,15 @@ export default class App extends Component {
         this.state = { 
             docUrl: null,
             modals: [],
+            dm = {},
+            r = [],
+            ri = 0,
+            fi = null,
+            search = true,
+            sdata = { empty: true },
+            init = true,
+            mdownpos = [],
+            config: [],
         };
     }
 

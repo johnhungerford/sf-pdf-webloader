@@ -10,13 +10,13 @@ export default class DocView extends Component {
     }
 
     render() {
-        if (this.props.blank) return (
+        if (this.props.load) return (
             <Panel 
                 outerClass={`${styles.outer} ${this.props.class}`}
             >
                 <iframe 
                     className={styles.dociframe}
-                    src={this.props.upload ? "/doc/view" : "doc/sample.pdf"}
+                    src={this.props.sample ? "doc/sample.pdf" : "/doc/view" }
                 />
             </Panel>
         );
