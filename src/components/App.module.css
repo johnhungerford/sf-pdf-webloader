@@ -1,0 +1,52 @@
+.menu { 
+    position: absolute; 
+    top: 0; 
+    bottom: calc(100% - 50px); 
+    left: 0;
+    right: 1;
+}
+
+.outerDiv {
+    position: absolute; 
+    top: 50px;
+    bottom: 0;
+    left: 0; 
+    right: 1px; 
+    white-space: nowrap; 
+    overflow-x: hidden; 
+    overflow-x: hidden;
+}
+
+.sfView { 
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    left: 0; 
+    right: 70%;
+}
+
+.innerDiv { 
+    position: absolute;
+    top: 0;
+    bottom: 0; 
+    left: 30%; 
+    right: 1; 
+    white-space: nowrap; 
+    overflow-x: hidden; 
+    overflow-y: hidden;
+}
+.dataEntry { 
+    position: absolute;
+    top: 0; 
+    bottom: calc(100% - 200px); 
+    left: 0; 
+    right: 0;
+}
+
+.docView { 
+    position: absolute;
+    top: 200; 
+    bottom: 0; 
+    left: 0; 
+    right: 0;
+}

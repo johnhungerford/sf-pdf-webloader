@@ -1,0 +1,26 @@
+.allowOverflow {
+    overflow-y: visible;
+}
+
+.centered {
+    display: block;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.centered > li {
+    display: inline-block;
+}
+
+.spaceHolder {
+    min-width: 5vw;
+}
+
+.button {
+    margin-right: 4px;
+}
+
+.button:hover {
+    margin-right: 3px;
+}

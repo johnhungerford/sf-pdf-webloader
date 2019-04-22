@@ -1,0 +1,19 @@
+.menu {
+    display: block;
+    min-height: 2em;
+}
+
+.menu ul {
+    list-style-type: none;
+}
+
+.menu li {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.allowOverflow {
+    overflow-x: visible;
+    overflow-y: visible;
+}

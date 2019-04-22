@@ -1,0 +1,34 @@
+.outer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.divLeft {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.divCenter {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 5;
+}
+
+.divRight {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.buttonLeft {
+    display: inline;
+}
+
+.dataInput {
+    display: block;
+    margin: auto;
+}

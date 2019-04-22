@@ -1,0 +1,67 @@
+body {
+    position: relative;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    background-color: white;
+}
+
+.panel {
+    position: relative;
+    border: 1px solid black;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 5px;
+    background-color: white;
+}
+
+.row {
+    position: relative;
+    display: block;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.row > div {
+    position: relative;
+    display: inline-block;
+}
+
+.row-flex {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.column {
+    position: relative;
+    display: block;
+    white-space: nowrap;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.column > div {
+    display: block
+}
+
+.column-flex {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.menu {
+    display: block;
+    height: 50px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
