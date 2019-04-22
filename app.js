@@ -4,11 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
-var httpClient = require('request');
 var jsforce = require('jsforce');
 
 global.appRoot = path.resolve(__dirname);
-
 
 var pageRouter = require('./routes/page');
 var apiRouter = require('./routes/api');
@@ -16,17 +14,26 @@ var docRouter = require('./routes/doc');
 
 console.log('Dirname: '+global.appRoot);
 
+// Get arguments
+const args = process.argv.slice(2);
+if (args[0] === undefined) throw new Error('Configuration file required for Salesforce connected app');
+const sfAppConfig = args[0];
 
+// Get configuration from file referenced in only argument
+const config = require(sfAppConfig[0] !== '/' ? './' + sfAppConfig : sfAppConfig);
+if(config.id === undefined || config.secret === undefined || config.redirect === undefined || config.url === undefined) {
+  throw new Error('Invalid Salesforce connected app configuration');
+}
 
 //jsForce connection
 oauth2 = new jsforce.OAuth2({
     // you can change loginUrl to connect to sandbox or prerelease env.
-    loginUrl : 'https://na85.salesforce.com',
-    //clientId and Secret will be provided when you create a new connected app in your SF developer account
-    clientId : '3MVG9KsVczVNcM8wWxTuGMVa0EwaCDVMhLWVSEPM5cIbkQwAv2daVYuNfqnA6D_KxXbPPRYxsOTsBiXiWhszc',
-    clientSecret : '6646022498909279346',
-    //redirectUri : 'http://localhost:' + port +'/token'
-    redirectUri : 'https://sfwebloader.herokuapp.com/token'
+    loginUrl : config.url,
+    // clientId and Secret will be provided when you create a new connected app in your SF developer account
+    clientId : config.id,
+    clientSecret : config.secret,
+    // redirectUri is the url sf will redirect you to when oauth is complete
+    redirectUri : config.redirect,
 });
 
 console.log(oauth2);
