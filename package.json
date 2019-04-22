@@ -6,7 +6,7 @@
     "build": "npx webpack --mode production",
     "watch": "npx webpack --mode development --watch",
     "test": "npx mocha --require @babel/register",
-    "dev-server": "npx nodemon ./bin/www sf.config.json",
+    "dev-server": "npx nodemon ./bin/www sf.config-dev.json",
     "dev-client": "npx webpack-dev-server",
     "dev": "npx concurrently --kill-others \"npm:watch\" \"npm:dev-server\"",
     "start": "node ./bin/www sf.config.json"
