@@ -5,3 +5,4 @@ module.exports = {
         filename: "sf-pdf-webloader.js"
     },
   }
+  

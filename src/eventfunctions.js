@@ -32,7 +32,7 @@ const bindEvents = function() {
     });
   
     d.$loadsample.off().click(function() {
-      rn.renderDoc('/pdfviewer/web/viewer.html?file=/doc/SampleRoster.pdf');
+      rn.renderDoc('/sample.html');
       if(r=[]) {
         rf.initR();
         rn.renderSfView();

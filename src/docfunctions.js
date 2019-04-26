@@ -13,11 +13,11 @@ const addDoc = function(fd, callback) {
             data: fd,
             success:function(data){
             	rn.renderLoadingEnd();
-            	if ( data.err || !data.iframeurl) {
-            		rn.renderError(data.err);
+            	if ( data.err) {
+            		rn.renderError(data.err.toString());
             		return false;
             	} else {
-            		rn.renderDoc(data.iframeurl);
+            		rn.renderDoc();
             	}
             },
             cache: false,
@@ -27,7 +27,7 @@ const addDoc = function(fd, callback) {
 
 	return true;
 
-}
+} 
 
 const removeDoc = function(callback) {
 	rn.renderLoadingStart('Removing Document');
