@@ -34,6 +34,7 @@
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.0",
+    "app.json": "^1.3.0",
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",
