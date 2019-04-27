@@ -10,5 +10,5 @@ libgcc1
 libjs-pdf
 libstdc++6
 http://ftp.br.debian.org/debian/pool/main/p/poppler/libpoppler64_0.48.0-2+deb9u2_amd64.deb
-http://ftp.br.debian.org/debian/pool/main/p/pdf2htmlex/pdf2htmlex_0.14.6+ds-3_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/p/pdf2htmlex/pdf2htmlex_0.14.6+ds-2build1_amd64.deb
 ttfautohint
