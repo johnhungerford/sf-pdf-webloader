@@ -1,5 +1,6 @@
 libc6
-https://launchpad.net/ubuntu/+source/fontforge/1:20170731~dfsg-1build1/+build/16277655/+files/libfontforge2_20170731~dfsg-1build1_amd64.deblibgcc1
+https://launchpad.net/ubuntu/+source/fontforge/1:20170731~dfsg-1build1/+build/16277655/+files/libfontforge2_20170731~dfsg-1build1_amd64.deb
+libgcc1
 libjs-pdf
 libstdc++6
 http://mirrors.kernel.org/ubuntu/pool/main/p/poppler/libpoppler44_0.24.5-2ubuntu4_amd64.deb 
