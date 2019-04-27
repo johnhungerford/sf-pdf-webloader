@@ -1,4 +1,5 @@
 libc6
+http://security.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7_2.7.12-1ubuntu0~16.04.4_amd64.deb
 http://ftp.br.debian.org/debian/pool/main/o/openjpeg2/libopenjp2-7_2.3.0-2_amd64.deb
 http://ftp.br.debian.org/debian/pool/main/n/nspr/libnspr4_4.20-1_amd64.deb
 http://ftp.br.debian.org/debian/pool/main/n/nss/libnss3_3.42.1-1_amd64.deb
