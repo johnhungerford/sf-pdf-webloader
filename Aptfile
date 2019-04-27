@@ -1,5 +1,5 @@
 libc6
-libfontforge1
+https://launchpad.net/ubuntu/+source/fontforge/0.0.20110222-4ubuntu1/+build/3018138/+files/libfontforge1_0.0.20110222-4ubuntu1_amd64.deb
 libgcc1
 libjs-pdf
 libstdc++6
