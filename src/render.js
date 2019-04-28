@@ -10,7 +10,7 @@ const renderDoc = function(site) {
   if(site !== undefined) {
     $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src='+site+'></iframe>');
   } else {
-    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc.html"></iframe>');
+    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc/view"></iframe>');
   }
 
   $('#pdfiframe').on('load', function () {

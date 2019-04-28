@@ -5,7 +5,20 @@ var path = require('path');
 var router = express.Router();
 var formidable = require('formidable');
 
-const html = path.join(global.appRoot, 'public/doc.html');
+const html = path.join(global.appRoot, 'doc/doc.html');
+
+router.get('/view', (req,res,next) => {
+	fs.access(html, fs.F_OK, (err) => {
+		if (err) {
+			console.log('no doc.html');
+			res.render('blankdoc');
+			return;
+		}
+		
+		console.log('sending doc.html');
+		res.sendFile(html);
+ 	  });
+});
 
 /* GET home page. */
 router.post('/load', function(req, res, next) {
@@ -30,7 +43,7 @@ router.post('/load', function(req, res, next) {
 		var file = files.file;
 		var converter = new pdftohtml( file.path, 'doc.html' );
 		console.log('prepared for conversion');
-		converter.add_options(['--dest-dir ./public']);
+		converter.add_options(['--dest-dir ./doc']);
 		converter.convert('default').then(function(){
 			fs.unlink(file.path, function(err) {
 				if(err) {
