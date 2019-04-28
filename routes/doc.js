@@ -5,8 +5,7 @@ var path = require('path');
 var router = express.Router();
 var formidable = require('formidable');
 
-const pdf = path.join(global.appRoot, 'doc/doc.pdf');
-const html = path.join(global.appRoot, 'doc/doc.html');
+const html = path.join(global.appRoot, 'public/doc.html');
 
 /* GET home page. */
 router.post('/load', function(req, res, next) {
@@ -85,10 +84,11 @@ router.post('/load', function(req, res, next) {
 
 router.get('/remove', function(req, res, next) {
 	console.log('remove (docs) router...');
-	fs.unlink(pdf, function(err) {
+	fs.unlink(html, function(err) {
 		if(err) {
 			console.log('Error trying to delete pdf file cached in session cookie: '+err);
 			res.json({err: 'error deleting pdf file cached in session cookie'});
+			return;
 		}
 
 		res.json({success: true});
