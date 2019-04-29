@@ -1,5 +1,6 @@
 var express = require('express');
 var jsforce = require('jsforce');
+var fs = require('fs');
 var router = express.Router();
 
 /* GET home page. */
@@ -23,7 +24,7 @@ router.get('/webloader', function(req, res, next) {
         req.session.accessToken = conn.accessToken;
         req.session.instanceUrl = conn.instanceUrl;
         req.session.refreshToken = conn.refreshToken;
-        res.render('app');
+        res.sendFile(global.appRoot + '/views/app.html');
       });
 
       return;
@@ -38,7 +39,7 @@ router.get('/webloader', function(req, res, next) {
     return;
   } 
   
-  res.render('app');
+  res.sendFile(global.appRoot + '/views/app.html');
 });
 
 router.get('/auth/login', function(req, res, next) {
@@ -60,7 +61,7 @@ router.get('/token', function(req, res, next) {
     req.session.accessToken = conn.accessToken;
     req.session.instanceUrl = conn.instanceUrl;
     req.session.refreshToken = conn.refreshToken;
-    res.redirect('https://sfwebloader.herokuapp.com/webloader?valid=true');
+    res.redirect('/webloader?valid=true');
   });
 });
 
