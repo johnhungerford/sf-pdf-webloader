@@ -9,6 +9,7 @@ router.get('/', function(req, res, next) {
 
 /* GET app page. */
 router.get('/webloader', function(req, res, next) {
+  console.log('sf conn type',global.sfConfig.type);
   if (!req.session.accessToken || !req.session.instanceUrl) { 
     if (global.sfConfig.type === 'login') {
       const conn = new jsforce.Connection({oauth2: global.oauth2}); // oauth2 is defined in app.js, global scope

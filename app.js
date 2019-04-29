@@ -20,10 +20,10 @@ const sfAppConfig = args[0];
 
 // Get salesforce configuration from file referenced in only argument
 global.sfConfig = require(sfAppConfig[0] !== '/' ? './' + sfAppConfig : sfAppConfig);
-if(global.sfConfig.loginUrl === undefined || 
-  global.sfConfig.clientId === undefined || 
-  global.sfConfig.clientSecret === undefined || 
-  global.sfConfig.redirectUri === undefined) 
+if(global.sfConfig.oauth.loginUrl === undefined || 
+  global.sfConfig.oauth.clientId === undefined || 
+  global.sfConfig.oauth.clientSecret === undefined || 
+  global.sfConfig.oauth.redirectUri === undefined) 
 {
   throw new Error('Invalid Salesforce connected app configuration');
 }
