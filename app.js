@@ -25,7 +25,7 @@ if(config.loginUrl === undefined || config.clientId === undefined || config.clie
 }
 
 //jsForce connection
-global.oauth2 = new jsforce.OAuth2(config);
+global.oauth2 = new jsforce.OAuth2(config.oauth);
 
 console.log(global.oauth2);
 
