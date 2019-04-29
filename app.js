@@ -19,21 +19,25 @@ if (args[0] === undefined) throw new Error('Configuration file required for Sale
 const sfAppConfig = args[0];
 
 // Get salesforce configuration from file referenced in only argument
-const config = require(sfAppConfig[0] !== '/' ? './' + sfAppConfig : sfAppConfig);
-if(config.loginUrl === undefined || config.clientId === undefined || config.clientSecret === undefined || config.redirectUri === undefined) {
+global.sfConfig = require(sfAppConfig[0] !== '/' ? './' + sfAppConfig : sfAppConfig);
+if(global.sfConfig.loginUrl === undefined || 
+  global.sfConfig.clientId === undefined || 
+  global.sfConfig.clientSecret === undefined || 
+  global.sfConfig.redirectUri === undefined) 
+{
   throw new Error('Invalid Salesforce connected app configuration');
 }
 
 //jsForce connection
-global.oauth2 = new jsforce.OAuth2(config.oauth);
+global.oauth2 = new jsforce.OAuth2(global.sfConfig.oauth);
 
 console.log(global.oauth2);
 
 // Get MySQL connection from sql.config.json file
-const sqlConfig = require('./sql.config.json');
+global.sqlConfig = require('./sql.config.json');
 
 // MySQL connection
-global.mysqlPool = mysql.createPool(sqlConfig);
+global.mysqlPool = mysql.createPool(global.sqlConfig);
 
 var app = express();
 
