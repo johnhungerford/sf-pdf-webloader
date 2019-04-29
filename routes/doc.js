@@ -5,67 +5,75 @@ var path = require('path');
 var router = express.Router();
 var formidable = require('formidable');
 
-const doc = path.join(global.appRoot, 'public/doc');
-const pdf = path.join(global.appRoot, 'public/pdfviewer/web/pdf.pdf');
-const pdfviewer = '/pdfviewer/web/viewer.html';
+const html = path.join(global.appRoot, 'doc/doc.html');
 
-
-/* GET home page. */
-router.get('/view', function(req, res, next) {
-
-	console.log('view (docs) router...');
-
-	if(req.session.pdffilename) {
-		res.redirect(pdfviewer+'?file=/doc/'+req.session.pdffilename);
-		return
-	}
-
-	res.render('blankdoc');
+router.get('/view', (req,res,next) => {
+	fs.access(html, fs.F_OK, (err) => {
+		if (err) {
+			console.log('no doc.html');
+			res.render('blankdoc');
+			return;
+		}
+		
+		console.log('sending doc.html');
+		res.sendFile(html);
+ 	  });
 });
-
 
 /* GET home page. */
 router.post('/load', function(req, res, next) {
-	if(req.session.pdffilename) {
-		fs.unlink(path.join(doc,req.session.pdffilename), function(err) {
-			if(err) {
-				console.log('Error trying to delete pdf file cached in session cooke: '+err)
-				return;
-			}
-
-			delete req.session.pdffilename;
-		});
-	}
-
-	console.log('Going on to parse file upload');
-
 	var form = new formidable.IncomingForm();
-
-	var file = null;
-
-	var end = false;
-
-	form.uploadDir = doc;
-
+	form.uploadDir = path.join(global.appRoot, 'doc/');
 	form.maxFieldsSize = 100 * 1024*1024;
-
 	form.parse( req, function(err, fields, files) {
+		if (err) {
+			console.log('FILE UPLOAD ERR:', err);
+			res.json({err: err, success: false});
+			return;
+		}
 
 		console.log('Form Parser. "files" data: ');
 		console.log(files);
 		console.log('Form Parser. "fields" data: ');
 		console.log(fields);
-
 		if ( !files.file ) { 
 			res.json({err: 'No file uploaded!', success: false }); 
 			return;
 		}
 
 		var file = files.file;
-		const fname = req.session.pdffilename = file.path.split('\\').pop().split('/').pop();
-		res.send({success: true, iframeurl: '/pdfviewer/web/viewer.html?file=/doc/'+fname});
-	});
+		var converter = new pdftohtml( file.path, 'doc.html' );
+		console.log('prepared for conversion');
+		converter.add_options(['--dest-dir ./doc']);
+		converter.convert('default').then(function(){
+			fs.unlink(file.path, function(err) {
+				if(err) {
+					console.error('Error trying to delete uploaded pdf: '+err);
+					res.json({err: new Error('error deleting uploaded pdf'), success: false});
+				}
+		
+				res.json({success: true});
+				return;
+			});
+		}).catch(function(error) {
+			fs.unlink(file.path, function(err) {
+				if(err) {
+					console.log('Error trying to delete uploaded pdf: '+err);
+					res.json({err: err, success: false});
+				}
+		
+				console.error('Error converting file from pdf');
+				res.json({err: 'Error converting file from pdf', success: false});
+				return;
+			});
 
+		});
+
+		converter.progress(function(ret) {
+			console.log ((ret.current*100.0)/ret.total + " %");
+		});
+
+    });
 
 	form
 	    .on('fileBegin',function(name,file){
@@ -86,33 +94,21 @@ router.post('/load', function(req, res, next) {
 	   	.on('file', function(name, file){
 	    	console.log('file uploaded: '+file.name);
 	    });
-
 });
-
-
 
 router.get('/remove', function(req, res, next) {
-
 	console.log('remove (docs) router...');
-
-	if(req.session.pdffilename) {
-		fs.unlink(path.join(doc,req.session.pdffilename), function(err) {
-			if(err) {
-				console.log('Error trying to delete pdf file cached in session cookie: '+err);
-				res.json({err: 'error deleting pdf file cached in session cookie'});
-			}
-
-			delete req.session.pdffilename;
-			res.json({success: true});
+	fs.unlink(html, function(err) {
+		if(err) {
+			console.log('Error trying to delete pdf file cached in session cookie: '+err);
+			res.json({err: 'error deleting pdf file cached in session cookie'});
 			return;
-		});
+		}
 
+		res.json({success: true});
 		return;
-	}
+	});
 
-	res.send({err: 'No document to remove'});
 });
-
-
 
 module.exports = router;

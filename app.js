@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var jsforce = require('jsforce');
+var mysql = require('mysql');
 
 global.appRoot = path.resolve(__dirname);
 
@@ -12,31 +13,31 @@ var pageRouter = require('./routes/page');
 var apiRouter = require('./routes/api');
 var docRouter = require('./routes/doc');
 
-console.log('Dirname: '+global.appRoot);
-
 // Get arguments
 const args = process.argv.slice(2);
 if (args[0] === undefined) throw new Error('Configuration file required for Salesforce connected app');
 const sfAppConfig = args[0];
 
-// Get configuration from file referenced in only argument
-const config = require(sfAppConfig[0] !== '/' ? './' + sfAppConfig : sfAppConfig);
-if(config.id === undefined || config.secret === undefined || config.redirect === undefined || config.url === undefined) {
+// Get salesforce configuration from file referenced in only argument
+global.sfConfig = require(sfAppConfig[0] !== '/' ? './' + sfAppConfig : sfAppConfig);
+if(global.sfConfig.oauth.loginUrl === undefined || 
+  global.sfConfig.oauth.clientId === undefined || 
+  global.sfConfig.oauth.clientSecret === undefined || 
+  global.sfConfig.oauth.redirectUri === undefined) 
+{
   throw new Error('Invalid Salesforce connected app configuration');
 }
 
 //jsForce connection
-oauth2 = new jsforce.OAuth2({
-    // you can change loginUrl to connect to sandbox or prerelease env.
-    loginUrl : config.url,
-    // clientId and Secret will be provided when you create a new connected app in your SF developer account
-    clientId : config.id,
-    clientSecret : config.secret,
-    // redirectUri is the url sf will redirect you to when oauth is complete
-    redirectUri : config.redirect,
-});
+global.oauth2 = new jsforce.OAuth2(global.sfConfig.oauth);
 
-console.log(oauth2);
+console.log(global.oauth2);
+
+// Get MySQL connection from sql.config.json file
+global.sqlConfig = require('./sql.config.json');
+
+// MySQL connection
+global.mysqlPool = mysql.createPool(global.sqlConfig);
 
 var app = express();
 

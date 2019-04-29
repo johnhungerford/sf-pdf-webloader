@@ -1,4 +1,4 @@
 node_modules/
-sf.config.json
 sf.config-dev.json
+sf.config.json
 sql.config.json

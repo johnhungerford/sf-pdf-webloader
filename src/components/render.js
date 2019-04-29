@@ -7,10 +7,10 @@ const ef = require('./eventfunctions.js');
 
 const renderDoc = function(site) {
   $('.pdfwin').empty();
-  if(site === undefined) {
-    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc/view"></iframe>');
+  if(site !== undefined) {
+    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src='+site+'></iframe>');
   } else {
-    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="'+site+'"></iframe>');
+    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc/view"></iframe>');
   }
 
   $('#pdfiframe').on('load', function () {
