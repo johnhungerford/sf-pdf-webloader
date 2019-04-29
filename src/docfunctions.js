@@ -14,7 +14,7 @@ const addDoc = function(fd, callback) {
             success:function(data){
             	rn.renderLoadingEnd();
             	if ( data.err) {
-            		rn.renderError(data.err.toString());
+            		rn.renderError(data.err);
             		return false;
             	} else {
             		rn.renderDoc();

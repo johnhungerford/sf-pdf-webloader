@@ -27,7 +27,8 @@ router.post('/load', function(req, res, next) {
 	form.maxFieldsSize = 100 * 1024*1024;
 	form.parse( req, function(err, fields, files) {
 		if (err) {
-			res.json({err: error, success: false});
+			console.log('FILE UPLOAD ERR:', err);
+			res.json({err: err, success: false});
 			return;
 		}
 
@@ -47,7 +48,7 @@ router.post('/load', function(req, res, next) {
 		converter.convert('default').then(function(){
 			fs.unlink(file.path, function(err) {
 				if(err) {
-					console.log('Error trying to delete uploaded pdf: '+err);
+					console.error('Error trying to delete uploaded pdf: '+err);
 					res.json({err: new Error('error deleting uploaded pdf'), success: false});
 				}
 		
@@ -55,14 +56,14 @@ router.post('/load', function(req, res, next) {
 				return;
 			});
 		}).catch(function(error) {
-			console.error(JSON.stringify(error));
 			fs.unlink(file.path, function(err) {
 				if(err) {
 					console.log('Error trying to delete uploaded pdf: '+err);
-					res.json({err: error, success: false});
+					res.json({err: err, success: false});
 				}
 		
-				res.json({err: error, success: false});
+				console.error('Error converting file from pdf');
+				res.json({err: 'Error converting file from pdf', success: false});
 				return;
 			});
 
