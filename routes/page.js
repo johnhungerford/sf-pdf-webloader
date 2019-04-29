@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
 /* GET app page. */
 router.get('/webloader', function(req, res, next) {
   if (req.session.accessToken || !req.session.instanceUrl) { 
-    const conn = new jsforce.Connection({oauth2: oauth2}); // oauth2 is defined in app.js, global scope
+    const conn = new jsforce.Connection({oauth2: global.oauth2}); // oauth2 is defined in app.js, global scope
     conn.login('guest@sfwebloader.com','testpwd', function(err, userInfo) {
       if (err) { return next(new Error("This error is in the auth callback: " + err)); }
       console.log('Access Token: ' + conn.accessToken);

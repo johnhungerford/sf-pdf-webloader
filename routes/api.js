@@ -30,7 +30,7 @@ router.post('/find', function(req, res, next) {
 
 
 	const conn = new jsforce.Connection({
-  		oauth2 : oauth2,
+  		oauth2 : global.oauth2,
   		instanceUrl : req.session.instanceUrl,
   		accessToken : req.session.accessToken,
   		refreshToken : req.session.refreshToken
@@ -70,7 +70,7 @@ router.post('/create', function(req, res, next) {
 	}
 
 	const conn = new jsforce.Connection({
-  		oauth2 : oauth2,
+  		oauth2 : global.oauth2,
   		instanceUrl : req.session.instanceUrl,
   		accessToken : req.session.accessToken,
   		refreshToken : req.session.refreshToken
@@ -111,7 +111,7 @@ router.post('/update', function(req, res, next) {
 
 
 	const conn = new jsforce.Connection({
-  		oauth2 : oauth2,
+  		oauth2 : global.oauth2,
   		instanceUrl : req.session.instanceUrl,
   		accessToken : req.session.accessToken,
   		refreshToken : req.session.refreshToken
