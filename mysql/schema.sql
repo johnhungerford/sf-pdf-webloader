@@ -29,10 +29,15 @@ CREATE TABLE sfconnections (
 CREATE TABLE sfschemas (
     id int(11) NOT NULL AUTO_INCREMENT,
     user int(11),
+    sfconnection int(11),
     config MEDIUMTEXT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY user_FOREIGN (user)
     REFERENCES users (id)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL,
+    FOREIGN KEY sfconnection_FOREIGN (user)
+    REFERENCES sfconnections (id)
     ON UPDATE CASCADE
     ON DELETE SET NULL
 );
