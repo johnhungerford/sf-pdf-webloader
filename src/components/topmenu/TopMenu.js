@@ -12,19 +12,35 @@ export default class TopMenu extends Component {
     }
 
     render() {
-        const menuContent = this.props.config.list.map((config) => 
+        const configMenuContent = this.props.config.list.map((config) => 
             <li key={config.title.slice(0,5).replace(' ','-')} onClick={config.handler}>{config.title}</li>
+        );
+
+        const connMenuContent = this.props.conn.list.map((conn) => 
+            <li key={conn.title.slice(0,5).replace(' ','-')} onClick={conn.handler}>{conn.title}</li>
         );
 
         return (
             <MenuBar class={this.props.class}>
                 <ul className={styles.centered}>
                     <li>
+                        <DropDown 
+                            title={
+                                this.props.conn.selected === null ? 'Select Connection' : this.props.conn.list[this.props.conn.selected].title 
+                            }
+                        >
+                            <ul>
+                                {connMenuContent}
+                            </ul>
+                        </DropDown>
+                    </li>
+                    <li><div className={styles.spaceHolder} /></li>
+                    <li>
                         <DropDown title={
-                            this.props.config.selected === null ? 'Select Configuration' : this.props.config.list[this.props.config.selected] 
+                            this.props.config.selected === null ? 'Select Configuration' : this.props.config.list[this.props.config.selected].title
                         }>
                             <ul>
-                                {menuContent}
+                                {configMenuContent}
                             </ul>
                         </DropDown>
                     </li>

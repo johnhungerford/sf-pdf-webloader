@@ -5,9 +5,11 @@ var path = require('path');
 var router = express.Router();
 var formidable = require('formidable');
 
-const html = path.join(global.appRoot, 'doc/doc.html');
+const jwtAuthenticate = require('./jwtauthenticate');
 
-router.get('/view', (req,res,next) => {
+const html = path.join(global.appRoot, 'doc', 'doc.html');
+
+router.get('/view', jwtAuthenticate, (req,res,next) => {
 	fs.access(html, fs.F_OK, (err) => {
 		if (err) {
 			console.log('no doc.html');
@@ -21,7 +23,7 @@ router.get('/view', (req,res,next) => {
 });
 
 /* GET home page. */
-router.post('/load', function(req, res, next) {
+router.post('/load', jwtAuthenticate, function(req, res, next) {
 	var form = new formidable.IncomingForm();
 	form.uploadDir = path.join(global.appRoot, 'doc/');
 	form.maxFieldsSize = 100 * 1024*1024;
@@ -96,7 +98,7 @@ router.post('/load', function(req, res, next) {
 	    });
 });
 
-router.get('/remove', function(req, res, next) {
+router.get('/remove', jwtAuthenticate, function(req, res, next) {
 	console.log('remove (docs) router...');
 	fs.unlink(html, function(err) {
 		if(err) {

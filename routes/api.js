@@ -1,33 +1,18 @@
-var express = require('express');
-var jsforce = require('jsforce');
-var fs = require('fs');
-var router = express.Router();
+const express = require('express');
+const jsforce = require('jsforce');
+const router = express.Router();
+
+const jwtAuthenticate = require('./jwtauthenticate');
+const sfAuthenticate = require('./sfauthenticate');
 
 
-// GET document map
-router.get('/dm', function(req, res, next) {
-	if (!req.session.accessToken || !req.session.instanceUrl) { 
-		next(new Error('Missing authentication!'));
-	}
-
-	fs.readFile('./config.json', function(err,data) {
-		if(err) { next(err); }
-		var parsedData = JSON.parse(data);
-		console.log(parsedData);
-		res.json(parsedData);
-	});
-});
-
-
-router.post('/find', function(req, res, next) {
+router.post('/find', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
 
 	console.log('Entering "find" router...');
 
 	if (!req.session.accessToken || !req.session.instanceUrl ) { 
 		res.json({ err: "authenticate" });
 	}
-
-
 
 	const conn = new jsforce.Connection({
   		oauth2 : global.oauth2,
@@ -58,7 +43,7 @@ router.post('/find', function(req, res, next) {
   
 });
 
-router.post('/create', function(req, res, next) {
+router.post('/create', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
 
 	console.log('Create router...');
 
@@ -96,7 +81,7 @@ router.post('/create', function(req, res, next) {
 });
 
 
-router.post('/update', function(req, res, next) {
+router.post('/update', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
 
 	console.log('Update router...');
 
@@ -139,6 +124,5 @@ router.post('/update', function(req, res, next) {
 		});
   
 });
-
 
 module.exports = router;

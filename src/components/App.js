@@ -11,38 +11,19 @@ import styles from './App.module.css';
 export default class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            docUrl: null,
-            modals: [],
-            dm: {},
-            r: [],
-            ri: 0,
-            fi: null,
-            search: true,
-            sdata: { empty: true },
-            init: true,
-            mdownpos: [],
-            config: [],
-        };
+        this.state = require('./state.js');
     }
 
     render() {
-        const configObj = { 
-            list: [
-                { title: 'one', handler: ()=>{} },
-                { title: 'two', handler: ()=>{} },
-                { title: 'three', handler: ()=>{} },
-                { title: 'four', handler: ()=>{} },
-            ],
-            selected: null, 
-        }
+        if (!this.state.auth.loggedin) return (<div><Login /></div>)
 
         return (
             <div>
                 <div>
                     <TopMenu
                         class={styles.menu} 
-                        config={configObj}
+                        config={this.state.config}
+                        conn={this.state.conn}
                     />
                     <div className={styles.outerDiv}>
                         <SfView class={styles.sfView}>
