@@ -4,7 +4,6 @@ const router = express.Router();
 const jwtAuthenticate = require('./jwtauthenticate');
 const sfAuthenticate = require('./sfauthenticate');
 
-
 router.post('/find', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
 	if (res.locals.sfconn === undefined) return next(new Error('No sf connection!'));
 	const conn = res.locals.sfconn;
