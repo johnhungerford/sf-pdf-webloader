@@ -3,8 +3,9 @@ const mf = require('./mapfunctions.js');
 const rf = require('./recarrayfunctions.js');
 const rn = require('./render.js');
 const sf = require('./searchfunctions.js');
+const ajax = require('./ajaxfunctions');
 
-const updateRecord = function(rin, callback) {
+const updateRecord = function(stateSetter, rin, callback) {
   if ( !rf.isChanged(rin) ) { return false; }
 
   let map = mf.getBorR(rin);
@@ -21,22 +22,18 @@ const updateRecord = function(rin, callback) {
       }
     }
 
-    $.ajax({
-      type: "POST",
-      contentType: "application/json",
-      url: "/api/create",
-      dataType: "json",
-      async: true,
-      //json object to sent to the authentication url
-      data: JSON.stringify(apiObj),
-      success: function(data) {
+    ajax.postJSON(
+      "/api/create",
+      apiObj,
+      function(data) {
         if ( data.success === false || data.err ) {
           return;
         }
 
         if(callback) callback(data, rin);
-      }
-    });
+      },
+      function(err) { rn.renderErr(stateSetter, err.message) }
+    );
 
   } else if ( !rec.new ) {
     let apiObj = {
@@ -49,41 +46,37 @@ const updateRecord = function(rin, callback) {
       if(rec.f[i].value != rec.f[i].origval && !map.fields[i].noupdate) { apiObj.records[0][map.fields[i].sfname] = rec.f[i].value; }
     }
 
-    $.ajax({
-      type: "POST",
-      contentType: "application/json",
-      url: "/api/update",
-      dataType: "json",
-      async: true,
-      //json object to sent to the authentication url
-      data: JSON.stringify(apiObj),
-      success: function(data) {
+    ajax.postJSON(
+      "/api/update",
+      apiObj,
+      function(data) {
         if ( data.success === false || data.err ) {
           return;
         }
 
         if(callback) callback(data);
-      }
-    });
+      },
+      function(err) { stateSetter, err.message }
+    );
 
 
   } else {
-    rn.renderErr('Record is labelled new but has salesforce Id');
+    rn.renderErr(stateSetter, 'Record is labelled new but has salesforce Id');
     return false;
   }
 
   return true;
 }
 
-const updateAll = function() {
+const updateAll = function(stateSetter, ) {
   if( rf.allUnchanged() ) { 
-    rn.renderError('Nothing to update!');
+    rn.renderErr(stateSetter, 'Nothing to update!');
     return false; 
   }
 
   var ctr = 0;
   var total = 0;
-  rn.renderLoadingStart();
+  rn.renderLoadingStart(stateSetter);
   for( let i = 0; i < d.r.length; i++ ) {
     if ( !rf.isChanged(i) ) { 
       continue; 
@@ -93,11 +86,11 @@ const updateAll = function() {
   }
   
   for ( let i = 0; i < d.r.length; i++ ) {
-    updateRecord(i, function(){
+    updateRecord(stateSetter, i, function(){
       ctr += 1;
       if(ctr === total) {
-        rn.renderLoadingEnd();
-        sf.loadAllRecords();
+        rn.renderLoadingEnd(stateSetter);
+        sf.loadAllRecords(stateSetter);
       }
     });
   }

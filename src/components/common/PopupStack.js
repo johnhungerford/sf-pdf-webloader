@@ -10,29 +10,30 @@ export default class PopupStack extends Component {
     }
 
     render() {
-        const modalStack = [];
-        for (let i = 0; i < this.props.stack.length; i++) {
-            modalStack.push(
+        const popupStack = [];
+        for (let i = 0; i < this.props.popups.length; i++) {
+            popupStack.push(
                 <Popup
-                    options={this.props.stack[i].options}
-                    buttons={this.props.stack[i].buttons}
+                    options={this.props.popups[i].options}
+                    buttons={this.props.popups[i].buttons}
                     zind={i + 10}
-                    header={this.props.stack[i].header}
+                    header={this.props.popups[i].header}
                 >
-                    {this.props.stack[i].content}
+                    {this.props.popups[i].content}
                 </Popup>
             );
         }
 
         return (
             <div>
-                {this.props.stack.map((modal,index) => {
+                {this.props.popups.map((modal,index) => {
                     return (
                         <Modal
                             options={modal.options}
                             buttons={modal.buttons}
                             zind={index + 10}
                             header={modal.header}
+                            key={index}
                         >
                             {modal.content}
                         </Modal>

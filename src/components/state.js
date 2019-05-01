@@ -15,12 +15,22 @@ module.exports = {
 
     // Authentification information
     auth: { 
+        username: null,
+        password: null,
         token: null, 
         loggedin: false, 
     },
 
-    // Modal stack
-    modals: [],
+    // Popup stack
+    popups: [],
+
+    // Loading
+    loading: false,
+    loadmessage: null,
+
+    sfschemata: [],
+    sfconns: [],
+    sfconnconfig: null,
 
     // temporary aspects
     config: {

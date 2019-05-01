@@ -1,11 +1,6 @@
-const d = require('./data.js');
-const mf = require('./mapfunctions.js');
-const sf = require('./searchfunctions.js');
-const rf = require('./recarrayfunctions.js');
-const uf = require('./upsertfunctions.js');
-const ef = require('./eventfunctions.js');
+const d = require('./state');
 
-const renderDoc = function(site) {
+/*const renderDoc = function(site) {
   $('.pdfwin').empty();
   if(site !== undefined) {
     $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src='+site+'></iframe>');
@@ -64,14 +59,13 @@ const renderSelectionErr = function(selec) {
   }, 2000);
 
 
-}
+}*/
 
-var renderError = function(msg) {
-  $(".error-body").empty();
-  $(".error-body").append(msg);
-  $(".error").modal("show");
+var renderError = function(stateSetter, msg) {
+  alert(msg);
 };
 
+/*
 var renderAlert = function(msg, callback) {
   $(".alert-body").empty();
   $(".alert-body").append(msg);
@@ -191,11 +185,11 @@ var renderBaseSearch = function() {
 
 var renderSfView = function() {
 
-  /*if (init) {
+  *//*if (init) {
     $(".sfviewmenu").empty();
     $(".sfviewbody").empty();
     return;
-  }*/
+  }*//*
 
   if (d.search) {
     return renderBaseSearch();
@@ -295,14 +289,14 @@ var convertDate = function(strin) {
 
 var renderFldEntry = function() {
 
-  /*if ( d.length == 0 ) {
+  *//*if ( d.length == 0 ) {
     $(".fldwinleft").empty();
     $(".fldwinright").empty();
     $(".fldtitle").empty();
     $(".fldentry").empty();
     $(".fldinstr").empty();
     return;
-  }*/
+  }*//*
 
   if( d.ri >= d.r.length ) d.ri = d.r.length-1;
   if( d.ri < 0 ) d.ri = 0;
@@ -551,8 +545,9 @@ const renderInstructionsHide = function () {
 }
 
 module.exports.renderDoc =renderDoc;
-module.exports.renderSelectionErr = renderSelectionErr;
+module.exports.renderSelectionErr = renderSelectionErr;*/
 module.exports.renderError = renderError;
+module.exports.renderErr = renderError;/*
 module.exports.renderAlert = renderAlert;
 module.exports.renderOpenUrl = renderOpenUrl;
 module.exports.renderLoadingStart = renderLoadingStart;
@@ -565,4 +560,4 @@ module.exports.renderIndexSearch = renderIndexSearch;
 module.exports.renderIndexCreate = renderIndexCreate;
 module.exports.renderAll = renderAll;
 module.exports.renderInstructions = renderInstructions;
-module.exports.renderInstructionsHide = renderInstructionsHide;
+module.exports.renderInstructionsHide = renderInstructionsHide;*/

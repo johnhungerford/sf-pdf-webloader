@@ -1,6 +1,7 @@
 const rn = require('./render.js');
+const d = require('../components/state');
 
-const addDoc = function(fd, callback) {
+const addDoc = function(fd, stateSetter) {
 	rn.renderLoadingStart('Loading document');
 
 	if( !fd ) { return false; }
@@ -14,10 +15,10 @@ const addDoc = function(fd, callback) {
             success:function(data){
             	rn.renderLoadingEnd();
             	if ( data.err) {
-            		rn.renderError(data.err);
+            		rn.renderError(stateSetter, data.err);
             		return false;
             	} else {
-            		rn.renderDoc();
+            		stateSetter(d);
             	}
             },
             cache: false,
@@ -29,20 +30,15 @@ const addDoc = function(fd, callback) {
 
 } 
 
-const removeDoc = function(callback) {
-	rn.renderLoadingStart('Removing Document');
+const removeDoc = function(stateSetter) {
+	rn.renderLoadingStart(stateSetter, 'Removing Document');
 	$.getJSON('/doc/remove', function(data) {
-		rn.renderLoadingEnd();
+		rn.renderLoadingEnd(stateSetter);
 		/*if( data.err ) {
 			rn.renderError(data.err);
 			return;
 		}*/
-		if( callback ) {
-			callback();
-		} else {
-			rn.renderDoc();
-		}
-
+		stateSetter(d);
 	});
 
 }

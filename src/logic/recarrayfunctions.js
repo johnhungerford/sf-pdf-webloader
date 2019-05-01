@@ -7,15 +7,14 @@ const rn = require('./render.js');
 /* Resets the global record array and its index tracker, initializing it with base records set to
  * 'search.'
  */
-const initR = function() {
+const initR = function(stateSetter) {
   d.r = [];
   d.ri = 0;
-  addSearchRecords();
+  addSearchRecords(stateSetter);
   d.search = true;
   d.sdata = { empty: true };
   d.fi = d.r[d.ri].order[0];
-  rn.renderSfView();
-  rn.renderFldEntry();
+  stateSetter(d);
 }
 
 /**
@@ -245,7 +244,7 @@ const basesUpToDate = function() {
   return true;
 }
 
-const setValue = function(rin, fin, value) {
+const setValue = function(rin, fin, value, stateSetter) {
   const fm = mf.getFm(rin, fin);
   let valout;
 
@@ -287,7 +286,7 @@ const setValue = function(rin, fin, value) {
       }
 
       if ( !dt || isNaN(dt.getTime())) {
-        rn.renderError("Not a valid date!");
+        rn.renderError(stateSetter, "Not a valid date!");
         return false;
       } else {
         valout = dt.toISOString();
@@ -301,7 +300,7 @@ const setValue = function(rin, fin, value) {
       if (re.test(value)) {
         valout = value;
       } else {
-        rn.renderError("Not a valid email address!");
+        rn.renderError(stateSetter, "Not a valid email address!");
         return false;
       }
 
@@ -319,56 +318,11 @@ const setValue = function(rin, fin, value) {
   return true;
 };
 
-const validateSelection = function(str) {
-  str = str.trim();
-  const $fldinput = $('.fldinput');
-  const type = mf.getFm().type;
-  let outval = true;
-
-  // If fldinput is an <input> tag
-  if($fldinput.prop('nodeName') === 'INPUT') {
-    // If fldinput is of type "text"
-    if($fldinput.attr('type') === 'text') {
-      // Reject if there are any line breaks
-      if(str.indexOf('\n') > -1) outval = false;
-      // Reject if it is longer than the 'size' attribute of the input
-      if(str.length > $fldinput.attr('size')) outval = false;
-    } 
-
-  // If fldinput is a <select> tag
-  } else if($fldinput.prop('nodeName') === 'SELECT') {
-    outval = false;
-    $('.fldinput option').each(function(){
-      if (this.value == str) {
-        outval = true;
-      }
-    });
-  } 
-
-  if(type === 'phone') {
-    if(str.length > 20) outval = false;
-    if(/[\&\@\$\%\^\{\}]/.test(str)) outval = false;
-    if(!/\d/.test(str)) outval = false;
-  } else if(type === 'date') {
-    if(str.length > 19) outval = false;
-  } else if(type === 'email') {
-    const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-    if (!re.test(str)) outval = false;
-  } else if(type === 'url') {
-    const re = /[\s\"]+/
-    const re2 = /\.+/
-    if (re.test(str)) outval = false;
-    if (!re2.test(str)) outval = false;
-  }
-
-  return outval;
-}
-
 // Cycle to the next ri up the record array (r), but add a new record of type dm.r[rin]
-const nextrAndAdd = function(rin) {
+const nextrAndAdd = function(stateSetter, rin) {
   if( rin < 0 || rin >= d.dm.r.length && d.r[d.ri].type == 'record' ) return false;
 
-  addRecord(rin);
+  addRecord(stateSetter, rin);
   if (isNew(d.ri) && !isChanged(d.ri)) { 
     d.r.splice(d.ri,1); 
   } else {
@@ -392,13 +346,13 @@ const nextrNoAdd = function() {
 }
 
 // Cycle to the next record (called when one presses the 'down' key -- see init.js)
-const nextr = function() {
+const nextr = function(stateSetter) {
   if (d.ri === d.r.length - 1) {
     if ( d.ri >= d.dm.b.length ) {
       if (!isNew(d.ri) || (isNew(d.ri) && isChanged(d.ri)) ) {
-        return nextrAndAdd(d.r[d.ri].ri)
+        return nextrAndAdd(stateSetter, d.r[d.ri].ri)
       } else if (d.r[d.ri].ri < d.dm.r.length - 1) {
-        return nextrAndAdd(d.r[d.ri].ri + 1);
+        return nextrAndAdd(stateSetter, d.r[d.ri].ri + 1);
       } else {
         return false;
       }
@@ -408,18 +362,18 @@ const nextr = function() {
       if ( isNew(d.ri) ) { 
         return false;
       } else { 
-        return nextrAndAdd(0); 
+        return nextrAndAdd(stateSetter, 0); 
       }
     }
   } else if (d.ri < d.r.length - 1) {
     if ( d.r[d.ri+1].ri === d.r[d.ri].ri || d.r[d.ri].type === 'base' ) {      
       return nextrNoAdd();
     } else if (!isNew(d.ri) || (isNew(d.ri) && isChanged(d.ri)) ) {
-      return nextrAndAdd(d.r[d.ri].ri);
+      return nextrAndAdd(stateSetter, d.r[d.ri].ri);
     } else if (d.r[d.ri + 1].ri === d.r[d.ri].ri + 1) {
       return nextrNoAdd(); 
     } else {
-      return nextrAndAdd(d.r[d.ri].ri + 1);
+      return nextrAndAdd(stateSetter, d.r[d.ri].ri + 1);
     }
   }
 
@@ -430,7 +384,7 @@ const nextr = function() {
 const prevrAndAdd = function(rin) {
   if(rin < 0 || rin >= d.dm.r.length) return false;
 
-  addRecord(rin);
+  addRecord(stateSetter, rin);
   if (isNew(d.ri + 1) && !isChanged(d.ri + 1)) { 
     d.r.splice(d.ri + 1, 1); 
   }
@@ -460,7 +414,7 @@ const prevr = function() {
     if(d.r[d.ri].ri === 0 || d.r[d.ri - 1].ri === d.r[d.ri].ri || (isNew(d.ri - 1) && !isChanged(d.ri - 1))) {
       prevrNoAdd();
     } else {
-      prevrAndAdd(d.r[d.ri].ri - 1);
+      prevrAndAdd(stateSetter, d.r[d.ri].ri - 1);
     }
   }
 
@@ -643,7 +597,7 @@ const addSearchRecords = function() {
   d.fi = d.r[d.ri].order[0];
 };
 
-const addBaseRecord = function(bInd, bRec) {
+const addBaseRecord = function(stateSetter, bInd, bRec) {
   for (let i = 0; i < d.r.length; i++) {
     if (d.r[i].bi == bInd) {
       // use Array.splice() to replace the base record with one that's filled out
@@ -681,9 +635,9 @@ const addBaseRecord = function(bInd, bRec) {
       }
 
       if(d.search) { 
-        sf.clearBaseSearch();
+        sf.clearBaseSearch(stateSetter);
         d.fi = d.r[i].order[0];
-        sf.loadAllRecords(); 
+        sf.loadAllRecords(stateSetter); 
       }
 
       return true;
@@ -693,7 +647,7 @@ const addBaseRecord = function(bInd, bRec) {
   return false;
 };
 
-const addRecord = function(rInd, rec) {
+const addRecord = function(stateSetter, rInd, rec) {
   let i = d.dm.b.length;
   // Decide where in the r array we will insert the new record. This loop keeps counting up until
   // a) we exceed the length of the array, b) we reach the next higher record type, or c) we get to
@@ -769,10 +723,10 @@ const addRecord = function(rInd, rec) {
   return true;
 };
 
-const updateIndexFields = function (callback, rin) {
+const updateIndexFields = function (stateSetter, callback, rin) {
   if (!callback || typeof(callback) !== 'function') return false;
 
-  rn.renderLoadingStart('Looking up index fields');
+  rn.renderLoadingStart(stateSetter, 'Looking up index fields');
   let ctr = 0;
   let total = 0;
   if( rin !== undefined && rin < d.r.length ) {
@@ -782,7 +736,7 @@ const updateIndexFields = function (callback, rin) {
     }
 
     if (total === 0) { 
-      rn.renderLoadingEnd();
+      rn.renderLoadingEnd(stateSetter);
       callback();
       return;
     }
@@ -812,7 +766,7 @@ const updateIndexFields = function (callback, rin) {
             }
 
             if (ctr === total) {
-              rn.renderLoadingEnd();
+              rn.renderLoadingEnd(stateSetter);
               callback();
             }
           },
@@ -834,7 +788,7 @@ const updateIndexFields = function (callback, rin) {
   }
 
   if (total === 0) { 
-    rn.renderLoadingEnd();
+    rn.renderLoadingEnd(stateSetter);
     callback();
     return;
   }
@@ -865,7 +819,7 @@ const updateIndexFields = function (callback, rin) {
             }
 
             if (ctr === total) {
-              rn.renderLoadingEnd();
+              rn.renderLoadingEnd(stateSetter);
               callback();
             }
           }

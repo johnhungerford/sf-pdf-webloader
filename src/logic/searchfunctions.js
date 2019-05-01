@@ -1,9 +1,10 @@
-const d = require('./data.js');
+const d = require('./state.js');
 const mf = require('./mapfunctions.js');
 const rf = require('./recarrayfunctions.js');
 const rn = require('./render.js');
+const ajax = require('./ajaxfunctions');
 
-const searchBase = function(rin) {
+const searchBase = function(stateSetter, rin) {
   if (d.r[rin].type != "search") {
     return false;
   }
@@ -40,16 +41,11 @@ const searchBase = function(rin) {
     }
   }
 
-  rn.renderLoadingStart("Searching for " + bm.appname);
-  $.ajax({
-    type: "POST",
-    contentType: "application/json",
-    url: "/api/find",
-    dataType: "json",
-    async: true,
-    //json object to sent to the authentication url
-    data: JSON.stringify(searchObj),
-    success: function(data) {
+  rn.renderLoadingStart(stateSetter, "Searching for " + bm.appname);
+  ajax.postJSON(
+    "/api/find",
+    searchObj,
+    function(data) {
       d.search = true;
       d.sdata = {
         type: "base",
@@ -64,25 +60,26 @@ const searchBase = function(rin) {
           return false;
         }
         if (e.Id ) {
-          baseSearchSelected(e.Id);
+          baseSearchSelected(stateSetter, e.Id);
         } else {
           return;
         }
       });
-      rn.renderLoadingEnd();
-      rn.renderSfView();
-    }
-  });
+      rn.renderLoadingEnd(stateSetter);
+      stateSetter(d);
+    },
+    function(err) { rn.renderError(stateSetter, err.message) }
+  );
 
 };
 
-const clearBaseSearch = function() {
+const clearBaseSearch = function(stateSetter) {
   d.search = false;
   d.sdata = { empty: true };
-  rn.renderSfView();
+  rn.renderSfView(stateSetter);
 };
 
-const searchIndexRecord = function(rin, fin) {
+const searchIndexRecord = function(stateSetter, rin, fin) {
   var map = mf.getBorR(rin);
   var fm = map.fields[fin];
 
@@ -104,24 +101,20 @@ const searchIndexRecord = function(rin, fin) {
     searchObj.fields[i] = 1;
   }
 
-  rn.renderLoadingStart("Searching for " + map.fields[fin].indexto);
-  $.ajax({
-    type: "POST",
-    contentType: "application/json",
-    url: "/api/find",
-    dataType: "json",
-    async: true,
-    //json object to sent to the authentication url
-    data: JSON.stringify(searchObj),
-    success: function(data) {
-      rn.renderLoadingEnd();
-      return rn.renderIndexSearch(rin, fin, data);
-    }
-  });
+  rn.renderLoadingStart(stateSetter, "Searching for " + map.fields[fin].indexto);
+  ajax.postJSON(
+    "/api/find",
+    searchObj,
+    function(data) {
+      rn.renderLoadingEnd(stateSetter);
+      return rn.renderIndexSearch(stateSetter, rin, fin, data);
+    },
+    function(err) { rn.renderError(stateSetter, err.message) }
+  );
 };
 
-const loadAllRecords = function(callback) {
-  rn.renderLoadingStart("Loading all records");
+const loadAllRecords = function(stateSetter, callback) {
+  rn.renderLoadingStart(stateSetter, "Loading all records");
   let loaded = 0;
   if(d.r.length > d.dm.b.length) {
     let len = d.r.length;
@@ -146,32 +139,27 @@ const loadAllRecords = function(callback) {
       }
     }
 
-    $.ajax({
-      type: "POST",
-      contentType: "application/json",
+    ajax.postJSON(
       url: "/api/find",
-      dataType: "json",
-      async: true,
-      //json object to sent to the authentication url
-      data: JSON.stringify(searchObj),
-      success: function(data) {
+      searchObj,
+      function(data) {
         loaded += 1;
         if (data) {
           for (let l in data) {
-            rf.addBaseRecord(i, data[l]);
+            rf.addBaseRecord(stateSetter, i, data[l]);
           }
         }
         
         if (loaded === d.dm.b.length + d.dm.r.length) {
           rf.orderR();
-          rf.updateIndexFields(() => {
-            rn.renderFldEntry();
-            rn.renderSfView();
+          rf.updateIndexFields(stateSetter, () => {
+            stateSetter(d);
             if(callback && typeof(callback) === 'function') callback();
           });
         }
-      }
-    });
+      },
+      function(err) { stateSetter, err.message }
+    );
   }
 
 
@@ -198,38 +186,33 @@ const loadAllRecords = function(callback) {
       }
     }
 
-    $.ajax({
-      type: "POST",
-      contentType: "application/json",
-      url: "/api/find",
-      dataType: "json",
-      async: true,
-      //json object to sent to the authentication url
-      data: JSON.stringify(searchObj),
-      success: function(data) {
+    ajax.postJSON(
+      "/api/find",
+      searchObj,
+      function(data) {
         loaded += 1;
         if (data) {
           for (let l in data) {
-            rf.addRecord(i, data[l]);
+            rf.addRecord(stateSetter, i, data[l]);
           }
         }
 
         if (loaded === d.dm.b.length + d.dm.r.length) {
           rf.orderR();
-          rf.updateIndexFields(() => {
-            rn.renderFldEntry();
-            rn.renderSfView();
+          rf.updateIndexFields(stateSetter, () => {
+            stateSetter(d);
             if(callback && typeof(callback) === 'function') callback();
           });
         }
 
         return true;
-      }
-    });
+      },
+      function(err) { stateSetter, err.message }
+    );
   }
 };
 
-const indexSearchSelected = function(rin, fin, record) {
+const indexSearchSelected = function(stateSetter, rin, fin, record) {
   if (!record.Id) {
     return false;
   }
@@ -242,11 +225,11 @@ const indexSearchSelected = function(rin, fin, record) {
 
   d.r[rin].f[fin].showval = record[fm.indexshow];
   rf.nextf();
-  rn.renderFldEntry();
+  stateSetter(d);
   return true;
 };
 
-const baseSearchSelected = function(id) {
+const baseSearchSelected = function(stateSetter, id) {
   let bRec = {};
   for (let i in d.sdata.records) {
     if (d.sdata.records[i].Id === id) {
@@ -258,11 +241,11 @@ const baseSearchSelected = function(id) {
     return false;
   }
 
-  rf.addBaseRecord(d.sdata.i, bRec);
+  rf.addBaseRecord(stateSetter, d.sdata.i, bRec);
   return;
 };
 
-const recordSearchSelected = function(id) {
+const recordSearchSelected = function(stateSetter, id) {
   let rec = {};
   for (let i in d.sdata.records) {
     if (d.sdata.records[i].Id === id) {
@@ -274,9 +257,8 @@ const recordSearchSelected = function(id) {
     return false;
   }
 
-  rf.addRecord(d.sdata.i, record);
-  rn.renderSfView();
-  rn.renderFldEntry();
+  rf.addRecord(stateSetter, d.sdata.i, record);
+  stateSetter(d);
   return;
 };
 

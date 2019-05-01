@@ -1,7 +1,7 @@
 const passport = require('passport');
 const passportLocal = require('passport-local');
 const passportJwt = require('passport-jwt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 passport.use('register', new passportLocal.Strategy(
   {
@@ -32,17 +32,22 @@ passport.use('login', new passportLocal.Strategy(
 function loginCallback(username, password, done) {
   global.mysql.getConnection((err, conn) => {
       if (err) return done(err);
-      conn.query(`SELECT * FROM users WHERE username="${username}"`, function (err, result) {
-          if (err) return done(err);
+      conn.query(`SELECT * FROM users WHERE username="${username}"`, function (error, result) {
+          if (error) return done(error);
           if (result.length === 0) return done(null, false, { message: 'Invalid user or password' });
-          bcrypt.compare(password, result[0].password, (err, res) => {
-              if (err) return done(null, false, { message: 'Invalid user or password' });
-              if (res) return done(
-                  null, 
-                  { 
-                      username: username,
-                  }
-              );
+          bcrypt.compare(password, result[0].password, (err2, res) => {
+            console.log(result[0].password);
+            console.log('hello?');
+            console.log(res);
+            console.log(err2);
+            if (err2) return done(null, false, { message: 'Invalid user or password' });
+            if (res) return done(
+                null, 
+                { 
+                    username: username,
+                }
+            );
+            done(null, false, { message: 'Invalid user or password' });
           });
       });
   });
