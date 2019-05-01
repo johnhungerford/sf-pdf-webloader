@@ -30,6 +30,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "passport-salesforce-oauth2": "0.0.1",
     "pdfjs-dist": "^2.0.943",
     "pdftohtmljs": "^0.5.2",
     "react": "^16.8.6",

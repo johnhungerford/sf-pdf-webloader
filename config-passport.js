@@ -1,6 +1,7 @@
 const passport = require('passport');
 const passportLocal = require('passport-local');
 const passportJwt = require('passport-jwt');
+const passportSfOauth = require('passport-salesforce-oauth2');
 const bcrypt = require('bcrypt');
 
 passport.use('register', new passportLocal.Strategy(
