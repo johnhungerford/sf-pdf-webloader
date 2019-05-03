@@ -57,16 +57,21 @@ function loginCallback(username, password, done) {
 passport.use('jwt', new passportJwt.Strategy(
   {
     secretOrKey: global.jwtSecret,
-    jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken,
+    jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
   },
   jwtCallback
 ));
 
-function jwtCallback(token, done) {
-  try {
-    //Pass the user details to the next middleware
-    return done(null, token.user);
-  } catch (error) {
-    done(error);
-  }
+function jwtCallback(jwtPayload, done) {
+  console.log('jwtCallback for authentication');
+  global.mysql.getConnection((err, conn) => {
+    if (err) return done(err);
+    const username = jwtPayload.username;
+    if (username === undefined) return done(null, false, message('No user!'));
+    conn.query(`SELECT * FROM users WHERE username="${username}"`, function (error, result) {
+        if (error) return done(error);
+        if (result.length === 0) return done(null, false, { message: 'Invalid user or password' });
+        return done(null, jwtPayload);
+    });
+});
 }

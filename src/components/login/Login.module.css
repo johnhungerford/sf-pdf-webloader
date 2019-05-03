@@ -5,23 +5,43 @@
 }
 
 .panelInner {
-    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    display: block;
+    width: 247;
+    padding: 10px;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.textinputs {
+    display: inline-block;
+    text-align: right;
 }
 
 .userName {
-
+    margin-bottom: 15px;
 }
 
 .password {
-
+    margin-bottom: 20px;
 }
 
 .submit {
-
+    margin-bottom: 24px;
 }
 
 .login {
+    margin-right: 40px;
+}
 
+.login:hover {
+    margin-right: 39px;
 }
 
 .register {

@@ -41,6 +41,8 @@ export default class DataEntry extends Component {
     }
 
     submit = () => {
+        console.log('submitted!');
+        console.log(`username: ${this.props.auth.username} password: ${this.props.auth.password}`)
         ajax.postJSON(
             '/login',
             { 
@@ -48,14 +50,14 @@ export default class DataEntry extends Component {
                 password: this.props.auth.password,
             },
             (result) => {
+                console.log('hello?');
                 console.log(result);
                 if (result.success) {
                     this.props.stateSetter((currentState)=>{
                         return { 
                             ...currentState, 
                             auth: {
-                                ...currentState.auth, 
-                                token: result.token,
+                                username: result.username,
                                 loggedin: true,
                             }
                         };
@@ -64,33 +66,44 @@ export default class DataEntry extends Component {
                     return;
                 }
 
-                if (result.err) rn.renderErr(this.props.stateSetter, result.err);
+                return rn.renderErr(this.props.stateSetter, result.message);
             },
-            (err) => { rn.renderErr(this.props.stateSetter, err.message) }
+            (err) => { return rn.renderErr(this.props.stateSetter, err.message) }
         );
+    }
+
+    keyDownHandler = (e) => {
+        if(e.keyCode === 13) this.submit();
     }
 
     render() {
         return (
-            <div className={styles.outerDiv}>
+            <div 
+                className={styles.outerDiv}
+                tabIndex='0'
+                onKeyDown={this.keyDownHandler}
+            >
                 <Panel 
                     outerClass={styles.panelOuter}
-                    innerClass={styles.innerPanel}
+                    innerClass={styles.panelInner}
                 >
+                    <div className={styles.container}>
                         <h1>Login</h1>
-                        <div className={styles.userName}>
-                            Username: <input 
-                                id='username' 
-                                type='text' 
-                                onChange={this.nameChange}
-                            />
-                        </div>
-                        <div className={styles.password}>
-                            Password: <input 
-                                id='password' 
-                                type='password' 
-                                onChange={this.pwdChange}
-                            />
+                        <div className={styles.textinputs}>
+                            <div className={styles.userName}>
+                                Username: <input 
+                                    id='username' 
+                                    type='text' 
+                                    onChange={this.nameChange}
+                                />
+                            </div>
+                            <div className={styles.password}>
+                                Password: <input 
+                                    id='password' 
+                                    type='password' 
+                                    onChange={this.pwdChange}
+                                />
+                            </div>
                         </div>
                         <div className={styles.submit}>
                             <Button 
@@ -99,7 +112,7 @@ export default class DataEntry extends Component {
                             >Login</Button>
                             <Button class={styles.register}>Register</Button>
                         </div>
-                        
+                    </div>
                 </Panel>
             </div>
         );

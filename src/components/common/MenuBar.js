@@ -9,12 +9,15 @@ export default class MenuBar extends Component {
     }
 
     render() {
+        const { sectionLeft, sectionCenter, sectionRight } = this.props.children;
         return (
             <Panel 
                 outerClass={`${styles.menu} ${styles.allowOverflow} ${this.props.class}`}
                 innerClass={styles.allowOverflow}
             >
-                {this.props.children}
+                <div className={styles.sectionLeft}>{sectionLeft}</div>
+                <div className={styles.sectionRight}>{sectionRight}</div>
+                <div className={styles.sectionCenter}>{sectionCenter}</div>
             </Panel>
         );
     }

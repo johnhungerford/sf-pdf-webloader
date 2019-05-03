@@ -2,19 +2,29 @@
     overflow-y: visible;
 }
 
-.centered {
-    display: block;
-    text-align: center;
+.menu {
+    display: flex;
     margin: 0;
     padding: 0;
 }
 
-.centered > li {
-    display: inline-block;
+.sectionLeft {
+    padding: 0;
+    float: left;
 }
 
-.spaceHolder {
-    min-width: 5vw;
+.sectionRight {
+    width: auto;
+    text-align: center;
+    overflow: hidden;
+}
+
+.left {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
 }
 
 .button {
@@ -23,4 +33,21 @@
 
 .button:hover {
     margin-right: 3px;
+}
+
+.logout {
+}
+
+.logout:hover {
+}
+
+.dropdownLeft {
+    margin-right: 5px;
+}
+
+.appButtons {
+    display: inline-block;
+    text-align: right;
+    margin: 0;
+    padding: 0;
 }

@@ -1,5 +1,4 @@
 const $ = require('jquery');
-const d = require('../components/state');
 
 const getJSON = function(url, successCallback, failCallback) {
     $.ajax({
@@ -7,7 +6,6 @@ const getJSON = function(url, successCallback, failCallback) {
         url: url,
         dataType: "json",
         async: true,
-        beforeSend: setHeader,
     }).done(successCallback).fail(failCallback);
 }
 
@@ -18,12 +16,9 @@ const postJSON = function(url, data, successCallback, failCallback) {
         url: url,
         dataType: "json",
         async: true,
-        beforeSend: setHeader,
         data: JSON.stringify(data),
     }).done(successCallback).fail(failCallback);
 }
-
-const setHeader = function(xhr) { xhr.setRequestHeader("Authorization", 'Bearer '+ d.auth.token) };
 
 module.exports.getJSON = getJSON;
 module.exports.postJSON = postJSON;

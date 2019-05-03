@@ -27,11 +27,12 @@ export default class DropDown extends Component {
         if (this.state.expand) {
             return (
                 <div 
-                    className={styles.topExpanded}
+                    className={`${styles.topExpanded} ${this.props.class}`}
                     onClick={this.clickHandler} 
                     ref={(node) => { this.titleRef = node}}
                 >
                     {this.props.title}
+                    <div className={styles.downArrowBox} />
                     <div 
                         className={styles.menu} 
                         ref={(node) => { this.contentRef = node}}
@@ -44,8 +45,9 @@ export default class DropDown extends Component {
 
         return (
             <div style={{ display: 'inline-block' }}>
-                <div className={styles.topClosed} onClick={this.clickHandler}>
+                <div className={`${styles.topClosed} ${this.props.class}`} onClick={this.clickHandler}>
                     {this.props.title}
+                    <div className={styles.downArrowBox} />
                 </div>
             </div>
         );

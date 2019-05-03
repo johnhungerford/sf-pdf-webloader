@@ -5,40 +5,109 @@ const jwtAuthenticate = require('./jwtauthenticate');
 
 const router = express.Router();
 
-// GET list of sf schema configs
-router.get('/sfschema', jwtAuthenticate, function(req, res, next) {
-    global.mysql.getConnection((err, conn) => {
-        if (err) next(err);
+// GET a list of schemata config
+router.get('/sfschema/:sfconnid', jwtAuthenticate, function(req, res, next) {
+    console.log('hello????');
+    console.log(`/config/sfschema/${req.params.sfconnid}`);
+    console.log(res.locals);
+    global.mysql.query(
+        `SELECT id, title FROM sfschemas WHERE user=${res.locals.id} AND sfconnection=${req.params.sfconnid}`, 
+        (err2, resQuery)=>{
+            if (err2) {
+                console.log(err2);
+                return res.json({
+                    success: false,
+                    message: 'attempt to query sf schema configs failed',
+                });
+            }
 
-        // get list of sf schema configs
-    });
+            console.log('no error...');
+            console.log(resQuery);
+            if (resQuery.length === 0) {
+                return res.json({
+                    success: true,
+                    list: [],
+                });
+            }
+
+            console.log()
+            const configList = resQuery.map((val, index)=>{
+                return {
+                    title: val.title,
+                    id: val.id
+                };
+            });
+
+            return res.json({ 
+                success: true, 
+                list: configList,
+            });
+        }
+    );
 });
 
-// GET sf schema config
-router.get('/sfschema/:param', jwtAuthenticate, function(req, res, next) {
-    global.mysql.getConnection((err, conn) => {
-        if (err) next(err);
+// GET a schema
+router.get('/sfschema/:sfconnid/:schemaid', jwtAuthenticate, function(req, res, next) {
+    global.mysql.query(
+        `SELECT config FROM sfschemas WHERE sfconnection=${req.params.sfconnid} AND id=${req.params.schemaid}`,
+        (err, result) => {
+            if (err) {
+                return res.json({
+                    success: false,
+                    message: 'attempt to query sf schema config failed',
+                });
+            }
+            
+            console.log('no error');
+            if (result.length !== 1) {
+                return res.json({
+                    success: false,
+                    message: 'unexpected number of records...',
+                });
+            }
 
-        // get sf schema config
-    });
+            return res.json({
+                success: true,
+                config: JSON.parse(result[0].config),
+            })
+        }
+    );
 });
 
 // GET list of sf connection configs
 router.get('/sfconn', jwtAuthenticate, function(req,res,next) {
-    global.mysql.getConnection((err, conn) => {
-        if (err) next(err);
+    console.log(`/config/sfconn: ${res.locals.username}`);
+    global.mysql.query(
+        `SELECT id, title FROM sfconnections WHERE user=${res.locals.id}`, 
+        (err2, resQuery)=>{
+            if (err2) {
+                return res.json({
+                    success: false,
+                    message: 'attempt to query sf connection configs failed',
+                });
+            }
 
-        // get list of sf connection configs
-    });
-});
+            if (resQuery.length === 0) {
+                return res.json({
+                    success: true,
+                    list: [],
+                });
+            }
 
-// GET sf connection config
-router.post('/sfconn/:param', jwtAuthenticate, function(req,res,next) {
-    global.mysql.getConnection((err, conn) => {
-        if (err) next(err);
-        // get sf connection config
-        // set global.oauth2 using the settings!
-    });
+            const configList = resQuery.map((val, index)=>{
+                return {
+                    title: val.title,
+                    id: val.id
+                };
+            });
+
+            console.log(configList);
+            return res.json({ 
+                success: true, 
+                list: configList,
+            });
+        }
+    );       
 });
 
 module.exports = router;

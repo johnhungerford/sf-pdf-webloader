@@ -14,10 +14,9 @@ module.exports = {
     mdownpos: [],
 
     // Authentification information
-    auth: { 
+    auth: {
+        promptlogin: false,
         username: null,
-        password: null,
-        token: null, 
         loggedin: false, 
     },
 
@@ -28,9 +27,12 @@ module.exports = {
     loading: false,
     loadmessage: null,
 
-    sfschemata: [],
-    sfconns: [],
-    sfconnconfig: null,
+    sfconfig: {
+        queryconns: true,
+        sfschemata: {list:[], selected:null},
+        sfconns: {list:[], selected:null},
+        sfconnconfig: null,
+    },
 
     // temporary aspects
     config: {

@@ -1,5 +1,5 @@
-const d = require('./data.js');
-const rn = require('./render.js');
+const d = require('../components/state');
+const rn = require('../components/render');
 const ajax = require('./ajaxfunctions');
 
 /**
@@ -8,16 +8,27 @@ const ajax = require('./ajaxfunctions');
  * stored on the server. 
  */
 
-const getSfSchemata = function(stateSetter, callback) {
+module.exports.getSfSchemata = function(stateSetter, callback) {
+    console.log('getting schemata');
+    console.log(d.sfconfig);
+    console.log(`/config/sfschema/${d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id}`);
     ajax.getJSON(
-        `/config/sfschema`, 
+        `/config/sfschema/${d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id}`, 
         function(data) {
             if (!data.success) {
                 rn.renderError(stateSetter, 'Can\'t access server!');
                 return;
             }
 
-            d.sfschemata = data;
+            d.sfconfig.sfschemata.list = data.list;
+            if (data.list.length === 0) d.sfconfig.sfschemata.selected = null;
+            for (let i in d.sfconfig.sfschemata.list) {
+                d.sfconfig.sfschemata.list[i].handler = (e) => {
+                    d.sfconfig.sfschemata.selected = i;
+                    module.exports.getDm(stateSetter);
+                }
+            }
+            stateSetter(d);
             if(callback instanceof Function) callback();
         },
         function(err) {
@@ -26,28 +37,37 @@ const getSfSchemata = function(stateSetter, callback) {
     );
 }
 
-const getDm = function(stateSetter, index, callback) {
-    if (index < 0 || index >= d.sfschemata.length) {
+module.exports.getDm = function(stateSetter, callback) {
+    const index = d.sfconfig.sfschemata.selected;
+    if (index < 0 || index >= d.sfconfig.sfschemata.list.length) {
         rn.renderError(stateSetter, 'Invalid selection')
         return false;
     }
 
+    console.log(`/config/sfschema/${d.sfconfig.sfschemata.list[index].id}`);
     ajax.getJSON(
-        `/config/sfschema/${d.sfschemata[index].id}`, 
+        `/config/sfschema/${d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id}/${d.sfconfig.sfschemata.list[index].id}`, 
         function(data) {
-            if (!data.b || !data.r) {
-                rn.renderError(stateSetter, 'Can\'t access server!');
+            if (!data.success) {
+                rn.renderError(stateSetter, 'Failed to retrieve config' + data.message);
                 return;
             }
 
-            d.dm = data;
+            if (!data.config) {
+                rn.renderError(stateSetter, 'No config file delivered...');
+                return;
+            }
+
+            d.dm = data.config;
+            stateSetter(d);
             if(callback instanceof Function) callback();
         },
         function(err) { rn.renderError(stateSetter, err.message) }
     );
 }
 
-const getSfConns = function(stateSetter, callback) {
+module.exports.getSfConns = function(stateSetter, callback) {
+    console.log('getSfConns');
     ajax.getJSON(
         `/config/sfconn`, 
         function(data) {
@@ -56,14 +76,29 @@ const getSfConns = function(stateSetter, callback) {
                 return;
             }
 
-            d.sfconns = data;
-            if(callback instanceof Function) callback();
+            d.sfconfig.sfconns.list = data.list;
+            d.sfconfig.sfconns.selected = null;
+            d.sfconfig.queryconns = false;
+            for (let i in d.sfconfig.sfconns.list) {
+                d.sfconfig.sfconns.list[i].handler = (e) => {
+                    d.sfconfig.sfconns.selected = i;
+                    module.exports.getSfSchemata(stateSetter);
+                }
+            }
+            stateSetter(d);
+            console.log(d.sfconfig);
+
+            if(callback instanceof Function) callback(data);
         },
-        function(err) { rn.renderError(stateSetter, err.message) }
+        function(err) { 
+            console.log('was there an error??');
+            console.log(err, err.message);
+            rn.renderError(stateSetter, err.message); 
+        }
     );
 }
 
-const getSfConn = function(stateSetter, index, callback) {
+module.exports.getSfConn = function(stateSetter, index, callback) {
     if (index < 0 || index >= d.sfconns.length) {
         rn.renderError(stateSetter, 'Invalid selection')
         return false;

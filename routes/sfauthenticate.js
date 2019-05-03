@@ -9,9 +9,9 @@ module.exports = function(req, res, next) {
     return next(new Error('no sfconn selected!'));
   }
 
-  global.mysql.getConnection((err, conn)=>{
-    if (err) return next(err);
-    conn.query(`SELECT title, config FROM sfconnections WHERE id='${req.params.sfconn}'`,(err2, res)=>{
+  global.mysql.query(
+    `SELECT title, config FROM sfconnections WHERE id='${req.params.sfconn}'`,
+    (err2, res)=>{
       if (err2) return next(err2);
       if (res.length != 1) return next(new Error('no Salesforce connection config found!'));
       if (res[0].config === undefined) {
@@ -58,6 +58,6 @@ module.exports = function(req, res, next) {
       }
         
       return next(new Error('Sf connection configuration type unknown'));
-    });
-  });
+    }
+  );
 }
