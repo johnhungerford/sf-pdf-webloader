@@ -5,8 +5,8 @@ import Button from '../common/Button.js';
 import DropDown from '../common/DropDown.js';
 
 import * as cf from '../../logic/configfunctions';
-import * as setLogicState from '../../logic/setlogicstate';
 import * as rn from '../render';
+import * as df from '../../logic/docfunctions';
 import * as ajax from '../../logic/ajaxfunctions';
 import * as d from '../state';
 
@@ -19,20 +19,14 @@ export default class TopMenu extends Component {
 
     logout = (e) => {
         ajax.postJSON(
+            this.props.stateSetter,
             `/login`,
             { logout: true },
             (data) => {
                 if (data.success) {
-                    return this.props.stateSetter((currentState)=>{
-                        return ({
-                            ...currentState,
-                            auth: {
-                                ...currentState.auth,
-                                loggedin: false,
-                                promptlogin: true,
-                            }
-                        });
-                    });
+                    d.auth.loggedin = false;
+                    d.auth.promptlogin = true;
+                    this.props.stateSetter(d);
                 }
 
                 rn.renderError(this.props.stateSetter, `Unable to log out: ${data.message}`);
@@ -43,43 +37,56 @@ export default class TopMenu extends Component {
         );
     }
 
-    connItemHandler = (e) => {
-        e.target.id
+    initEntry = () => {
+        console.log('hello...');
+    }
+
+    loadSamplePdf = () => {
+        d.doc = {
+            html: null,
+            render: true,
+            sample: true,
+        };
+        this.props.stateSetter(d);
+    }
+
+    removePdf = (e) => {
+        d.doc = {
+            html: null,
+            render: false,
+            sample: false,
+        };
+        this.props.stateSetter(d);
+    }
+
+    uploadPdf = (e) => {
+        const fd = new FormData();
+        fd.append('file', e.target.files[0]);
+        d.doc.render = false;
+        d.doc.sample = false;
+        return df.addDoc(this.props.stateSetter, fd);
     }
 
     render() {
-        if(this.props.state.sfconfig.queryconns && this.props.state.auth.loggedin) {
-            console.log('need to query for sfconnections');
-            setLogicState(this.props.state);
-            cf.getSfConns(this.props.stateSetter, (data)=>{
-                console.log(`got sfConns: `, data);
-                this.props.stateSetter((currentState)=>{
-                    return { 
-                        ...currentState, 
-                        sfconfig: {
-                            ...currentState.sfconfig,
-                            sfconns: {
-                                list: data.list,
-                                selected: null,
-                            },
-                            queryconns: false,
-                        }
-                    };
-                });
-            });
+        if(d.sfconfig.queryconns && d.auth.loggedin) {
+            cf.getSfConns(
+                this.props.stateSetter, 
+                (data)=>{
+                    d.sfconfig.sfconns.list = data.list;
+                    d.sfconfig.sfconns.selected = null;
+                    d.sfconfig.queryconns = false;
+                    this.props.stateSetter(d);
+                }
+            );
         }
 
-        const configMenuContent = this.props.state.sfconfig.sfschemata.list.map((config) => 
+        const configMenuContent = d.sfconfig.sfschemata.list.map((config) => 
             <li key={config.id} data-id={config.id} onClick={config.handler}>{config.title}</li>
         );
 
-        const connMenuContent = this.props.state.sfconfig.sfconns.list.map((conn) => 
+        const connMenuContent = d.sfconfig.sfconns.list.map((conn) => 
             <li key={conn.id} data-id={conn.id} onClick={conn.handler}>{conn.title}</li>
         );
-
-        console.log('selected conn:');
-        console.log(this.props.state.sfconfig.sfconns);
-        console.log(d.sfconfig.sfconns);
 
         return (
             <MenuBar class={this.props.class}>
@@ -90,11 +97,11 @@ export default class TopMenu extends Component {
                                 <DropDown 
                                     class={styles.dropdownLeft}
                                     title={
-                                        this.props.state.sfconfig.sfconns.selected === null ||
-                                        this.props.state.sfconfig.sfconns.selected < 0 ||
-                                        this.props.state.sfconfig.sfconns.selected >= this.props.state.sfconfig.sfconns.list.length ? 
+                                        d.sfconfig.sfconns.selected === null ||
+                                        d.sfconfig.sfconns.selected < 0 ||
+                                        d.sfconfig.sfconns.selected >= d.sfconfig.sfconns.list.length ? 
                                         'Select Connection' :
-                                        `Connection: ${this.props.state.sfconfig.sfconns.list[this.props.state.sfconfig.sfconns.selected].title}` 
+                                        `Connection: ${d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].title}` 
                                     }
                                 >
                                     <ul>
@@ -105,11 +112,11 @@ export default class TopMenu extends Component {
                             <li>
                                 <DropDown
                                     title={
-                                        this.props.state.sfconfig.sfschemata.selected === null || 
-                                        this.props.state.sfconfig.sfschemata.selected >= this.props.state.sfconfig.sfschemata.list.length ||
-                                        this.props.state.sfconfig.sfschemata.selected < 0 ? 
-                                        'Select Configuration' : 
-                                        `Config: ${this.props.state.sfconfig.sfschemata.list[this.props.state.sfconfig.sfschemata.selected].title}`
+                                        d.sfconfig.sfschemata.selected === null || 
+                                        d.sfconfig.sfschemata.selected >= d.sfconfig.sfschemata.list.length ||
+                                        d.sfconfig.sfschemata.selected < 0 ? 
+                                        'Select Configuration' :
+                                        `Config: ${d.sfconfig.sfschemata.list[d.sfconfig.sfschemata.selected].title}`
                                     }
                                 >
                                     <ul>
@@ -121,10 +128,26 @@ export default class TopMenu extends Component {
                     ),
                     sectionCenter: (
                         <ul className={styles.center}>
-                            <li><Button class={styles.button}>Init Entry</Button></li>
-                            <li><Button class={styles.button}>Upload PDF</Button></li>
-                            <li><Button class={styles.button}>Load Sample PDF</Button></li>
-                            <li><Button class={styles.button}>Remove PDF</Button></li>
+                            <li>
+                                <Button class={styles.button} clickHandler={this.initEntry}>
+                                    Init Entry
+                                </Button>
+                            </li>
+                            <li>
+                                <Button class={styles.button} type='file' fileLoadHandler={this.uploadPdf}>
+                                    Upload PDF
+                                </Button>
+                            </li>
+                            <li>
+                                <Button class={styles.button} clickHandler={this.loadSamplePdf}>
+                                    Load Sample PDF
+                                </Button>
+                            </li>
+                            <li>
+                                <Button class={styles.button} clickHandler={this.removePdf}>
+                                    Remove PDF
+                                </Button>
+                            </li>
                         </ul>
                     ),
                     sectionRight: (

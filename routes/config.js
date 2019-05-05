@@ -66,9 +66,10 @@ router.get('/sfschema/:sfconnid/:schemaid', jwtAuthenticate, function(req, res, 
                 });
             }
 
+            console.log(result[0].config.slice(result[0].config.length - 10, result[0].config.length));
             return res.json({
                 success: true,
-                config: JSON.parse(result[0].config),
+                config: result[0].config,
             })
         }
     );

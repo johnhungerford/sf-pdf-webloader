@@ -85,27 +85,31 @@ var renderOpenUrl = function() {
   });
 };
 
-var renderLoadingStart = function(msg) {
+*/
 
+var renderLoadingStart = function(msg) {
+  return null;
+  /*
   $('.ld-msg').empty();
   $('.ld-msg').append(msg);
   $('.loading').modal('show');
   setTimeout(function () {
     renderLoadingEnd();
   }, 10000);
+  */
 
-}
+};
 
 var renderLoadingEnd = function() {
-
-  setTimeout(function() {
+  return 1;
+  /*setTimeout(function() {
     $('.loading').modal('hide');
   }, 200);
   $('.ld-msg').empty();
-  
+  */
 
-}
-
+};
+/*
 var renderBaseSearch = function() {
   var map = mf.getBorR();
 
@@ -545,13 +549,9 @@ const renderInstructionsHide = function () {
 }
 
 module.exports.renderDoc =renderDoc;
-module.exports.renderSelectionErr = renderSelectionErr;*/
-module.exports.renderError = renderError;
-module.exports.renderErr = renderError;/*
+module.exports.renderSelectionErr = renderSelectionErr;
 module.exports.renderAlert = renderAlert;
 module.exports.renderOpenUrl = renderOpenUrl;
-module.exports.renderLoadingStart = renderLoadingStart;
-module.exports.renderLoadingEnd = renderLoadingEnd;
 module.exports.renderBaseSearch = renderBaseSearch;
 module.exports.renderSfView = renderSfView;
 module.exports.convertDate = convertDate;
@@ -561,3 +561,8 @@ module.exports.renderIndexCreate = renderIndexCreate;
 module.exports.renderAll = renderAll;
 module.exports.renderInstructions = renderInstructions;
 module.exports.renderInstructionsHide = renderInstructionsHide;*/
+
+module.exports.renderError = renderError;
+module.exports.renderErr = renderError;
+module.exports.renderLoadingStart = renderLoadingStart;
+module.exports.renderLoadingEnd = renderLoadingEnd;

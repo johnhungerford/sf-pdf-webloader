@@ -10,6 +10,12 @@ module.exports = {
     sdata: { empty: true },
     init: true,
 
+    fldentry: {
+        value: null,
+        focus: false,
+        submit: false,
+    },
+
     // Where is the cursor?
     mdownpos: [],
 
@@ -17,6 +23,7 @@ module.exports = {
     auth: {
         promptlogin: false,
         username: null,
+        password: null,
         loggedin: false, 
     },
 
@@ -32,6 +39,13 @@ module.exports = {
         sfschemata: {list:[], selected:null},
         sfconns: {list:[], selected:null},
         sfconnconfig: null,
+    },
+
+    doc: {
+        html: null,
+        render: false,
+        sample: false,
+        selectionerr: null,
     },
 
     // temporary aspects

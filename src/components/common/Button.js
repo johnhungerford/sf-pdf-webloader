@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import * as style from './Button.module.css';
+import * as styles from './Button.module.css';
 
 export default class Button extends Component {
     constructor(props) {
@@ -8,8 +8,21 @@ export default class Button extends Component {
     }
 
     render() {
+        if (this.props.type === 'file') {
+            return (
+                <span className={`${styles.button} ${this.props.class}`}>
+                    {this.props.children}
+                    <input 
+                        className={styles.fileInput}
+                        type='file' 
+                        onChange={this.props.fileLoadHandler} 
+                    />
+                </span>
+            )
+        }
+
         return (
-            <button className={`${style.button} ${this.props.class}`} onClick={this.props.clickHandler}>
+            <button className={`${styles.button} ${this.props.class}`} onClick={this.props.clickHandler}>
                 {this.props.children}
             </button>
         );

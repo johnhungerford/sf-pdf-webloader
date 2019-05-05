@@ -4,6 +4,8 @@ var fs = require('fs');
 var path = require('path');
 var router = express.Router();
 var formidable = require('formidable');
+var crypto = require('crypto');
+const shortid = require('shortid');
 
 const jwtAuthenticate = require('./jwtauthenticate');
 
@@ -43,38 +45,9 @@ router.post('/load', jwtAuthenticate, function(req, res, next) {
 			return;
 		}
 
-		var file = files.file;
-		var converter = new pdftohtml( file.path, 'doc.html' );
-		console.log('prepared for conversion');
-		converter.add_options(['--dest-dir ./doc']);
-		converter.convert('default').then(function(){
-			fs.unlink(file.path, function(err) {
-				if(err) {
-					console.error('Error trying to delete uploaded pdf: '+err);
-					res.json({err: new Error('error deleting uploaded pdf'), success: false});
-				}
-		
-				res.json({success: true});
-				return;
-			});
-		}).catch(function(error) {
-			fs.unlink(file.path, function(err) {
-				if(err) {
-					console.log('Error trying to delete uploaded pdf: '+err);
-					res.json({err: err, success: false});
-				}
-		
-				console.error('Error converting file from pdf');
-				res.json({err: 'Error converting file from pdf', success: false});
-				return;
-			});
+		const file = files.file;
 
-		});
-
-		converter.progress(function(ret) {
-			console.log ((ret.current*100.0)/ret.total + " %");
-		});
-
+		return hashFile(file.path, req, res, next)
     });
 
 	form
@@ -114,3 +87,113 @@ router.get('/remove', jwtAuthenticate, function(req, res, next) {
 });
 
 module.exports = router;
+
+const hashFile = (inPath, req, res, next) => {
+	console.log('hashing file...');
+	fs
+		.createReadStream(inPath)
+		.pipe(crypto.createHash('sha1')
+		.setEncoding('hex'))
+		.on('finish', function() { 
+		queryFile(
+			this.read(), 
+			inPath,
+			req, res, next
+		); 
+	});
+}
+
+const queryFile = (hash, filePath, req, res, next) => {
+	console.log('querying file (do we already have it?');
+	console.log(`hash: ${hash}`);
+	global.mysql.query(
+		`SELECT id, html FROM documents WHERE filehash="${hash}"`,
+		(err, result) => {
+			if (err) return res.json({success: false, message: `Could not execute document query: ${err}`});
+			if (result.length > 1) return res.json({success: false, message: 'sql err: file not unique!'});
+			if (result.length === 1) return returnFile (result[0].id, result[0].html, req, res, next);
+			return convertFile(hash, filePath, req, res, next); 
+		}
+	);
+}
+
+const returnFile = (id, html, req, res, next) => {
+	console.log('returning file...');
+	return res.json({ 
+		success: true,
+		html: html,
+	});
+}
+
+const convertFile = (hash, inPath, req, res, next) => {
+	console.log('converting files');
+	const outName = `temphtml_${shortid.generate()}_${shortid.generate()}`;
+	var converter = new pdftohtml( inPath, outName );
+	console.log('prepared for conversion');
+	converter.add_options([`--dest-dir ./doc`]);
+	converter.convert('default').then(function(){
+		return uploadFile(
+			inPath, 
+			path.join(global.appRoot, 'doc', outName), 
+			hash,
+			req, res, next);
+	}).catch(function(error) {
+		fs.unlink(inPath, function(err) {
+			if(err) return res.json({success: false, message: `Error deleting file -- ${err.message} -- when cleaning up after err converting: ${error.message}`});
+	
+			return res.json({message: `Error converting file from pdf: ${error.message}`, success: false});
+		});
+
+	});
+
+	converter.progress(function(ret) {
+		console.log ((ret.current*100.0)/ret.total + " %");
+	});
+}
+
+const uploadFile = (pdfPath, htmlPath, hash, req, res, next) => {
+	console.log('uploading files');
+	fs.open(pdfPath, 'r', (status, fd) => {
+		if (status) return res.json({success: false, message: `failed to open pdf for sql upload: ${status}`});
+		const fileSize = getFilesizeInBytes(pdfPath);
+		const buffer = new Buffer(fileSize);
+		fs.read(fd, buffer, 0, fileSize, 0, function (err, num) {
+			if (err) return res.json({success: false, message: `failed to read pdf for sql upload: ${err.message}`});
+			
+			fs.readFile(htmlPath, 'utf8', (err2, data) => {
+				console.log(`THIS SHOULD BE HTML: ${data}`);
+				if (err2) return res.json({success: false, message: `failed to html for sql upload: ${err2.message}`});
+				global.mysql.query(
+					"INSERT INTO documents SET ?", 
+					{
+						fileblob: buffer,
+						html: data,
+						filehash: hash,
+						type: 'pdf',
+					}, 
+					(err3, result) => {
+						if(err3) return res.json({success: false, message: `unable to upload files to database: ${err3.message}`});
+						
+						fs.unlink(pdfPath, (err4) => {
+							if(err4) return res.json({message: 'error deleting uploaded pdf', success: false});
+							fs.unlink(htmlPath, (err5) => {
+								if (err5) return res.json({message: 'error deleting html from conversion', success: false});
+								return res.json({
+									success: true,
+									html: data,
+									mysqlresponse: result,
+								});
+							});
+						});
+					}
+				);
+			});
+		});
+	});
+}
+
+function getFilesizeInBytes(filename) {
+    const stats = fs.statSync(filename);
+    const fileSizeInBytes = stats.size;
+    return fileSizeInBytes;
+}

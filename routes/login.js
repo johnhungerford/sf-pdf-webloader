@@ -8,6 +8,10 @@ router.post('/', function(req, res, next) {
     console.log('Logging in...');
     console.log(req.session);
 
+    if (req.body.test) {
+        return res.json({ success: true });
+    }
+
     if (req.body.logout) {
         delete req.session.webloadertoken;
         return res.json({ success: true });

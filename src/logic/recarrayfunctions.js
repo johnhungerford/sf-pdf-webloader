@@ -1,7 +1,7 @@
-const d = require('./data.js');
+const d = require('../components/state');
 const mf = require('./mapfunctions.js');
 const sf = require('./searchfunctions.js');
-const rn = require('./render.js');
+const rn = require('../components/render.js');
 
 /** 
 /* Resets the global record array and its index tracker, initializing it with base records set to
@@ -244,7 +244,7 @@ const basesUpToDate = function() {
   return true;
 }
 
-const setValue = function(rin, fin, value, stateSetter) {
+const setValue = function(stateSetter, rin, fin, value) {
   const fm = mf.getFm(rin, fin);
   let valout;
 
@@ -456,6 +456,13 @@ const prevf = function() {
 
   return true;
 };
+
+const submit = function(stateSetter) {
+  setValue(stateSetter, d.ri, d.fi, d.fldentry.value);
+  d.fldentry.focus = true;
+  nextr;
+  stateSetter(d);
+}
 
 const jumpTo = function(rin) {
   if(!d.r[rin]) return false;
@@ -843,6 +850,52 @@ const updateR = function() {
   return true;
 };
 
+const validateSelection = function(str) {
+  str = str.trim();
+  const $fldinput = $('.fldinput');
+  const type = mf.getFm().type;
+  let outval = true;
+
+  // If fldinput is an <input> tag
+  if($fldinput.prop('nodeName') === 'INPUT') {
+    // If fldinput is of type "text"
+    if($fldinput.attr('type') === 'text') {
+      // Reject if there are any line breaks
+      if(str.indexOf('\n') > -1) outval = false;
+      // Reject if it is longer than the 'size' attribute of the input
+      if(str.length > $fldinput.attr('size')) outval = false;
+    } 
+
+  // If fldinput is a <select> tag
+  } else if($fldinput.prop('nodeName') === 'SELECT') {
+    outval = false;
+    $('.fldinput option').each(function(){
+      if (this.value == str) {
+        outval = true;
+      }
+    });
+  } 
+
+  if(type === 'phone') {
+    if(str.length > 20) outval = false;
+    if(/[\&\@\$\%\^\{\}]/.test(str)) outval = false;
+    if(!/\d/.test(str)) outval = false;
+  } else if(type === 'date') {
+    if(str.length > 19) outval = false;
+  } else if(type === 'email') {
+    const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    if (!re.test(str)) outval = false;
+  } else if(type === 'url') {
+    const re = /[\s\"]+/
+    const re2 = /\.+/
+    if (re.test(str)) outval = false;
+    if (!re2.test(str)) outval = false;
+  }
+
+  return outval;
+}
+
+module.exports.submit = submit;
 module.exports.initR = initR;
 module.exports.orderR = orderR;
 module.exports.isNew = isNew;

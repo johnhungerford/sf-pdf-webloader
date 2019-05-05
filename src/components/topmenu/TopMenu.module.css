@@ -1,24 +1,3 @@
-.allowOverflow {
-    overflow-y: visible;
-}
-
-.menu {
-    display: flex;
-    margin: 0;
-    padding: 0;
-}
-
-.sectionLeft {
-    padding: 0;
-    float: left;
-}
-
-.sectionRight {
-    width: auto;
-    text-align: center;
-    overflow: hidden;
-}
-
 .left {
     text-align: left;
 }
@@ -43,11 +22,4 @@
 
 .dropdownLeft {
     margin-right: 5px;
-}
-
-.appButtons {
-    display: inline-block;
-    text-align: right;
-    margin: 0;
-    padding: 0;
 }

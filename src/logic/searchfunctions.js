@@ -1,7 +1,7 @@
-const d = require('./state.js');
+const d = require('../components/state.js');
 const mf = require('./mapfunctions.js');
 const rf = require('./recarrayfunctions.js');
-const rn = require('./render.js');
+const rn = require('../components/render.js');
 const ajax = require('./ajaxfunctions');
 
 const searchBase = function(stateSetter, rin) {
@@ -43,6 +43,7 @@ const searchBase = function(stateSetter, rin) {
 
   rn.renderLoadingStart(stateSetter, "Searching for " + bm.appname);
   ajax.postJSON(
+    stateSetter,
     "/api/find",
     searchObj,
     function(data) {
@@ -103,6 +104,7 @@ const searchIndexRecord = function(stateSetter, rin, fin) {
 
   rn.renderLoadingStart(stateSetter, "Searching for " + map.fields[fin].indexto);
   ajax.postJSON(
+    stateSetter,
     "/api/find",
     searchObj,
     function(data) {
@@ -140,9 +142,9 @@ const loadAllRecords = function(stateSetter, callback) {
     }
 
     ajax.postJSON(
-      url: "/api/find",
-      searchObj,
-      function(data) {
+      stateSetter,
+      "/api/find",
+      (data) => {
         loaded += 1;
         if (data) {
           for (let l in data) {
@@ -158,7 +160,7 @@ const loadAllRecords = function(stateSetter, callback) {
           });
         }
       },
-      function(err) { stateSetter, err.message }
+      (err) => { stateSetter, err.message }
     );
   }
 
@@ -187,6 +189,7 @@ const loadAllRecords = function(stateSetter, callback) {
     }
 
     ajax.postJSON(
+      stateSetter,
       "/api/find",
       searchObj,
       function(data) {

@@ -1,47 +1,39 @@
-const rn = require('./render.js');
+const rn = require('../components/render.js');
+const ajax = require('./ajaxfunctions')
 const d = require('../components/state');
 
-const addDoc = function(fd, stateSetter) {
+const addDoc = function(stateSetter, fd) {
 	rn.renderLoadingStart('Loading document');
 
 	if( !fd ) { return false; }
 
 	if( !fd.get('file') ) { return false; }
 
-	$.ajax({
-            url: '/doc/load',  
-            type: 'POST',
-            data: fd,
-            success:function(data){
-            	rn.renderLoadingEnd();
-            	if ( data.err) {
-            		rn.renderError(stateSetter, data.err);
-            		return false;
-            	} else {
-            		stateSetter(d);
-            	}
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
+	ajax.postForm(
+		stateSetter,
+		'/doc/load',  
+		fd,
+		(data) => {
+			console.log(data);
+			rn.renderLoadingEnd();
+			if ( data.err) {
+				rn.renderError(stateSetter, data.err);
+				return false;
+			}
+			
+			if ( data.success && data.html ) {
+				d.doc.html = data.html;
+				d.doc.render = true;
+				stateSetter(d);
+			}
+		},
+		(err) => { 
+			rn.renderError(stateSetter, `Unable to post data to ${'/doc/load'}: ${err.message}`); 
+		}
+	);
 
 	return true;
 
 } 
 
-const removeDoc = function(stateSetter) {
-	rn.renderLoadingStart(stateSetter, 'Removing Document');
-	$.getJSON('/doc/remove', function(data) {
-		rn.renderLoadingEnd(stateSetter);
-		/*if( data.err ) {
-			rn.renderError(data.err);
-			return;
-		}*/
-		stateSetter(d);
-	});
-
-}
-
 module.exports.addDoc = addDoc;
-module.exports.removeDoc = removeDoc;

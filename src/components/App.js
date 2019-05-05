@@ -17,31 +17,19 @@ export default class App extends Component {
         super(props);
         this.state = require('./state.js');
 
-        ajax.postJSON(
-            `/login`,
-            {},
-            (data) => {
-                if (data.success) {
-                    return this.setState((currentState)=>{
-                        return {
-                            ...currentState,
-                            auth: {
-                                ...currentState.auth,
-                                loggedin: true,
-                            }
-                        }
-                    });
-                }
+        console.log('HERE IS STARTING D:');
+        console.log(d);
 
-                return this.setState((currentState)=>{
-                    return {
-                        ...currentState,
-                        auth: {
-                            ...currentState.auth,
-                            promptlogin: true,
-                        }
-                    }
-                });
+        ajax.postJSON(
+            this.props.stateSetter,
+            `/login`,
+            { test: true },
+            (data)=>{
+                if (data.success) {
+                    d.auth.promptlogin = false;
+                    d.auth.loggedin = true;
+                    this.setState(d);
+                }
             }
         );
     }
@@ -58,27 +46,24 @@ export default class App extends Component {
 
     render() {
         console.log(d);
-        if (this.state.auth.promptlogin) {
+        if (d.auth.promptlogin) {
             return (
                 <div >
                     <Login 
-                        auth={this.state.auth}
+                        auth={d.auth}
                         stateSetter={this.stateSetter}
                     />
                 </div>
             )
         }
 
-        console.log(this.state.auth);
+        console.log(d.auth);
 
         return (
             <div>
                 <div>
                     <TopMenu
                         class={styles.menu} 
-                        state={this.state}
-                        config={this.state.config}
-                        conn={this.state.conn}
                         stateSetter={this.stateSetter}
                     />
                     <div className={styles.outerDiv}>
@@ -95,14 +80,13 @@ export default class App extends Component {
                             />
                             <DocView 
                                 class={styles.docView} 
-                                url={this.state.docUrl}
                                 stateSetter={this.stateSetter}
                             />
                         </div>
                     </div>
                 </div>
                 <PopupStack 
-                    popups={this.state.popups} 
+                    popups={d.popups} 
                     stateSetter={this.stateSetter}
                 />
             </div>

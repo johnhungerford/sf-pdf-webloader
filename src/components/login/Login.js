@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Panel from '../common/Panel.js';
 import Button from '../common/Button.js';
 
+import * as d from '../state';
 import * as rn from '../render';
 import * as ajax from '../../logic/ajaxfunctions';
 
@@ -12,61 +13,40 @@ import { runInNewContext } from 'vm';
 export default class DataEntry extends Component {
     constructor(props) {
         super(props);
+
+        d.auth.password = null;
     }
 
     nameChange = (e) => {
         const value = e.target.value;
-        this.props.stateSetter((currentState) => {
-            return { 
-                ...currentState, 
-                auth: {
-                    ...currentState.auth, 
-                    username: value
-                }
-            };
-        });
+        d.auth.username = value;
+        this.props.stateSetter(d);
     }
     
     pwdChange = (e) => {
         const value = e.target.value;
-        this.props.stateSetter((currentState) => {
-            return { 
-                ...currentState, 
-                auth: {
-                    ...currentState.auth, 
-                    password: value
-                }
-            };
-        });
+        d.auth.password = value;
+        this.props.stateSetter(d);
     }
 
     submit = () => {
         console.log('submitted!');
         console.log(`username: ${this.props.auth.username} password: ${this.props.auth.password}`)
         ajax.postJSON(
+            this.props.stateSetter,
             '/login',
             { 
-                username: this.props.auth.username,
-                password: this.props.auth.password,
+                username: d.auth.username,
+                password: d.auth.password,
             },
             (result) => {
-                console.log('hello?');
-                console.log(result);
-                if (result.success) {
-                    this.props.stateSetter((currentState)=>{
-                        return { 
-                            ...currentState, 
-                            auth: {
-                                username: result.username,
-                                loggedin: true,
-                            }
-                        };
-                    });
-
-                    return;
+                if (!result.success) {
+                    return rn.renderErr(this.props.stateSetter, result.message);
                 }
 
-                return rn.renderErr(this.props.stateSetter, result.message);
+                d.auth.loggedin = true;
+                d.auth.promptlogin = false;
+                this.props.stateSetter(d);
             },
             (err) => { return rn.renderErr(this.props.stateSetter, err.message) }
         );
@@ -93,14 +73,16 @@ export default class DataEntry extends Component {
                             <div className={styles.userName}>
                                 Username: <input 
                                     id='username' 
-                                    type='text' 
+                                    type='text'
+                                    value={d.auth.username} 
                                     onChange={this.nameChange}
                                 />
                             </div>
                             <div className={styles.password}>
                                 Password: <input 
                                     id='password' 
-                                    type='password' 
+                                    type='password'
+                                    value={d.auth.password} 
                                     onChange={this.pwdChange}
                                 />
                             </div>
