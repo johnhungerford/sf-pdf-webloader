@@ -2,6 +2,7 @@ const d = require('../components/state');
 const mf = require('./mapfunctions.js');
 const sf = require('./searchfunctions.js');
 const rn = require('../components/render.js');
+const ajax = require('./ajaxfunctions.js');
 
 /** 
 /* Resets the global record array and its index tracker, initializing it with base records set to
@@ -11,9 +12,11 @@ const initR = function(stateSetter) {
   d.r = [];
   d.ri = 0;
   addSearchRecords(stateSetter);
-  d.search = true;
+  d.search = false;
   d.sdata = { empty: true };
   d.fi = d.r[d.ri].order[0];
+  setFldInput();
+  d.stage = 'searchbase';
   stateSetter(d);
 }
 
@@ -230,7 +233,7 @@ const isChanged = function(rin) {
 // Check whether none of the records have been changed from their original values
 const allUnchanged = function() {
   for (let i in d.r) {
-    if (isChanged(i)) return false;
+    if (isChanged(i) || d.r[i].delete) return false;
   }
 
   return true;
@@ -330,18 +333,29 @@ const nextrAndAdd = function(stateSetter, rin) {
   }
 
   d.fi = d.r[d.ri].order[0];
+  setFldInput();
   return true;
 }
 
 // Cycle to the next record without adding a new record
-const nextrNoAdd = function() {
+const nextrNoAdd = function(stateSetter) {
   if (isNew(d.ri) && !isChanged(d.ri)) { 
     d.r.splice(d.ri, 1); 
   } else {
     d.ri += 1;
   }
 
+  const oldri = d.ri;
+  if (d.r[d.ri].delete) {
+    console.log('DELETE!!');
+    nextr(stateSetter);
+    if (d.ri === oldri) return prevr();
+    setFldInput();
+    return;
+  }
+
   d.fi = d.r[d.ri].order[0];
+  setFldInput();
   return true;
 }
 
@@ -367,11 +381,11 @@ const nextr = function(stateSetter) {
     }
   } else if (d.ri < d.r.length - 1) {
     if ( d.r[d.ri+1].ri === d.r[d.ri].ri || d.r[d.ri].type === 'base' ) {      
-      return nextrNoAdd();
+      return nextrNoAdd(stateSetter);
     } else if (!isNew(d.ri) || (isNew(d.ri) && isChanged(d.ri)) ) {
       return nextrAndAdd(stateSetter, d.r[d.ri].ri);
     } else if (d.r[d.ri + 1].ri === d.r[d.ri].ri + 1) {
-      return nextrNoAdd(); 
+      return nextrNoAdd(stateSetter); 
     } else {
       return nextrAndAdd(stateSetter, d.r[d.ri].ri + 1);
     }
@@ -381,7 +395,7 @@ const nextr = function(stateSetter) {
 };
 
 // 
-const prevrAndAdd = function(rin) {
+const prevrAndAdd = function(stateSetter, rin) {
   if(rin < 0 || rin >= d.dm.r.length) return false;
 
   addRecord(stateSetter, rin);
@@ -390,29 +404,37 @@ const prevrAndAdd = function(rin) {
   }
 
   d.fi = d.r[d.ri].order[0];
+  setFldInput();
   return true;
 }
 
 //
-const prevrNoAdd = function() {
+const prevrNoAdd = function(stateSetter) {
   if (isNew(d.ri) && !isChanged(d.ri) && d.r[d.ri].type === 'record') { 
     d.r.splice(d.ri, 1); 
   }
 
   d.ri -= 1;
+  if (d.r[d.ri].delete) {
+    prevr(stateSetter);
+    setFldInput();
+    return;
+  }
+
   d.fi = d.r[d.ri].order[0];
+  setFldInput();
   return true;
 }
 
 // 
-const prevr = function() {
+const prevr = function(stateSetter) {
   if(d.ri === 0) {
     return false;
   } else if ( d.ri < d.dm.b.length ) {
-    prevrNoAdd();
+    prevrNoAdd(stateSetter);
   } else {
     if(d.r[d.ri].ri === 0 || d.r[d.ri - 1].ri === d.r[d.ri].ri || (isNew(d.ri - 1) && !isChanged(d.ri - 1))) {
-      prevrNoAdd();
+      prevrNoAdd(stateSetter);
     } else {
       prevrAndAdd(stateSetter, d.r[d.ri].ri - 1);
     }
@@ -422,9 +444,9 @@ const prevr = function() {
 };
 
 // 
-const nextf = function() {
+const nextf = function(stateSetter) {
   if (d.fi === d.r[d.ri].order[d.r[d.ri].order.length - 1]) {
-    return nextr();
+    return nextr(stateSetter);
   } else {
     for (var i = 0; i < d.r[d.ri].order.length; i++) {
       if (d.fi === d.r[d.ri].order[i]) {
@@ -434,15 +456,17 @@ const nextf = function() {
     }
   }
 
+  setFldInput();
   return true;
 };
 
-const prevf = function() {
+const prevf = function(stateSetter) {
   if (d.fi === d.r[d.ri].order[0]) {
-    if (!prevr()) {
+    if (!prevr(stateSetter)) {
       return false;
     } else {
       d.fi = d.r[d.ri].order[d.r[d.ri].order.length - 1];
+      setFldInput();
       return true;
     }
   } else {
@@ -454,6 +478,7 @@ const prevf = function() {
     }
   }
 
+  setFldInput();
   return true;
 };
 
@@ -469,6 +494,8 @@ const jumpTo = function(rin) {
 
   d.ri = rin;
   d.fi = d.r[rin].order[0];
+  setFldInput();
+  console.log(`Setting fldentry:\n \tValue: ${d.fldentry.value}\n\tOld Value: ${d.fldentry.oldval}`);
   return true;
 }
 
@@ -602,6 +629,7 @@ const addSearchRecords = function() {
 
   d.ri = 0;
   d.fi = d.r[d.ri].order[0];
+  setFldInput();
 };
 
 const addBaseRecord = function(stateSetter, bInd, bRec) {
@@ -636,7 +664,7 @@ const addBaseRecord = function(stateSetter, bInd, bRec) {
         if (d.r[j].type === "search") {
           d.ri = j;
           d.fi = d.r[j].order[0];
-
+          setFldInput();
           return true;
         }
       }
@@ -644,6 +672,7 @@ const addBaseRecord = function(stateSetter, bInd, bRec) {
       if(d.search) { 
         sf.clearBaseSearch(stateSetter);
         d.fi = d.r[i].order[0];
+        setFldInput();
         sf.loadAllRecords(stateSetter); 
       }
 
@@ -731,19 +760,19 @@ const addRecord = function(stateSetter, rInd, rec) {
 };
 
 const updateIndexFields = function (stateSetter, callback, rin) {
-  if (!callback || typeof(callback) !== 'function') return false;
+  if (!callback || ! callback instanceof Function) return false;
 
   rn.renderLoadingStart(stateSetter, 'Looking up index fields');
   let ctr = 0;
   let total = 0;
   if( rin !== undefined && rin < d.r.length ) {
-    let map = rf.getBorR(rin);
+    let map = mf.getBorR(rin);
     for(let j in d.r[rin].f) {
       if ( map.fields[j].type === 'index' && d.r[rin].f[j].value ) total += 1;
     }
 
     if (total === 0) { 
-      rn.renderLoadingEnd(stateSetter);
+      rn.renderLoadingEnd(stateSetter, 0);
       callback();
       return;
     }
@@ -751,25 +780,20 @@ const updateIndexFields = function (stateSetter, callback, rin) {
     for(let j in d.r[rin].f) {
       if (map.fields[j].type === 'index' && d.r[rin].f[j].value) {
         let fieldsvar = {};
-        let callback;
         fieldsvar[map.fields[j].indexshow] = 1;
-        $.ajax({
-          type: "POST",
-          contentType: "application/json",
-          url: "/api/find",
-          dataType: "json",
-          async: true,
-          //json object to sent to the authentication url
-          data: JSON.stringify({
+        ajax.postJSON(
+          stateSetter,
+          '/api/find',
+          {
             sobject: map.fields[j].indexto,
-            conditions: { Id: d.r[i].f[j].value },
+            conditions: { Id: d.r[rin].f[j].value },
             fields: fieldsvar,
-          }),
-          success: (data) => {
+          },
+          (data) => {
             ctr += 1;
 
             if(data[0]) {
-              d.r[i].f[j].showval = data[0][map.fields[j].indexshow];
+              d.r[rin].f[j].showval = data[0][map.fields[j].indexshow];
             }
 
             if (ctr === total) {
@@ -777,7 +801,10 @@ const updateIndexFields = function (stateSetter, callback, rin) {
               callback();
             }
           },
-        });
+          (err) => {
+            rn.renderError(stateSetter, err.message);
+          }
+        );
       }
     }
 
@@ -806,19 +833,15 @@ const updateIndexFields = function (stateSetter, callback, rin) {
       if ( map.fields[j].type == 'index' && d.r[i].f[j].value ) {
         let fieldsvar = {};
         fieldsvar[map.fields[j].indexshow] = 1;
-        $.ajax({
-          type: "POST",
-          contentType: "application/json",
-          url: "/api/find",
-          dataType: "json",
-          async: true,
-          //json object to sent to the authentication url
-          data: JSON.stringify({
+        ajax.postJSON(
+          stateSetter,
+          '/api/find',
+          {
             sobject: map.fields[j].indexto,
             conditions: { Id: d.r[i].f[j].value },
             fields: fieldsvar,
-          }),
-          success: (data) => {
+          },
+          (data) => {
             ctr += 1;
 
             if(data[0]) {
@@ -829,21 +852,19 @@ const updateIndexFields = function (stateSetter, callback, rin) {
               rn.renderLoadingEnd(stateSetter);
               callback();
             }
-          }
-        });
-      
+          },
+          (err) => rn.renderError(stateSetter, err.message)
+        );
       }
-    
     }
-  
   }
 }
 
-const updateR = function() {
+const updateR = function(stateSetter) {
   fm = mf.getFm();
   if (!d.r[d.ri].f[d.fi].origval || d.r[d.ri].f[d.fi].value != d.r[d.ri].f[d.fi].origval) {
     if (d.r[d.ri].type === "search" && d.r[d.ri].new) {
-      return sf.searchBase(d.ri);
+      return sf.searchBase(stateSetter, d.ri);
     }
   }
 
@@ -852,49 +873,119 @@ const updateR = function() {
 
 const validateSelection = function(str) {
   str = str.trim();
-  const $fldinput = $('.fldinput');
+  const fm = mf.getFm();
   const type = mf.getFm().type;
   let outval = true;
 
-  // If fldinput is an <input> tag
-  if($fldinput.prop('nodeName') === 'INPUT') {
-    // If fldinput is of type "text"
-    if($fldinput.attr('type') === 'text') {
-      // Reject if there are any line breaks
-      if(str.indexOf('\n') > -1) outval = false;
-      // Reject if it is longer than the 'size' attribute of the input
-      if(str.length > $fldinput.attr('size')) outval = false;
-    } 
-
-  // If fldinput is a <select> tag
-  } else if($fldinput.prop('nodeName') === 'SELECT') {
-    outval = false;
-    $('.fldinput option').each(function(){
-      if (this.value == str) {
-        outval = true;
-      }
-    });
-  } 
-
-  if(type === 'phone') {
-    if(str.length > 20) outval = false;
-    if(/[\&\@\$\%\^\{\}]/.test(str)) outval = false;
-    if(!/\d/.test(str)) outval = false;
-  } else if(type === 'date') {
-    if(str.length > 19) outval = false;
-  } else if(type === 'email') {
-    const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-    if (!re.test(str)) outval = false;
-  } else if(type === 'url') {
-    const re = /[\s\"]+/
-    const re2 = /\.+/
-    if (re.test(str)) outval = false;
-    if (!re2.test(str)) outval = false;
+  switch (fm.type) {
+    case 'text':
+      if (str.length > fm.length) return false;
+      if (fm.length <= 40 && str.indexOf('\n') > -1) return false; 
+      return true;
+    case 'phone':
+      if(str.length > 20) return false;
+      if(/[\&\@\$\%\^\{\}]/.test(str)) return false;
+      if(!/\d/.test(str)) return false;
+      return true;
+    case 'date':
+      if(str.length > 19) return false;
+      return true;
+    case 'picklist':
+      for (let i in fm.values) if (str === fm.values[i]) return true;
+      return false;
+    case 'email':
+      const reEmail = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      if (!reEmail.test(str)) return false;
+    case 'url':
+      const reUrl = /[\s\"]+/;
+      const reUrl2 = /\.+/;
+      if (reUrl.test(str)) return false;
+      if (!reUrl2.test(str)) return false;
   }
 
-  return outval;
+  return true;
 }
 
+const setFldInput = function() {
+  const rmap = mf.getBorR();
+  let value = null;
+  if (d.r[d.ri].f[d.fi].value !== null && d.r[d.ri].f[d.fi].value !== '') {
+      if ( rmap.fields[d.fi].type == 'index' ) {
+          if (d.r[d.ri].f[d.fi].showval ) {
+              value = d.r[d.ri].f[d.fi].showval;
+          }
+      } else if ( rmap.fields[d.fi].type == 'date' ) {
+          value = rn.convertDate(d.r[d.ri].f[d.fi].value);
+      } else if(rmap.fields[d.fi].type == 'boolean' ) {
+          if ( d.r[d.ri].f[d.fi].value ) { 
+              value = true; 
+          } else { 
+              value = false; 
+          }
+      } else {
+          value = d.r[d.ri].f[d.fi].value;
+      }
+  }
+
+  d.fldentry = {
+    ...d.fldentry,
+    value: value,
+    oldval: value,
+  }
+}
+
+const clearState = function() {
+  d.auth = {
+    promptlogin: false,
+    username: null,
+    password: null,
+    loggedin: false, 
+  };
+
+  d.sfconfig = {
+    queryconns: true,
+    sfschemata: {list:[], selected:null},
+    sfconns: {list:[], selected:null},
+    sfconnconfig: null,
+  };
+
+  // Sf record data
+  d.dm = null;
+
+  d.stage = 'off';
+  d.search = false;
+  d.sdata = { empty: true };
+
+  d.r = [];
+  d.ri = 0;
+  d.fi = null;
+
+  d.fldentry = {
+      value: null,
+      focus: null,
+      submit: false,
+      blockKey: false,
+  };
+
+  d.doc = {
+      html: null,
+      render: false,
+      sample: false,
+      selectionerr: null,
+  };
+
+  // Popup stack
+  d.popups = [];
+
+  // Loading
+  d.loading = false;
+  d.loadmessage = null;
+
+  // Where is the cursor?
+  d.mdownpos = [];
+}
+
+module.exports.setFldInput = setFldInput;
 module.exports.submit = submit;
 module.exports.initR = initR;
 module.exports.orderR = orderR;
@@ -919,3 +1010,4 @@ module.exports.addBaseRecord = addBaseRecord;
 module.exports.addRecord = addRecord;
 module.exports.updateIndexFields = updateIndexFields;
 module.exports.updateR = updateR;
+module.exports.clearState = clearState;

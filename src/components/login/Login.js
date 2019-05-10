@@ -30,8 +30,6 @@ export default class DataEntry extends Component {
     }
 
     submit = () => {
-        console.log('submitted!');
-        console.log(`username: ${this.props.auth.username} password: ${this.props.auth.password}`)
         ajax.postJSON(
             this.props.stateSetter,
             '/login',
@@ -92,7 +90,17 @@ export default class DataEntry extends Component {
                                 class={styles.login}
                                 clickHandler={this.submit}
                             >Login</Button>
-                            <Button class={styles.register}>Register</Button>
+                            <Button 
+                                class={styles.register}
+                                clickHandler={() => {
+                                    d.auth.register = true;
+                                    d.auth.login = false;
+                                    d.auth.loggedin = false;
+                                    this.props.stateSetter(d);
+                                }}
+                            >
+                                Register
+                            </Button>
                         </div>
                     </div>
                 </Panel>

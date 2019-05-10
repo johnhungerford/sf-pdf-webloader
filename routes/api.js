@@ -38,6 +38,9 @@ router.post('/create', jwtAuthenticate, sfAuthenticate, function(req, res, next)
 		}
 	}
 
+	console.log('/api/create REQUEST:');
+	console.log(req.body.records);
+
 	conn.sobject(req.body.sobject)
 		.create(req.body.records, function(err,ret) {
 			if(err) { return next(err); }
@@ -69,6 +72,30 @@ router.post('/update', jwtAuthenticate, sfAuthenticate, function(req, res, next)
 			if(err) { return next(err); }
 			console.log('Successfully updated records: ' + ret);
 			res.json(ret);
+		});
+  
+});
+
+router.post('/delete', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
+	if (req.body.Id === undefined || 
+		req.body.Id === null ||
+		req.body.sObject === undefined ||
+		req.body.sObject === null
+	) return res.json({
+		success: false,
+		message: 'Missing record Id or object type for destroy operation!',
+		data: req.body,
+	});
+
+	if (res.locals.sfconn === undefined) return next(new Error('No sf connection!'));
+	const conn = res.locals.sfconn;
+
+	console.log(req.body);
+	conn.sobject(req.body.sObject)
+		.del(req.body.Id, (errSf, resSf) => {
+			if(errSf) return res.json({ success: false, message: 'unable to delete record', err: errSf });
+			console.log('Successfully deleted record: '+req.body.Id);
+			return res.json({success: true, data: resSf})
 		});
   
 });

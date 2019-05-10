@@ -3,7 +3,6 @@ const rn = require('../components/render');
 const ajax = require('./ajaxfunctions');
 
 module.exports.getSfConns = function(stateSetter, callback) {
-    console.log('getSfConns');
     ajax.getJSON(
         stateSetter,
         `/config/sfconn`, 
@@ -21,19 +20,19 @@ module.exports.getSfConns = function(stateSetter, callback) {
                     if (d.sfconfig.sfconns.selected === i) return;
                     d.sfconfig.sfconns.selected = i;
                     d.dm = null;
+                    d.ri = null;
+                    d.fi = null;
+                    d.stage = 'off';
                     d.sfconfig.sfschemata.list = [];
                     d.sfconfig.sfschemata.selected = null;
                     module.exports.getSfSchemata(stateSetter);
                 }
             }
             stateSetter(d);
-            console.log(d.sfconfig);
 
             if(callback instanceof Function) callback(data);
         },
         function(err) { 
-            console.log('was there an error??');
-            console.log(err, err.message);
             rn.renderError(stateSetter, err.message); 
         }
     );
@@ -62,9 +61,6 @@ module.exports.getSfConn = function(stateSetter, index, callback) {
 }
 
 module.exports.getSfSchemata = function(stateSetter, callback) {
-    console.log('getting schemata');
-    console.log(d.sfconfig);
-    console.log(`/config/sfschema/${d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id}`);
     ajax.getJSON(
         stateSetter,
         `/config/sfschema/${d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id}`, 
@@ -80,6 +76,10 @@ module.exports.getSfSchemata = function(stateSetter, callback) {
                 d.sfconfig.sfschemata.list[i].handler = (e) => {
                     if (d.sfconfig.sfschemata.selected === i) return;
                     d.sfconfig.sfschemata.selected = i;
+                    d.dm = null;
+                    d.ri = null;
+                    d.fi = null;
+                    d.stage = 'off';
                     module.exports.getDm(stateSetter);
                 }
             }
@@ -99,7 +99,6 @@ module.exports.getDm = function(stateSetter, callback) {
         return false;
     }
 
-    console.log(`/config/sfschema/${d.sfconfig.sfschemata.list[index].id}`);
     ajax.getJSON(
         stateSetter,
         `/config/sfschema/${d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id}/${d.sfconfig.sfschemata.list[index].id}`, 
@@ -115,6 +114,7 @@ module.exports.getDm = function(stateSetter, callback) {
             }
 
             d.dm = JSON.parse(data.config);
+            d.stage = 'off';
             stateSetter(d);
             if(callback instanceof Function) callback();
         },

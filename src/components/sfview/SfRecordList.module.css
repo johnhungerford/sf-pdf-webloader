@@ -1,0 +1,9 @@
+.recordList {
+    flex: 1;
+    width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    min-height: 0;
+    overflow-y: auto;
+    font-size: 12px;
+}

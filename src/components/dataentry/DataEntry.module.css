@@ -8,20 +8,36 @@
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
-    flex-grow: 1;
+    width: 15%
 }
 
 .divCenter {
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 70%;
+    height: 100%;
+    white-space: normal;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.divDataEntry {
+    display: flex;
     flex-direction: column;
-    flex-grow: 5;
+    align-items: center;
+    margin: auto;
+}
+
+.noresize {
+    resize: none;
 }
 
 .divRight {
     display: flex;
     flex-direction: row;
     align-items: center;
-    flex-grow: 1;
+    width: 15%;
 }
 
 .buttonLeft {
@@ -30,5 +46,6 @@
 
 .dataInput {
     display: block;
-    margin: auto;
+    font-size: 18;
+    margin-bottom: 20px;
 }

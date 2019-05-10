@@ -9,8 +9,12 @@ export default class SfSearchEntry extends Component {
 
     render() {
         return (
-            <div> 
-
+            <div 
+                key={this.props.keyprop}
+                className={styles.entry}
+                onClick={this.props.clickHandler}
+            > 
+                {this.props.children}
             </div>
         );
     }

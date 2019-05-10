@@ -46,7 +46,8 @@ const searchBase = function(stateSetter, rin) {
     stateSetter,
     "/api/find",
     searchObj,
-    function(data) {
+    (data) => {
+      d.stage = 'searchbase';
       d.search = true;
       d.sdata = {
         type: "base",
@@ -55,21 +56,10 @@ const searchBase = function(stateSetter, rin) {
         i: d.r[rin].bi,
         records: mf.convRecSA("base", d.r[rin].bi, data)
       };
-
-      $(document).on("searchSelect", function(e) {
-        if (!e) {
-          return false;
-        }
-        if (e.Id ) {
-          baseSearchSelected(stateSetter, e.Id);
-        } else {
-          return;
-        }
-      });
       rn.renderLoadingEnd(stateSetter);
       stateSetter(d);
     },
-    function(err) { rn.renderError(stateSetter, err.message) }
+    (err) => { rn.renderError(stateSetter, err.message) }
   );
 
 };
@@ -77,29 +67,48 @@ const searchBase = function(stateSetter, rin) {
 const clearBaseSearch = function(stateSetter) {
   d.search = false;
   d.sdata = { empty: true };
-  rn.renderSfView(stateSetter);
+  d.stage = 'main';
 };
 
-const searchIndexRecord = function(stateSetter, rin, fin) {
+const searchIndexRecord = function(stateSetter, rin, fin, indmap, value, callback) {
   var map = mf.getBorR(rin);
   var fm = map.fields[fin];
-
   if ( fm.type != 'index' ) { return false;}
 
-  var searchObj = {
-    sobject: fm.indexto,
-    conditions: {},
-    fields: {
-      Id: 1
+  if (indmap instanceof Object && value != undefined && callback instanceof Function) {
+    if (indmap.type !== 'index') return false;
+
+    var searchObj = {
+      sobject: indmap.indexto,
+      conditions: {},
+      fields: {
+        Id: 1
+      }
+    };
+
+    searchObj.conditions[indmap.indexshow] = {
+      $like: "%" + value.replace(/\s\s+/g, "%") + "%",
+    };
+  
+    for (var i in indmap.indexfields) {
+      searchObj.fields[i] = 1;
     }
-  };
-
-  searchObj.conditions[fm.indexshow] = {
-    $like: "%" + d.r[rin].f[fin].showval.replace(/\s\s+/g, "%") + "%"
-  };
-
-  for (var i in fm.indexfields) {
-    searchObj.fields[i] = 1;
+  } else {
+    var searchObj = {
+      sobject: fm.indexto,
+      conditions: {},
+      fields: {
+        Id: 1
+      }
+    };
+  
+    searchObj.conditions[fm.indexshow] = {
+      $like: "%" + d.r[rin].f[fin].showval.replace(/\s\s+/g, "%") + "%"
+    };
+  
+    for (var i in fm.indexfields) {
+      searchObj.fields[i] = 1;
+    }
   }
 
   rn.renderLoadingStart(stateSetter, "Searching for " + map.fields[fin].indexto);
@@ -107,22 +116,25 @@ const searchIndexRecord = function(stateSetter, rin, fin) {
     stateSetter,
     "/api/find",
     searchObj,
-    function(data) {
+    (data) => {
       rn.renderLoadingEnd(stateSetter);
+      if (callback instanceof Function) {
+        return rn.renderIndexSearch(stateSetter, rin, fin, data, indmap, callback); 
+      }
+
       return rn.renderIndexSearch(stateSetter, rin, fin, data);
     },
-    function(err) { rn.renderError(stateSetter, err.message) }
+    (err) => { 
+      rn.renderLoadingEnd(stateSetter);
+      rn.renderError(stateSetter, err.message) }
   );
 };
 
 const loadAllRecords = function(stateSetter, callback) {
+  console.log('loading all records...');
+  console.log(d.r.length);
   rn.renderLoadingStart(stateSetter, "Loading all records");
   let loaded = 0;
-  if(d.r.length > d.dm.b.length) {
-    let len = d.r.length;
-    for (let i = d.dm.b.length; i < len; i++) d.r.pop();
-  }
-
   for (let i = 0; i < d.dm.b.length; i++) {
     if (!d.r[i].f.Id.value) continue;
 
@@ -144,6 +156,7 @@ const loadAllRecords = function(stateSetter, callback) {
     ajax.postJSON(
       stateSetter,
       "/api/find",
+      searchObj,
       (data) => {
         loaded += 1;
         if (data) {
@@ -152,15 +165,28 @@ const loadAllRecords = function(stateSetter, callback) {
           }
         }
         
+        console.log(`Numbers of record types loaded: ${loaded}`);
+
         if (loaded === d.dm.b.length + d.dm.r.length) {
-          rf.orderR();
+          for (let k = 0; k < d.r.length; k++) {
+            if (d.r[k].new) d.r.splice(k, 1);
+            if (d.ri >= d.r.length) {
+              d.ri = d.r.length - 1;
+              d.fi = d.r[d.ri].order[0];
+            }
+          }
+
           rf.updateIndexFields(stateSetter, () => {
+            rf.orderR();
+            if (d.r[d.ri].f[d.fi] === undefined) d.fi = d.r[d.ri].order[0];
             stateSetter(d);
             if(callback && typeof(callback) === 'function') callback();
           });
         }
       },
-      (err) => { stateSetter, err.message }
+      (err) => { 
+        if (callback) return callback({ success: false, message: err });
+      }
     );
   }
 
@@ -192,7 +218,7 @@ const loadAllRecords = function(stateSetter, callback) {
       stateSetter,
       "/api/find",
       searchObj,
-      function(data) {
+      (data) => {
         loaded += 1;
         if (data) {
           for (let l in data) {
@@ -200,17 +226,28 @@ const loadAllRecords = function(stateSetter, callback) {
           }
         }
 
+        console.log(`Numbers of record types loaded: ${loaded}`);
+
         if (loaded === d.dm.b.length + d.dm.r.length) {
-          rf.orderR();
+          for (let k = 0; k < d.r.length; k++) {
+            if (d.r[k].new) d.r.splice(k, 1);
+            if (d.ri >= d.r.length) {
+              d.ri = d.r.length - 1;
+              d.fi = d.r[d.ri].order[0];
+            }
+          }
+
           rf.updateIndexFields(stateSetter, () => {
+            rf.orderR();
+            if (d.r[d.ri].f[d.fi] === undefined) d.fi = d.r[d.ri].order[0];
             stateSetter(d);
             if(callback && typeof(callback) === 'function') callback();
           });
         }
-
-        return true;
       },
-      function(err) { stateSetter, err.message }
+      (err) => { 
+        if (callback) return callback({ success: false, message: err });
+      }
     );
   }
 };
@@ -220,7 +257,7 @@ const indexSearchSelected = function(stateSetter, rin, fin, record) {
     return false;
   }
 
-  rf.setValue(rin, fin, record.Id);
+  rf.setValue(stateSetter, rin, fin, record.Id);
   const fm = mf.getFm(rin, fin);
   if (!record[fm.indexshow]) {
     return false;
@@ -228,7 +265,6 @@ const indexSearchSelected = function(stateSetter, rin, fin, record) {
 
   d.r[rin].f[fin].showval = record[fm.indexshow];
   rf.nextf();
-  stateSetter(d);
   return true;
 };
 

@@ -1,44 +1,36 @@
 module.exports = {
-    // Sf record data
-    dm: {},
-    r: [],
-    ri: 0,
-    fi: null,
-
-    // State of webloader
-    search: true,
-    sdata: { empty: true },
-    init: true,
-
-    fldentry: {
-        value: null,
-        focus: false,
-        submit: false,
-    },
-
-    // Where is the cursor?
-    mdownpos: [],
-
     // Authentification information
     auth: {
         promptlogin: false,
         username: null,
         password: null,
-        loggedin: false, 
+        loggedin: false,
+        register: false, 
     },
-
-    // Popup stack
-    popups: [],
-
-    // Loading
-    loading: false,
-    loadmessage: null,
 
     sfconfig: {
         queryconns: true,
         sfschemata: {list:[], selected:null},
         sfconns: {list:[], selected:null},
         sfconnconfig: null,
+    },
+
+    // Sf record data
+    dm: null,
+
+    stage: 'off',
+    search: false,
+    sdata: { empty: true },
+
+    r: [],
+    ri: 0,
+    fi: null,
+
+    fldentry: {
+        value: null,
+        focus: null,
+        submit: false,
+        blockKey: false,
     },
 
     doc: {
@@ -48,13 +40,15 @@ module.exports = {
         selectionerr: null,
     },
 
-    // temporary aspects
-    config: {
-        list: [{ title: 'one', handler: null },{ title: 'two', handler: null },{ title: 'three', handler: null },{ title: 'four', handler: null }],
-        selected: 1,
-    },
-    conn: {
-        list: [{ title: 'one', handler: null },{ title: 'two', handler: null },{ title: 'three', handler: null },{ title: 'four', handler: null }],
-        selected: null,
-    },
+    // Popup stack
+    popups: [],
+
+    // Loading
+    loading: false,
+    loadmessage: null,
+
+    // Where is the cursor?
+    mdownpos: [],
+
+    datalibrary: {},
 }

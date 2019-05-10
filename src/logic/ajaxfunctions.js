@@ -1,10 +1,14 @@
 const $ = require('jquery');
 const d = require('../components/state');
+const rn = require('../components/render');
 
 const getJSON = function(stateSetter, url, successCallback, failCallback) {
+    const data = d.sfconfig.sfconns.selected === null ? null :
+    { sfconnid: d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id};
     $.ajax({
         type: "GET",
         url: url,
+        data: data,
         dataType: "json",
         async: true,
     }).done((data2)=>{
@@ -44,8 +48,18 @@ const getJSON = function(stateSetter, url, successCallback, failCallback) {
         }
 
         if (data2.sfreauth) {
-            if (data2.redirect) window.open(data2.redirect, '_blank');
-            return failCallback instanceof Function ? failCallback(data2) : null;
+            if (data2.redirect) {
+                window.open(data2.redirect, '_blank');
+            } else  return failCallback instanceof Function ? failCallback(data2) : null;
+            rn.renderAlert(
+                stateSetter, 
+                'You must reauthorize with Salesforce. Click continue when this is complete.',
+                () => {
+                    return getJSON(stateSetter, url, successCallback, failCallback);
+                }
+            )
+
+            return;
         }
 
         return successCallback instanceof Function ? successCallback(data2) : null;
@@ -57,6 +71,8 @@ const getJSON = function(stateSetter, url, successCallback, failCallback) {
 }
 
 const postJSON = function(stateSetter, url, data, successCallback, failCallback) {
+    data.sfconnid = d.sfconfig.sfconns.selected === null ? null :
+    d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id;
     $.ajax({
         type: "POST",
         contentType: "application/json",
@@ -101,8 +117,18 @@ const postJSON = function(stateSetter, url, data, successCallback, failCallback)
         }
 
         if (data2.sfreauth) {
-            if (data2.redirect) window.open(data2.redirect, '_blank');
-            return failCallback instanceof Function ? failCallback(data2) : null;
+            if (data2.redirect) {
+                window.open(data2.redirect, '_blank');
+            } else  return failCallback instanceof Function ? failCallback(data2) : null;
+            rn.renderAlert(
+                stateSetter, 
+                'You must reauthorize with Salesforce. Click continue when this is complete.',
+                () => {
+                    return postJSON(stateSetter, url, data, successCallback, failCallback);
+                }
+            )
+
+            return;
         }
 
         return successCallback instanceof Function ? successCallback(data2) : null;
@@ -114,6 +140,8 @@ const postJSON = function(stateSetter, url, data, successCallback, failCallback)
 }
 
 const postForm = function(stateSetter, url, data, successCallback, failCallback) {
+    data.sfconnid = d.sfconfig.sfconns.selected === null ? null :
+    d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id;
     $.ajax({
         type: "POST",
         contentType: "application/json",
@@ -161,8 +189,18 @@ const postForm = function(stateSetter, url, data, successCallback, failCallback)
         }
 
         if (data2.sfreauth) {
-            if (data2.redirect) window.open(data2.redirect, '_blank');
-            return failCallback instanceof Function ? failCallback(data2) : null;
+            if (data2.redirect) {
+                window.open(data2.redirect, '_blank');
+            } else  return failCallback instanceof Function ? failCallback(data2) : null;
+            rn.renderAlert(
+                stateSetter, 
+                'You must reauthorize with Salesforce. Click continue when this is complete.',
+                () => {
+                    return postForm(stateSetter, url, data, successCallback, failCallback);
+                }
+            )
+
+            return;
         }
 
         return successCallback instanceof Function ? successCallback(data2) : null;

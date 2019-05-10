@@ -1,0 +1,80 @@
+.inactive {
+    padding: 7px;
+}
+
+.active {
+    border: 2px solid red;
+    padding: 5px;
+}
+
+.record {
+    margin-top: 0;
+    margin-bottom: 10px;
+    pointer-events: auto;
+}
+
+.recordp {
+    margin: 0;
+}
+
+.entry {
+    position: relative;
+}
+
+.closeBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    right: 2;
+    top: 2;
+    bottom: 2;
+    width: 25px;
+    font-size: 12px;
+}
+
+.closex {
+    display: inline;
+    padding: 5px;
+    background-color: lightgrey;
+}
+
+.closeBox:hover .closex {
+    border: 1px solid black;
+    background-color: lightgrey;
+    cursor: pointer;
+}
+
+.closeBox:active .closex {
+    background-color: white;
+}
+
+.closeBoxBox {
+    width: 100%;
+}
+
+
+.entry .closeBox {
+    display: none;
+}
+
+.entry:hover .closeBox {
+    display: flex;
+}
+
+.entry:hover .record {
+    border: 2px solid grey;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.entry:hover .record.active {
+    border: 2px solid red;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.base {
+    font-size: 18px;
+}

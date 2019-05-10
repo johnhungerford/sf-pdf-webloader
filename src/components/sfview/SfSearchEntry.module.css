@@ -1,0 +1,14 @@
+.entry {
+    border: 2px solid transparent;
+    margin-bottom: 5px;
+}
+
+.entry p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.entry:hover {
+    border: 2px solid grey;
+    cursor: pointer;
+}

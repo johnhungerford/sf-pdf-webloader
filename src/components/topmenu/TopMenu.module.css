@@ -7,11 +7,7 @@
 }
 
 .button {
-    margin-right: 4px;
-}
-
-.button:hover {
-    margin-right: 3px;
+    margin-right: 5px;
 }
 
 .logout {

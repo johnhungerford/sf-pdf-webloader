@@ -3,7 +3,7 @@ const ajax = require('./ajaxfunctions')
 const d = require('../components/state');
 
 const addDoc = function(stateSetter, fd) {
-	rn.renderLoadingStart('Loading document');
+	rn.renderLoadingStart(stateSetter, 'Loading document');
 
 	if( !fd ) { return false; }
 
@@ -14,8 +14,7 @@ const addDoc = function(stateSetter, fd) {
 		'/doc/load',  
 		fd,
 		(data) => {
-			console.log(data);
-			rn.renderLoadingEnd();
+			rn.renderLoadingEnd(stateSetter);
 			if ( data.err) {
 				rn.renderError(stateSetter, data.err);
 				return false;

@@ -24,7 +24,12 @@ export default class DropDown extends Component {
     }
 
     render() {
-        if (this.state.expand) {
+        const dis = this.props.disabled === true ? true : false;
+        const className = dis ?
+            `${styles.topClosed} ${this.props.class} disabled` :
+            `${styles.topClosed} ${this.props.class}`;
+
+        if (this.state.expand && !dis) {
             return (
                 <div 
                     className={`${styles.topExpanded} ${this.props.class}`}
@@ -45,7 +50,10 @@ export default class DropDown extends Component {
 
         return (
             <div style={{ display: 'inline-block' }}>
-                <div className={`${styles.topClosed} ${this.props.class}`} onClick={this.clickHandler}>
+                <div 
+                    className={className} 
+                    onClick={dis ? ()=>null : this.clickHandler}
+                >
                     <div className={styles.titleBox}>{this.props.title}</div>
                     <div className={styles.downArrowBox} />
                 </div>

@@ -5,13 +5,13 @@ const jwtAuthenticate = require('./jwtauthenticate');
 
 const router = express.Router();
 
-// GET a list of schemata config
+// GET a list of sf schema configs
 router.get('/sfschema/:sfconnid', jwtAuthenticate, function(req, res, next) {
     console.log('hello????');
     console.log(`/config/sfschema/${req.params.sfconnid}`);
     console.log(res.locals);
     global.mysql.query(
-        `SELECT id, title FROM sfschemas WHERE user=${res.locals.id} AND sfconnection=${req.params.sfconnid}`, 
+        `SELECT id, title FROM sfschemas WHERE (user=${res.locals.id} OR user IS NULL) AND sfconnection=${req.params.sfconnid}`, 
         (err2, resQuery)=>{
             if (err2) {
                 console.log(err2);
@@ -46,7 +46,7 @@ router.get('/sfschema/:sfconnid', jwtAuthenticate, function(req, res, next) {
     );
 });
 
-// GET a schema
+// choose a sf schema config
 router.get('/sfschema/:sfconnid/:schemaid', jwtAuthenticate, function(req, res, next) {
     global.mysql.query(
         `SELECT config FROM sfschemas WHERE sfconnection=${req.params.sfconnid} AND id=${req.params.schemaid}`,
@@ -66,7 +66,10 @@ router.get('/sfschema/:sfconnid/:schemaid', jwtAuthenticate, function(req, res, 
                 });
             }
 
-            console.log(result[0].config.slice(result[0].config.length - 10, result[0].config.length));
+            req.session.sfauthcode = null;
+            req.session.instanceUrl = null;
+            req.session.accessToken = null;
+            req.session.refreshToken = null;
             return res.json({
                 success: true,
                 config: result[0].config,
@@ -79,7 +82,7 @@ router.get('/sfschema/:sfconnid/:schemaid', jwtAuthenticate, function(req, res, 
 router.get('/sfconn', jwtAuthenticate, function(req,res,next) {
     console.log(`/config/sfconn: ${res.locals.username}`);
     global.mysql.query(
-        `SELECT id, title FROM sfconnections WHERE user=${res.locals.id}`, 
+        `SELECT id, title FROM sfconnections WHERE user=${res.locals.id} OR user IS NULL`, 
         (err2, resQuery)=>{
             if (err2) {
                 return res.json({

@@ -1,0 +1,12 @@
+.searchList {
+    flex: 1;
+    width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.listp {
+    margin-top: 0;
+}

@@ -1,11 +1,44 @@
-const d = require('./data.js');
+const d = require('../components/state');
 const mf = require('./mapfunctions.js');
 const rf = require('./recarrayfunctions.js');
-const rn = require('./render.js');
+const rn = require('../components/render');
 const sf = require('./searchfunctions.js');
 const ajax = require('./ajaxfunctions');
 
 const updateRecord = function(stateSetter, rin, callback) {
+  if (d.r[rin].delete) {
+    const fm = mf.getBorR(rin);
+    console.log(`Record to delete!!:`);
+    console.log(d.r[rin]);
+    ajax.postJSON(
+      stateSetter,
+      "/api/delete",
+      {
+        Id: d.r[rin].f.Id.value,
+        sObject: fm.sobject,
+      },
+      (data) => {
+        if (data.success) {
+          d.r.splice(rin,1);
+          if (d.ri >= rin) {
+            d.r.splice(this.props.ri,1);
+            if (d.ri >= this.props.ri) rf.prevrNoAdd();
+            this.props.stateSetter(d);
+            return;
+          }
+        }
+
+        if (callback) callback(data);
+      },
+      (err) => { 
+        rn.renderErr(stateSetter, err.message);
+        if (callback) callback({success: false, err: err}, rin);
+      }
+    );
+
+    return;
+  }
+
   if ( !rf.isChanged(rin) ) { return false; }
 
   let map = mf.getBorR(rin);
@@ -23,19 +56,22 @@ const updateRecord = function(stateSetter, rin, callback) {
     }
 
     ajax.postJSON(
+      stateSetter,
       "/api/create",
       apiObj,
-      function(data) {
-        if ( data.success === false || data.err ) {
-          return;
-        }
-
-        if(callback) callback(data, rin);
+      (data) => {
+        if (callback) callback(data, rin);
       },
-      function(err) { rn.renderErr(stateSetter, err.message) }
+      (err) => { 
+        rn.renderErr(stateSetter, err.message);
+        if (callback) callback({success: false, err: err}, rin);
+      }
     );
 
-  } else if ( !rec.new ) {
+    return;
+  } 
+  
+  if ( !rec.new ) {
     let apiObj = {
       sobject: map.sobject,
       records: [{}],
@@ -47,38 +83,43 @@ const updateRecord = function(stateSetter, rin, callback) {
     }
 
     ajax.postJSON(
+      stateSetter,
       "/api/update",
       apiObj,
-      function(data) {
-        if ( data.success === false || data.err ) {
-          return;
-        }
-
+      (data) => {
         if(callback) callback(data);
       },
-      function(err) { stateSetter, err.message }
+      (err) => { 
+        rn.renderError(stateSetter, err);
+        if (callback) callback({success: false, err: err}, rin);
+      }
     );
 
-
-  } else {
-    rn.renderErr(stateSetter, 'Record is labelled new but has salesforce Id');
-    return false;
-  }
-
-  return true;
+    return;
+  } 
+    
+  rn.renderErr(
+    stateSetter, 
+    'Record is labelled new but has salesforce Id. Press continue to change "new" status to false and try again.',
+    () => {
+      d.r[rin].new = false;
+      updateRecord(stateSetter, rin, callback);
+    } 
+  );
+  return false;
 }
 
-const updateAll = function(stateSetter, ) {
+const updateAll = function(stateSetter) {
   if( rf.allUnchanged() ) { 
-    rn.renderErr(stateSetter, 'Nothing to update!');
+    rn.renderAlert(stateSetter, 'Nothing to update!');
     return false; 
   }
 
-  var ctr = 0;
-  var total = 0;
-  rn.renderLoadingStart(stateSetter);
+  let ctr = 0;
+  let total = 0;
+  rn.renderLoadingStart(stateSetter, 'Saving all records');
   for( let i = 0; i < d.r.length; i++ ) {
-    if ( !rf.isChanged(i) ) { 
+    if ( !rf.isChanged(i) && !d.r[i].delete ) { 
       continue; 
     } else {
       total += 1;
@@ -86,7 +127,7 @@ const updateAll = function(stateSetter, ) {
   }
   
   for ( let i = 0; i < d.r.length; i++ ) {
-    updateRecord(stateSetter, i, function(){
+    updateRecord(stateSetter, i, () => {
       ctr += 1;
       if(ctr === total) {
         rn.renderLoadingEnd(stateSetter);

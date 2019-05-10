@@ -73,7 +73,7 @@ const getFm = function(rin, fin) {
 
 const parseLayout = function (layStr, fieldsArray) {
   const parseLayoutIf = function (condition, trueresult, falseresult) {
-    let conditionArray = $.trim(condition).split('=');
+    let conditionArray = condition.trim().split('=');
     if (!fieldsArray[conditionArray[0]]) {
       return parseLayout(falseresult, fieldsArray);
     }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import * as d from '../state';
 import * as rf from '../../logic/recarrayfunctions';
+import * as rn from '../render';
 
 import styles from './DocView.module.css';
 
@@ -13,33 +14,33 @@ export default class DocView extends Component {
     componentDidUpdate() {
       if (this.ifr === undefined || this.ifr === null) return;
 
-      console.log(this.ifr);
 
       this.ifr.onload = () => {
         this.ifr.contentDocument.body.onmouseup = (e) => {
-          console.log('up');
           const selec = this.ifr.contentDocument.getSelection();
           const txt = selec.toString();
           if(!txt) { return; }
-          console.log('selection: '+ txt);
           if(d.mdownpos === []) d.mdownpos = [e.pageX, e.pageY];
-          /*if(!rf.validateSelection(txt)) {
-            d.doc.selectionerr = selec;
+          if(!rf.validateSelection(txt)) {
+            rn.renderSelectionErr(this.ifr);
             selec.collapseToStart();
-            d.fldentry.focus = 'true';
+            this.props.stateSetter(d, ()=>{
+              document.getElementById('app').focus();
+            });
             return;
-          }*/
-
+          }
+          
           d.fldentry.value = txt;
-          selec.collapseToStart();
-          d.fldentry.focus = 'off';
-          rf.submit(this.props.stateSetter);
-          console.log(d.fldentry.value);
+          d.fldentry.submit = true;
+          d.fldentry.next = true;
           d.mdownpos = [];
+          selec.collapseToStart();
+          this.props.stateSetter(d, ()=>{
+            document.getElementById('app').focus();
+          });
         };
       
         this.ifr.contentDocument.body.onmousedown = (e) => {
-          console.log('down');
           d.mdownpos = [e.pageX, e.pageY];
           d.doc.selectionerr = null;
         };

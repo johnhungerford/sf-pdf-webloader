@@ -24,6 +24,12 @@ module.exports = function(req, res, next) {
                 message: `bad token: ${err.message}`
             });
             
+            if (decoded.username === undefined) return res.json({
+                success: false,
+                wlreauth: true,
+                message: 'token is missing username...',
+            });
+
             console.log('Authenticated jwt: ', decoded);
             res.locals.username = decoded.username;
             res.locals.id = decoded.id;

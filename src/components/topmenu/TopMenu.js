@@ -7,6 +7,7 @@ import DropDown from '../common/DropDown.js';
 import * as cf from '../../logic/configfunctions';
 import * as rn from '../render';
 import * as df from '../../logic/docfunctions';
+import * as rf from '../../logic/recarrayfunctions';
 import * as ajax from '../../logic/ajaxfunctions';
 import * as d from '../state';
 
@@ -18,27 +19,48 @@ export default class TopMenu extends Component {
     }
 
     logout = (e) => {
-        ajax.postJSON(
-            this.props.stateSetter,
-            `/login`,
-            { logout: true },
-            (data) => {
-                if (data.success) {
-                    d.auth.loggedin = false;
-                    d.auth.promptlogin = true;
-                    this.props.stateSetter(d);
-                }
-
-                rn.renderError(this.props.stateSetter, `Unable to log out: ${data.message}`);
-            },
-            (err) => {
-                rn.renderError(this.props.stateSetter, `Unable to log out: ${err.message}`);
+        rn.renderAlert(
+            this.props.stateSetter, 
+            'Are you sure you want to logout? All unsaved data will be lost',
+            () => {
+                rn.renderLoadingStart(this.props.stateSetter, 'Logging Out');
+                ajax.postJSON(
+                    this.props.stateSetter,
+                    `/login`,
+                    { logout: true },
+                    (data) => {
+                        if (data.success) {
+                            console.log('Successfully logged out!');
+                            location.reload();
+                            return this.props.stateSetter(d);
+                        }
+        
+                        rf.clearState();
+                        rn.renderError(this.props.stateSetter, `Unable to log out: ${data.message}`);
+                    },
+                    (err) => {
+                        rn.renderError(this.props.stateSetter, `Unable to log out: ${err.message}`);
+                    }
+                );
             }
         );
     }
 
     initEntry = () => {
-        console.log('hello...');
+        if (d.dm === null || !d.doc.render) return;
+        if( !rf.allUnchanged() ) {
+            rn.renderAlert(
+                this.props.stateSetter,
+                'Initiating data entry will end your current session, erasing any unsaved data. Are you sure you wish to continue?', 
+                () => {
+                    rf.initR(this.props.stateSetter);
+                    this.props.stateSetter(d);
+                }
+            );
+        } else {    
+            rf.initR(this.props.stateSetter);
+            this.props.stateSetter(d);
+        }
     }
 
     loadSamplePdf = () => {
@@ -80,6 +102,12 @@ export default class TopMenu extends Component {
             );
         }
 
+        const connD = d.sfconfig.sfconns.list.length === 0;
+        const schemD = d.sfconfig.sfschemata.list.length === 0 || d.sfconfig.sfconns.selected === null;
+        const initD = schemD || d.dm === null || !d.doc.render;
+        const fileD = d.sfconfig.sfschemata.list.length === 0 || d.sfconfig.sfschemata.selected === null || d.dm === null;
+        const remD = !d.doc.render;
+
         const configMenuContent = d.sfconfig.sfschemata.list.map((config) => 
             <li key={config.id} data-id={config.id} onClick={config.handler}>{config.title}</li>
         );
@@ -96,6 +124,7 @@ export default class TopMenu extends Component {
                             <li>
                                 <DropDown 
                                     class={styles.dropdownLeft}
+                                    disabled={connD}
                                     title={
                                         d.sfconfig.sfconns.selected === null ||
                                         d.sfconfig.sfconns.selected < 0 ||
@@ -111,6 +140,7 @@ export default class TopMenu extends Component {
                             </li>
                             <li>
                                 <DropDown
+                                    disabled={schemD}
                                     title={
                                         d.sfconfig.sfschemata.selected === null || 
                                         d.sfconfig.sfschemata.selected >= d.sfconfig.sfschemata.list.length ||
@@ -129,22 +159,22 @@ export default class TopMenu extends Component {
                     sectionCenter: (
                         <ul className={styles.center}>
                             <li>
-                                <Button class={styles.button} clickHandler={this.initEntry}>
+                                <Button class={styles.button} clickHandler={this.initEntry} disabled={initD}>
                                     Init Entry
                                 </Button>
                             </li>
                             <li>
-                                <Button class={styles.button} type='file' fileLoadHandler={this.uploadPdf}>
+                                <Button class={styles.button} type='file' fileLoadHandler={this.uploadPdf} disabled={fileD}>
                                     Upload PDF
                                 </Button>
                             </li>
                             <li>
-                                <Button class={styles.button} clickHandler={this.loadSamplePdf}>
+                                <Button class={styles.button} clickHandler={this.loadSamplePdf} disabled={fileD}>
                                     Load Sample PDF
                                 </Button>
                             </li>
                             <li>
-                                <Button class={styles.button} clickHandler={this.removePdf}>
+                                <Button class={styles.button} clickHandler={this.removePdf} disabled={remD}>
                                     Remove PDF
                                 </Button>
                             </li>

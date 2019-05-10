@@ -13,7 +13,6 @@
 
 .container {
     display: block;
-    width: 247;
     padding: 10px;
     border: 1px solid black;
     text-align: center;
@@ -48,5 +47,14 @@
     
 }
 
-
+.error {
+    display: inline-block;
+    font-size: 14px;
+    color: red;
+    font-weight: bold;
+    max-width: 275;
+    white-space: normal;
+    text-align: left;
+    margin-bottom: 12px;
+}
 

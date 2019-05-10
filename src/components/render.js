@@ -1,284 +1,145 @@
+const React = require('react');
+
 const d = require('./state');
+const mf = require('../logic/mapfunctions');
+const sf = require('../logic/searchfunctions');
+const ajax = require('../logic/ajaxfunctions');
 
-/*const renderDoc = function(site) {
-  $('.pdfwin').empty();
-  if(site !== undefined) {
-    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src='+site+'></iframe>');
-  } else {
-    $(".pdfwin").append('<iframe id="pdfiframe" height="100%" width="100%" src="/doc/view"></iframe>');
-  }
-
-  $('#pdfiframe').on('load', function () {
-    
-    $("#pdfiframe")
-      .contents()
-      .find("body")
-      .off()
-      .mouseup(function(e) {
-        let doc = document.getElementById("pdfiframe").contentDocument;
-        let selec = doc.getSelection();
-        let txt = selec.toString();
-        if(!txt) { return; }
-
-        if(mdownpos === []) mdownpos = [e.pageX, e.pageY];
-        
-        if(!rf.validateSelection(txt)) {
-          renderSelectionErr(selec);
-          selec.collapseToStart();
-          $('.fldwin').attr("tabindex",-1).focus();
-          return;
-        }
-
-        $(".fldinput").val(txt);
-        $(".fldinput").change();
-        selec.collapseToStart();
-        $('.fldwin').attr("tabindex",-1).focus();
-        mdownpos = [];
-      });
-
-    $('#pdfiframe').contents().find('body').mousedown(function (e) {
-      mdownpos = [e.pageX, e.pageY];
-      $('#selecpopup').remove();
-    });
-  
-  });
-  
-};
-
-const renderSelectionErr = function(selec) {
-  const fname = mf.getFm().appname;
-  const $mainwin = $('.mainwin');
-  const $iframe = $('.pdfwin');
-  $mainwin.append('<div id="selecpopup" style="position:absolute;display:none;z-index:100;background-color:yellow;"><b>Invalid selection for field: "'+fname+'"</b></div>');
-  const $popup = $('#selecpopup');
-  $('#selecpopup').offset({ top: $iframe.position().top + mdownpos[1] - 45, left: $iframe.position().left + mdownpos[0] - 100}).show();
+const renderSelectionErr = function(ifr) {
+  // const fname = mf.getFm().appname;
+  const fname = 'Test';
+  const tmpDiv = document.createElement('div');
+  const ifrRect = ifr.getBoundingClientRect();
+  const style = 'position: absolute; z-index: 100; background-color: yellow; ';
+  const pos = `top: ${ifrRect.top + d.mdownpos[1] - 45}; left: ${ifrRect.left + d.mdownpos[0] - 100};`;
+  const htmlString = `<div id="selecpopup" style="${style} ${pos}"><b>Invalid selection for field: "${fname}"</b></div>`;
+  tmpDiv.innerHTML = htmlString;
+  const popup = tmpDiv.firstChild;
+  document.body.appendChild(popup);
+  let op = 1;  // initial opacity
+  const time = 600;
+  const interval = op / (time / 50);
   setTimeout(()=>{
-    $('#selecpopup').fadeOut('slow',()=>{
-      $('#selecpopup').remove();
-    });
-  }, 2000);
-
-
-}*/
-
-var renderError = function(stateSetter, msg) {
-  alert(msg);
-};
-
-/*
-var renderAlert = function(msg, callback) {
-  $(".alert-body").empty();
-  $(".alert-body").append(msg);
-  $(".alert").modal("show");
-  $('.alert-execute').off().click(function () {
-    $('.alert').modal('hide');
-    if(callback) { callback(); }
-  });
-};
-
-var renderOpenUrl = function() {
-  $('.openurl-input').val('');
-  $('.openurlmodal').modal('show');
-  $('.openurl-open-btn').off().click(function () {
-    $('.openurlmodal').modal('hide');
-    renderDoc($('.openurl-input').val());
-  });
-};
-
-*/
-
-var renderLoadingStart = function(msg) {
-  return null;
-  /*
-  $('.ld-msg').empty();
-  $('.ld-msg').append(msg);
-  $('.loading').modal('show');
-  setTimeout(function () {
-    renderLoadingEnd();
-  }, 10000);
-  */
-
-};
-
-var renderLoadingEnd = function() {
-  return 1;
-  /*setTimeout(function() {
-    $('.loading').modal('hide');
-  }, 200);
-  $('.ld-msg').empty();
-  */
-
-};
-/*
-var renderBaseSearch = function() {
-  var map = mf.getBorR();
-
-  var riloc = d.ri;
-  var filoc = d.fi;
-
-  $(".sfviewmenu").empty();
-
-  if ( d.r[d.ri].type == 'search' ) {
-    $(".sfviewmenu").append(
-      '<button type="button" class="btn btn-primary newbase-button">New</button'
-    );
-
-    $(".newbase-button").off().click(function() {
-      d.r[riloc].type = 'base';
-      rf.setOrder(riloc);
-      d.fi = d.r[riloc].order[0];
-      renderFldEntry();
-      renderSfView();
-    });
-
-    $(".sfviewbody").empty();
-    $(".sfviewbody").append(
-      "<h4>Find or Create " + map.appname + " (" + map.sobject + ")</h4>"
-    );
-
-    if (d.sdata.empty) {
-      return false;
-    }
-
-    for (let i = 0; i < d.sdata.records.length; i++) {
-      $(".sfviewbody").append(
-        '<div class="search-result" data-id="' +
-          d.sdata.records[i]["Id"] +
-          '" id="sresult' +
-          i +
-          '"></div>'
-      );
-      for (var j in d.sdata.layout) {
-        $("#sresult" + i).append(
-          "<div>" + mf.parseLayout(d.sdata.layout[j], d.sdata.records[i]) + "</div>"
-        );
+    let timer = setInterval(function () {
+      if (op <= 0){
+          clearInterval(timer);
+          popup.style.display = 'none';
       }
-      $("#sresult" + i).off().click(function() {
-        $.event.trigger({
-          type: "searchSelect",
-          Id: d.sdata.records[i]["Id"]
-        });
-      });
-    }
-  } else {
-    $(".sfviewmenu").append(
-      '<button type="button" class="btn btn-primary createbase-button">Add to Salesforce</button'
-    );
 
-    $(".createbase-button").off().click(function() {
-      renderLoadingStart();
-      uf.updateRecord(riloc, function(data, rin){
-        renderLoadingEnd();
-        if(data[0]) {
-          if(data[0].id) {
-            rf.setValue(rin, 'Id', data[0].id);
-            d.r[rin].new = false;
-            sf.loadAllRecords();
-          }
-        }
-      });
+      popup.style.opacity = op;
+      popup.style.filter = `alpha(opacity=${op * 100})`;
+      op -= interval;
+    }, 50);
+  }, 2000);
+}
+
+var renderError = function(stateSetter, msg, callback) {
+  const popup = {
+    header: 'Error!',
+    body: msg,
+  }
+
+  const buttons = [];
+  if (callback instanceof Function) {
+    buttons.push({
+      name: 'Try Again',
+      clickHandler: tryAgainCb,
     });
+  }
 
-    $(".sfviewbody").empty();
-    $(".sfviewbody").append(
-      "<h4>Add " + map.appname + " (" + map.sobject + ") to Salesforce</h4>"
-    );
-  }  
-  
+  buttons.push({
+    name: 'OK',
+    clickHandler: okCb,
+  })
+
+  popup.buttons = buttons;
+  d.popups.push(popup);
+  stateSetter(d);
+
+  function tryAgainCb() {
+    d.popups.pop();
+    stateSetter(d);
+    if (callback instanceof Function) callback();
+  };
+
+  function okCb() {
+    d.popups.pop();
+    stateSetter(d);
+  };
 };
 
-var renderSfView = function() {
 
-  *//*if (init) {
-    $(".sfviewmenu").empty();
-    $(".sfviewbody").empty();
-    return;
-  }*//*
-
-  if (d.search) {
-    return renderBaseSearch();
+const renderAlert = function(stateSetter, msg, callback) {
+  const popup = {
+    header: 'Alert',
+    body: msg,
   }
 
-  if( d.ri >= d.r.length ) d.ri = d.r.length-1;
-  if( d.ri < 0 ) d.ri = 0;
-
-  $(".sfviewmenu").empty();
-
-  $(".sfviewmenu").append(
-    '<button type="button" class="btn btn-primary saveall-button" style="margin-right:5px;">Save All</button'
-  );
-  $('.saveall-button').off().click(function(){
-    uf.updateAll();
-  });
-
-  $(".sfviewmenu").append(
-    '<button type="button" class="btn btn-primary refresh-button">Refresh</button'
-  );
-  $('.refresh-button').off().click(function(){
-    sf.loadAllRecords();
-  });
-
-  $(".sfviewbody").empty();
-
-  for (let i = 0; i < d.dm.b.length; i++) {
-    $(".sfviewbody").append(
-      '<div class="sfview-header sfview-base-box" id="sfview-hdr-b-' + i + '"></div>'
-    );
-    $("#sfview-hdr-b-" + i).append("<h4>" + d.dm.b[i].appname + "</h4>");
-    for( var j = 0; j < d.dm.b[i].settings.layout.length; j++ ) {
-      $("#sfview-hdr-b-" + i).append('<div>'+mf.parseLayout( d.dm.b[i].settings.layout[j], mf.getFieldsForLayout(i) )+'</div>');
-    }
-    $("#sfview-hdr-b-" + i).attr('style','cursor:pointer');
-    $("#sfview-hdr-b-" + i).off().click(function() {
-      rf.jumpTo(i);
-      renderFldEntry();
-      renderSfView();
-    });
-    if( d.ri == i ) {
-      $('#sfview-hdr-b-' + i).attr('style','border:2px solid red;');
-    }
-  }
-
-  for (let i = 0; i < d.dm.r.length; i++) {
-    $(".sfviewbody").append(
-      '<div class="sfview-header" id="sfview-hdr-r-' + i + '"></div>'
-    );
-    $("#sfview-hdr-r-" + i).append("<h4>" + d.dm.r[i].appname + "</h4>");
-  }
-
-  for (let i = d.dm.b.length; i < d.r.length; i++) {
-    $("#sfview-hdr-r-" + d.r[i].ri).append('<div class="sfview-record" id="sfview-rec-' + i + '"></div>');
-    for ( let j = 0; j < d.dm.r[d.r[i].ri].settings.layout.length; j++ ) {
-      $("#sfview-rec-" + i).append('<div>'+mf.parseLayout( d.dm.r[d.r[i].ri].settings.layout[j], mf.getFieldsForLayout(i) )+'</div>');
-    }
-    $('#sfview-rec-'+i).off().click(function(){
-      rf.jumpTo(i);
-      renderFldEntry();
-      renderSfView();
-    });
-    if( d.ri == i ) {
-      $('#sfview-rec-' + i).attr('style','border: 2px solid red;');
-    }
-  }
-
-  var currentScrollTop = $('.sfviewbody').scrollTop();
-
-  if( d.ri < d.dm.b.length ) {
-    var selElement = $('#sfview-hdr-b-' + d.ri);
+  let buttons = [];
+  if (callback instanceof Function) {
+    buttons = [
+      {
+        name: 'Continue',
+        clickHandler: continueCb,
+      },
+      {
+        name: 'Cancel',
+        clickHandler: cancelCb,
+      }
+    ];
   } else {
-    var selElement = $('#sfview-rec-' + d.ri);
+    buttons = [
+      {
+        name: 'OK',
+        clickHandler: cancelCb,
+      }
+    ];
   }
 
-  var offsettop = selElement.offset().top - $('.sfviewbody').offset().top;
-  var offsetbottom = offsettop + selElement.height();
+  popup.buttons = buttons;
+  d.popups.push(popup);
+  stateSetter(d);
 
-  if( offsetbottom > $('.sfviewbody').innerHeight() ) {
-    $('.sfviewbody').scrollTop(currentScrollTop + offsetbottom - $('.sfviewbody').innerHeight() + 5);
-  } else if ( offsettop < 0 ) {
-    $('.sfviewbody').scrollTop(currentScrollTop + offsettop);
+  function continueCb() {
+    d.popups.pop();
+    stateSetter(d);
+    if (callback instanceof Function) {
+      console.log('RUN CONTINUE CALLBACK...');
+      callback();
+    }
+  };
+
+  function cancelCb() {
+    d.popups.pop();
+    stateSetter(d);
+  };
+};
+
+var renderLoadingStart = function(stateSetter, msg) {
+  d.popups.push({
+    type: 'loading',
+    body: msg,
+  });
+
+  stateSetter(d);
+};
+
+var renderLoadingEnd = function(stateSetter, time) {
+  if (time === 0) {
+    for(let i = d.popups.length - 1; i >= 0; i--) {
+      if (d.popups[i].type === 'loading') return d.popups.splice(i,1);
+    }
+
+    return;
   }
-  
 
+  setTimeout(() => {
+    for(let i = d.popups.length - 1; i >= 0; i--) {
+      if (d.popups[i].type === 'loading') d.popups.splice(i,1);
+    }
+
+    stateSetter(d);
+  }, time === undefined ? 200 : time);
 };
 
 var convertDate = function(strin) {
@@ -291,252 +152,117 @@ var convertDate = function(strin) {
 
 }
 
-var renderFldEntry = function() {
-
-  *//*if ( d.length == 0 ) {
-    $(".fldwinleft").empty();
-    $(".fldwinright").empty();
-    $(".fldtitle").empty();
-    $(".fldentry").empty();
-    $(".fldinstr").empty();
-    return;
-  }*//*
-
-  if( d.ri >= d.r.length ) d.ri = d.r.length-1;
-  if( d.ri < 0 ) d.ri = 0;
-
-  $(".fldwinleft").empty();
-  if (d.ri != 0 || d.fi != d.r[0].order[0]) {
-    $(".fldwinleft").append('<a class="btn btn-primary" href="#" id="prevlink"><</a>');
-    $("#prevlink").off().click(function() {
-      rf.updateR();
-      rf.setOrder();
-      rf.prevf();
-      renderFldEntry();
-      renderSfView();
-    });
-  }
-
-  $(".fldwinright").empty();
-  if (
-    d.ri < d.r.length - 1 ||
-    d.fi != d.r[d.r.length - 1].order[d.r[d.r.length - 1].order.length - 1]
-  ) {
-    $(".fldwinright").append('<a class="btn btn-primary" href="#" id="nextlink">></a>');
-    $("#nextlink").off().click(function() {
-      rf.updateR();
-      rf.setOrder();
-      rf.nextf();
-      renderFldEntry();
-      renderSfView();
-    });
-  }
-
-  var rec = d.r[d.ri];
-  var rmap = mf.getBorR();
-
-  $(".fldtitle").empty();
-  $(".fldtitle").append("<h4>" + rmap.fields[d.fi].appname + "</h4>");
-
-  $(".fldinstr").empty();
-  if (rmap.fields[d.fi].instructions) {
-    $(".fldinstr").append("<p>" + rmap.fields[d.fi].instructions + "</p>");
-  }
-
-  $(".fldentry").empty();
-  switch (rmap.fields[d.fi].type) {
-    case "text":
-      if (rmap.fields[d.fi].length > 260) {
-        var fldinput = '<textarea style="resize: none" rows="5" cols="45" ';
-      } else {
-        var fldinput = '<input type="text" size="45" ';
-      }
-      fldinput +=
-        'class="fldinput" maxlength = "' + rmap.fields[d.fi].length + '" > ';
-      break;
-    case "phone":
-      var fldinput = '<input class="fldinput" type="text" size="45" maxlength="40">';
-      break;
-    case "url":
-      var fldinput = '<input class="fldinput" type="text" size="50">';
-      break;
-    case "email":
-      var fldinput =
-        '<input class="fldinput" type="text" size="45" maxlength="' +
-        rmap.fields[d.fi].length +
-        '">';
-      break;
-    case "picklist":
-      var fldinput = '<select class="fldinput">';
-      fldinput += '<option value="">None</option>';
-      for (var i = 0; i < rmap.fields[d.fi].values.length; i++) {
-        fldinput += "<option>" + rmap.fields[d.fi].values[i] + "</option>";
-      }
-      fldinput += "</select>";
-      break;
-    case "date":
-      var fldinput = '<input class="fldinput" type="text" maxlength="100">';
-      break;
-    case "index":
-      var fldinput =
-        '<input class="fldinput" type="text" size="45" maxlength="255">';
-      break;
-    case "boolean":
-      var fldinput =
-        '<input class="fldinput" type="checkbox" >';
-        break;
-    default:
-      break;
-  }
-  $(".fldentry").append(fldinput);
-  if (d.r[d.ri].f[d.fi].value) {
-    if ( rmap.fields[d.fi].type == 'index' ) {
-      if (d.r[d.ri].f[d.fi].showval ) {
-        $('.fldinput').val(d.r[d.ri].f[d.fi].showval);
-      }
-    } else if ( rmap.fields[d.fi].type == 'date' ) {
-      $('.fldinput').val(convertDate(d.r[d.ri].f[d.fi].value));
-    } else if(rmap.fields[d.fi].type == 'boolean' ) {
-      if ( d.r[d.ri].f[d.fi].value ) { $('.fldinput').prop('checked',true); } else { $('.fldinput').prop('checked',false); }
-    } else {
-      $(".fldinput").val(d.r[d.ri].f[d.fi].value);
-    }
-  }
-
-  let rin = d.ri;
-  let fin = d.fi;
-  let so = rmap.fields[fin].indexto;
-
-  $(".fldinput").off().change(function() {
-    if (rmap.fields[fin].type == "index") {
-      if ($('.fldinput').val() == '') {
-        d.r[rin].f[fin].showval = null;
-        d.r[rin].f[fin].value = null;
-        rf.updateR();
-        rf.setOrder();
-        rf.nextf();
-        renderFldEntry();
-        renderSfView();
-        return;
-      }
-      d.r[rin].f[fin].showval = $('.fldinput').val();
-      sf.searchIndexRecord(rin, fin);
-      return;
-    }
-    if(rmap.fields[fin].type == "boolean") {
-      d.r[rin].f[fin].value = $(".fldinput").prop('checked');
-      return
-    }
-    if (rf.setValue(rin, fin, $(".fldinput").val())) {
-      rf.updateR();
-      rf.setOrder();
-      rf.nextf();
-      renderFldEntry();
-      renderSfView();
-    }
-  });
-};
-
-var renderIndexSearch = function(rin, fin, records) {
+const renderIndexSearch = function(stateSetter, rin, fin, records, indmap, callback, valin) {
   var fm = mf.getFm(rin, fin);
+  var value = d.fldentry.value;
 
-  $(".insrch-title").empty();
-  $(".insrch-body").empty();
+  if (indmap instanceof Object && callback instanceof Function) {
+    fm = indmap;
+    value = valin === undefined ? '' : valin;
+  }
 
-  $(".insrch-title").prepend('Searching for ' + fm.indexto );
-  $('.insrch').modal('show');
+  var title = 'Searching for ' + fm.indexto;
 
+  const body = [];
   for (let i = 0; i < records.length; i++) {
-    $(".insrch-body").append('<div class="insresult" id="insresult' + i + '"></div>');
+    const content = [];
     for ( let j = 0; j < fm.searchlayout.length; j++ ) {
-      $("#insresult" + i).append('<span>'+mf.parseLayout(fm.searchlayout[j], records[i])+'</span>');
+      content.push((
+        <span key={`search-span-${i}-${j}`}>{mf.parseLayout(fm.searchlayout[j], records[i])}</span>
+      ));
     }
-    $('#insresult' + i).off().click( function () {
-      indexSearchSelected( rin, fin, records[i] );
-      $('.insrch').modal('hide');
-    });
+
+    body.push((
+      <div 
+        key={`search-div-${i}`}
+        style={{marginBottom: 8, cursor: 'pointer'}}
+        onClick={()=>{
+          if (indmap instanceof Object && callback instanceof Function) {
+            return callback(records[i]);
+          } 
+
+          sf.indexSearchSelected(stateSetter, rin, fin, records[i]);
+          d.popups.pop();
+          stateSetter(d);
+        }}
+      >
+        {content}
+      </div>
+    ));
   }
-  $('.insrch-create-btn').off().click(function() {
-    renderIndexCreate(rin, fin);
-  });
+
+  d.popups.push({
+    type: 'normal',
+    header: title,
+    body: body,
+    buttons: [
+      {
+        name: 'Create New',
+        clickHandler: () => {
+          if (indmap instanceof Object && callback instanceof Function) {
+            return renderIndexCreate(stateSetter, fm, value, callback);
+          }
+
+          renderIndexCreate(stateSetter, fm, value);
+        },
+      },
+      {
+        name: 'Cancel',
+        clickHandler: () => {
+          d.popups.pop();
+          stateSetter(d);
+        },
+      },
+    ],
+  })
+  
+  stateSetter(d);
 };
 
-var renderIndexCreate = function(rin, fin) {
-  var map = mf.getBorR(rin);
-  var fm = mf.getFm(rin, fin);
-
-  $(".increate-title").empty();
-  $('.increate-body').empty();
-
-
-  $(".increate-title").append("Create new " + fm.appname + " record");
-
-  var recordObj = {};
-  recordObj.sobject = fm.indexto;
-  recordObj.record = {};
-  for ( let i = 0; i < fm.createfields.length; i++ ) {
-    $('.increate-body').append('<div id="increate-fld-'+i+'"></div>');
-    $('#increate-fld-'+i).append('<h5 id="increate-fldtitle-'+i+'"></h5>');
-    $('#increate-fld-' + i).append('<input type="text" size="45" id="increate-fldinput-'+i+'">');
-    $("#increate-fldtitle-"+i).append(fm.createfields[i] + ':' );
-    if(fm.createfields[i] == fm.indexshow) {
-      $("#increate-fldinput-"+i).val($('.fldinput').val());
+var renderIndexCreate = function(stateSetter, indmap, value, callback) {
+  const title = "Create new " + indmap.appname + " record";
+  const fields = [];
+  const buttons = [
+    {
+      name: 'Create',
+    },
+    {
+      name: 'Cancel',
+      clickHandler: ()=>{
+        d.popups.pop()
+        stateSetter(d);
+      },
     }
-  }
-  $('.increate-create-btn').off().click(function() {
+  ];
 
-    var apiObj = {
-      sobject: fm.indexto,
-      records: [{}]
+  for ( let i = 0; i < indmap.createfields.length; i++ ) {
+    fields.push({});
+    if (indmap.indexfields[indmap.createfields[i]].type !== 'index') {
+      fields[i].label = indmap.createfields[i] + ':';
+      fields[i].type = 'text';
+      fields[i].init = indmap.createfields[i] === indmap.indexshow ? value : '';
+      continue;
     }
     
-    for( var j = 0; j < fm.createfields.length; j++ ) {
-      if($('#increate-fldinput-'+j).val()) {
-        apiObj.records[0][fm.createfields[j]] = $('#increate-fldinput-'+j).val();
-      }
-    }
+    fields[i].label = indmap.createfields[i] + ':';
+    fields[i].type = 'index';
+    fields[i].init = indmap.createfields[i] === indmap.indexshow ? value : '';
+  }
 
-    for( var k in fm.indexfields ) {
-      if( fm.indexfields[k].value ) {
-        apiObj.records[0][k] = fm.indexfields[k].value;
-      }
-    }
+  const popup = {
+    type: 'form',
+    header: title,
+    fields: fields,
+    buttons: buttons,
+    fm: indmap,
+  };
 
-    renderLoadingStart('Creating '+fm.appname+' record');
-    $.ajax({
-      type: "POST",
-      contentType: "application/json",
-      url: "/api/create",
-      dataType: "json",
-      async: true,
-      //json object to sent to the authentication url
-      data: JSON.stringify(apiObj),
-      success: function (data) {
-        renderLoadingEnd();
-        if( data[0].err || !data[0].success) {
-          renderError('Could not create '+fm.indexto+': ' + data[0].err );
-          return false;
-        }
-
-        $('.increate').modal('hide');
-        rf.setValue(rin, fin, data[0].id);
-        d.r[rin].f[fin].showval = apiObj.records[0][fm.indexshow];
-        renderFldEntry();
-        renderSfView();
-      }
-    });
-
-  });
-
-  $('.increate').modal('show');
-
+  if(callback instanceof Function) popup.callback = callback;
+  d.popups.push(popup);
+  stateSetter(d);
 };
-
-var renderAll = function() {
-  renderSfView();
-  renderFldEntry();
-  renderDoc();
-}
+ 
+/*
 
 const renderInstructions = function () {
   $('.instructions-frame').show();
@@ -549,20 +275,20 @@ const renderInstructionsHide = function () {
 }
 
 module.exports.renderDoc =renderDoc;
-module.exports.renderSelectionErr = renderSelectionErr;
-module.exports.renderAlert = renderAlert;
 module.exports.renderOpenUrl = renderOpenUrl;
 module.exports.renderBaseSearch = renderBaseSearch;
 module.exports.renderSfView = renderSfView;
-module.exports.convertDate = convertDate;
 module.exports.renderFldEntry = renderFldEntry;
-module.exports.renderIndexSearch = renderIndexSearch;
 module.exports.renderIndexCreate = renderIndexCreate;
 module.exports.renderAll = renderAll;
 module.exports.renderInstructions = renderInstructions;
 module.exports.renderInstructionsHide = renderInstructionsHide;*/
 
+module.exports.renderAlert = renderAlert;
+module.exports.renderIndexSearch = renderIndexSearch;
 module.exports.renderError = renderError;
 module.exports.renderErr = renderError;
+module.exports.convertDate = convertDate;
 module.exports.renderLoadingStart = renderLoadingStart;
 module.exports.renderLoadingEnd = renderLoadingEnd;
+module.exports.renderSelectionErr = renderSelectionErr;
