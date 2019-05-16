@@ -30,7 +30,7 @@ const getJSON = function(stateSetter, url, successCallback, failCallback) {
                     if (result.success) {
                         d.auth.promptlogin = false;
                         d.auth.loggedin = true;
-                        return getJSON(url, successCallback, failCallback);
+                        return getJSON(stateSetter, url, successCallback, failCallback);
                     }
 
                     d.auth.promptlogin = true;
@@ -171,7 +171,7 @@ const postForm = function(stateSetter, url, data, successCallback, failCallback)
                     if (result.success) {
                         d.auth.loggedin = true;
                         d.auth.promptlogin = false;
-                        return postForm(url, data, successCallback, failCallback)
+                        return postForm(stateSetter, url, data, successCallback, failCallback)
                     }
 
                     d.auth.promptlogin = true;

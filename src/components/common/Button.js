@@ -10,16 +10,15 @@ export default class Button extends Component {
     render() {
         const dis = this.props.disabled === true ? true : false;
 
-        const className = dis ?
-            `${styles.button} ${this.props.class} disabled` :
-            `${styles.button} ${this.props.class}`;
+        const className = this.props.class ? this.props.option === 'small' ? `${styles.button} ${this.props.class} ${styles.small}` : `${styles.button} ${this.props.class}` : this.props.option === 'small' ? `${styles.button} ${styles.small}` : styles.button;
 
         if (this.props.type === 'file' && !dis) {
             return (
-                <span className={`${styles.button} ${this.props.class}`}>
+                <span className={className}>
                     {this.props.children}
                     <input 
                         className={styles.fileInput}
+                        style={this.props.style}
                         type='file' 
                         onChange={this.props.fileLoadHandler}
                         ref={this.props.setRef}
@@ -32,8 +31,10 @@ export default class Button extends Component {
         return (
             <button 
                 className={className} 
+                style={this.props.style}
                 onClick={dis ? ()=>null : this.props.clickHandler}
                 ref={this.props.setRef}
+                disabled={dis}
             >
                 {this.props.children}
             </button>

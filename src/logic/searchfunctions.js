@@ -41,7 +41,7 @@ const searchBase = function(stateSetter, rin) {
     }
   }
 
-  rn.renderLoadingStart(stateSetter, "Searching for " + bm.appname);
+  const popupId = rn.renderLoadingStart(stateSetter, "Searching for " + bm.appname);
   ajax.postJSON(
     stateSetter,
     "/api/find",
@@ -56,10 +56,13 @@ const searchBase = function(stateSetter, rin) {
         i: d.r[rin].bi,
         records: mf.convRecSA("base", d.r[rin].bi, data)
       };
-      rn.renderLoadingEnd(stateSetter);
+      rn.renderLoadingEnd(stateSetter, popupId);
       stateSetter(d);
     },
-    (err) => { rn.renderError(stateSetter, err.message) }
+    (err) => { 
+      rn.renderLoadingEnd(stateSetter, popupId);
+      rn.renderError(stateSetter, err.message) 
+    }
   );
 
 };
@@ -111,13 +114,13 @@ const searchIndexRecord = function(stateSetter, rin, fin, indmap, value, callbac
     }
   }
 
-  rn.renderLoadingStart(stateSetter, "Searching for " + map.fields[fin].indexto);
+  const popupId = rn.renderLoadingStart(stateSetter, "Searching for " + map.fields[fin].indexto);
   ajax.postJSON(
     stateSetter,
     "/api/find",
     searchObj,
     (data) => {
-      rn.renderLoadingEnd(stateSetter);
+      rn.renderLoadingEnd(stateSetter, popupId);
       if (callback instanceof Function) {
         return rn.renderIndexSearch(stateSetter, rin, fin, data, indmap, callback); 
       }
@@ -125,7 +128,7 @@ const searchIndexRecord = function(stateSetter, rin, fin, indmap, value, callbac
       return rn.renderIndexSearch(stateSetter, rin, fin, data);
     },
     (err) => { 
-      rn.renderLoadingEnd(stateSetter);
+      rn.renderLoadingEnd(stateSetter, popupId);
       rn.renderError(stateSetter, err.message) }
   );
 };
@@ -133,7 +136,7 @@ const searchIndexRecord = function(stateSetter, rin, fin, indmap, value, callbac
 const loadAllRecords = function(stateSetter, callback) {
   console.log('loading all records...');
   console.log(d.r.length);
-  rn.renderLoadingStart(stateSetter, "Loading all records");
+  const popupId = rn.renderLoadingStart(stateSetter, "Loading all records");
   let loaded = 0;
   for (let i = 0; i < d.dm.b.length; i++) {
     if (!d.r[i].f.Id.value) continue;
@@ -176,6 +179,7 @@ const loadAllRecords = function(stateSetter, callback) {
             }
           }
 
+          rn.renderLoadingEnd(stateSetter, popupId)
           rf.updateIndexFields(stateSetter, () => {
             rf.orderR();
             if (d.r[d.ri].f[d.fi] === undefined) d.fi = d.r[d.ri].order[0];
@@ -237,6 +241,7 @@ const loadAllRecords = function(stateSetter, callback) {
             }
           }
 
+          rn.renderLoadingEnd(stateSetter, popupId);
           rf.updateIndexFields(stateSetter, () => {
             rf.orderR();
             if (d.r[d.ri].f[d.fi] === undefined) d.fi = d.r[d.ri].order[0];

@@ -2,6 +2,7 @@
     position: relative;
     height: 100%;
     width: 100%;
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .panelInner {
@@ -16,6 +17,7 @@
     padding: 10px;
     border: 1px solid black;
     text-align: center;
+    background-color: white;
 }
 
 .textinputs {

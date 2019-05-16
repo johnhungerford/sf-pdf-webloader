@@ -15,21 +15,23 @@ export default class SfSearchList extends Component {
 
     render() {
         return (
-            <div className={this.props.searchList}>
-                {d.sdata.records.map((value, index)=>(
-                    <SfSearchEntry
-                        keyprop={`basesearch-${value['Id']}`}
-                        clickHandler={()=>sf.baseSearchSelected(this.props.stateSetter, value['Id'])}
-                    >
-                        {d.sdata.layout.map((val,ind) => (
-                            <p 
-                                key={`searchentry-index-${ind}`}
-                            >
-                                {mf.parseLayout(val, d.sdata.records[index])}
-                            </p>
-                        ))}
-                    </SfSearchEntry>
-                ))}
+            <div className={styles.searchList}>
+                <div>
+                    {d.sdata.records.map((value, index)=>(
+                        <SfSearchEntry
+                            keyprop={`basesearch-${value['Id']}`}
+                            clickHandler={()=>sf.baseSearchSelected(this.props.stateSetter, value['Id'])}
+                        >
+                            {d.sdata.layout.map((val,ind) => (
+                                <p 
+                                    key={`searchentry-index-${ind}`}
+                                >
+                                    {mf.parseLayout(val, d.sdata.records[index])}
+                                </p>
+                            ))}
+                        </SfSearchEntry>
+                    ))}
+                </div>
             </div>
         );
     }

@@ -39,3 +39,18 @@
 .button:focus {
     outline: 3px solid rgb(152, 209, 247);
 }
+
+.button:disabled,
+.button[disabled] {
+    opacity: 0.3;
+    filter: grayscale(100%);
+    pointer-events: none;
+}
+
+.small {
+    padding: 5px;
+}
+
+.small:hover {
+    padding: 4px;
+}

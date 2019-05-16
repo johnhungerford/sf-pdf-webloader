@@ -762,7 +762,7 @@ const addRecord = function(stateSetter, rInd, rec) {
 const updateIndexFields = function (stateSetter, callback, rin) {
   if (!callback || ! callback instanceof Function) return false;
 
-  rn.renderLoadingStart(stateSetter, 'Looking up index fields');
+  const popupId = rn.renderLoadingStart(stateSetter, 'Looking up index fields');
   let ctr = 0;
   let total = 0;
   if( rin !== undefined && rin < d.r.length ) {
@@ -772,7 +772,7 @@ const updateIndexFields = function (stateSetter, callback, rin) {
     }
 
     if (total === 0) { 
-      rn.renderLoadingEnd(stateSetter, 0);
+      rn.renderLoadingEnd(stateSetter, popupId);
       callback();
       return;
     }
@@ -797,7 +797,7 @@ const updateIndexFields = function (stateSetter, callback, rin) {
             }
 
             if (ctr === total) {
-              rn.renderLoadingEnd(stateSetter);
+              rn.renderLoadingEnd(stateSetter, popupId);
               callback();
             }
           },
@@ -822,7 +822,7 @@ const updateIndexFields = function (stateSetter, callback, rin) {
   }
 
   if (total === 0) { 
-    rn.renderLoadingEnd(stateSetter);
+    rn.renderLoadingEnd(stateSetter, popupId);
     callback();
     return;
   }
@@ -849,7 +849,7 @@ const updateIndexFields = function (stateSetter, callback, rin) {
             }
 
             if (ctr === total) {
-              rn.renderLoadingEnd(stateSetter);
+              rn.renderLoadingEnd(stateSetter, popupId);
               callback();
             }
           },

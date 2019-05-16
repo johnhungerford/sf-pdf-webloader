@@ -1,0 +1,72 @@
+.window {
+    position: relative;
+    display: block;
+    background-color: white;
+    color: black;
+    text-align: left;
+    padding: 12px 24px 12px 24px;
+    border: 1px solid black;
+    min-height: 500px;
+}
+
+.objectSelector {
+    position: relative;
+    display: block;
+    background-color: white;
+    color: black;
+    text-align: left;
+    padding: 12px 24px 12px 24px;
+    border: 1px solid black;
+    min-height: 500px;
+}
+
+.objectSelector ul {
+    list-style: none;
+    padding: 0;
+}
+
+.addedObjects {
+    overflow-y: auto;
+}
+
+.allObjects {
+}
+
+.allList {
+    overflow-y: auto;
+}
+
+.fieldSelector {
+    position: relative;
+    display: block;
+    background-color: white;
+    color: black;
+    text-align: left;
+    padding: 12px 24px 12px 24px;
+    border: 1px solid black;
+}
+
+.window td {
+    text-align: center;
+    padding-right: 5px;
+}
+
+.filterDivParent {
+    padding: 20px 0px;
+    text-align: center;
+}
+
+.filterDiv {
+    display: inline-block;
+    margin: auto;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.button {
+    padding: 4px;
+}
+
+.orderList {
+    padding-left: 20px;
+}

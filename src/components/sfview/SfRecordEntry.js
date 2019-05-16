@@ -115,7 +115,7 @@ class SfRecordEntry extends Component {
                             <div 
                                 className={styles.closex}
                                 onClick={this.deleteRecord}
-                            >{'✖'}</div>
+                            >{'×'}</div>
                         </div>
                     </div>
                 </div>

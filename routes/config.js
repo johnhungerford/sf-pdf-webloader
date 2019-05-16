@@ -114,4 +114,30 @@ router.get('/sfconn', jwtAuthenticate, function(req,res,next) {
     );       
 });
 
+router.post('/addsfconn', jwtAuthenticate, function (req, res, next) {
+    console.log(`/addsfconn; username: ${res.locals.username}`);
+    global.mysql.query(
+        `INSERT INTO sfconnections SET ?`, 
+        {
+            user: res.locals.id,
+            title: req.body.title,
+            config: req.body.config,
+        },
+        (errQuery, resQuery)=>{
+            if (errQuery) {
+                return res.json({
+                    success: false,
+                    message: 'attempt to query sf connection configs failed',
+                    err: errQuery,
+                });
+            }
+
+            return res.json({ 
+                success: true, 
+                data: resQuery,
+            });
+        }
+    );    
+});
+
 module.exports = router;

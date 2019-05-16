@@ -117,7 +117,7 @@ const updateAll = function(stateSetter) {
 
   let ctr = 0;
   let total = 0;
-  rn.renderLoadingStart(stateSetter, 'Saving all records');
+  const popupId = rn.renderLoadingStart(stateSetter, 'Saving all records');
   for( let i = 0; i < d.r.length; i++ ) {
     if ( !rf.isChanged(i) && !d.r[i].delete ) { 
       continue; 
@@ -130,7 +130,7 @@ const updateAll = function(stateSetter) {
     updateRecord(stateSetter, i, () => {
       ctr += 1;
       if(ctr === total) {
-        rn.renderLoadingEnd(stateSetter);
+        rn.renderLoadingEnd(stateSetter, popupId);
         sf.loadAllRecords(stateSetter);
       }
     });

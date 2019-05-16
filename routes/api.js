@@ -100,4 +100,39 @@ router.post('/delete', jwtAuthenticate, sfAuthenticate, function(req, res, next)
   
 });
 
+router.get('/sobjects', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
+	if (res.locals.sfconn === undefined) return json({ success: false, message: 'No Salesforce connection!'});
+	const conn = res.locals.sfconn;
+
+	console.log(req.body);
+	conn.describeGlobal((errQuery, resQuery) => {
+		if (errQuery) return res.json({ success: false, message: 'Unable to get Salesforce objects', err: errQuery });
+		return res.json({success: true, data: resQuery.sobjects, full: resQuery});
+	});
+});
+
+router.get('/sobjects/:sobj/fields', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
+	const sobj = req.params.sobj;
+	if (res.locals.sfconn === undefined) return json({ success: false, message: 'No Salesforce connection!'});
+	const conn = res.locals.sfconn;
+
+	console.log(req.body);
+	conn.sobject(sobj).describe((errQuery, resQuery) => {
+		if (errQuery) return res.json({ success: false, message: 'Unable to get Salesforce objects', err: errQuery });
+		resQuery.fields.push({
+			label: "Record Type",
+			name: "RecordTypeId",
+			type: "picklist",
+			picklistValues: resQuery.recordTypeInfos.map((val) => {
+				return {
+					label: val.name,
+					value: val.recordTypeId,
+				};
+			})
+		});
+
+		return res.json({success: true, data: resQuery.fields, full: resQuery});
+	});
+});
+
 module.exports = router;

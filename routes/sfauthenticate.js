@@ -6,11 +6,20 @@ module.exports = function(req, res, next) {
     return res.json({ success: false, sfreauth: true, message: 'missing username' });
   }
 
+  console.log('req.query:');
+  console.log(req.query);
+  console.log('\n\n\nreq.body:');
+  console.log(req.body);
+
   if (
     (
       req.params.sfconnid === undefined || 
       req.params.sfconnid === null || 
-      res.locals.sfconnid === ''
+      req.params.sfconnid === ''
+    ) && (
+      req.query.sfconnid === undefined ||
+      req.query.sfconnid === null ||
+      req.query.sfconnid === ''
     ) && (
       req.body.sfconnid === undefined ||
       req.body.sfconnid === null ||
@@ -21,7 +30,7 @@ module.exports = function(req, res, next) {
     )
   ) return res.json({ success: false, message: 'no sf configuration received' });
 
-  const sfconnid = req.params.sfconnid === undefined ? req.body.sfconnid : req.params.sfconnid;
+  const sfconnid = req.params.sfconnid === undefined ? req.body.sfconnid === undefined ? req.query.sfconnid : req.body.sfconnid : req.params.sfconnid;
   console.log('sfconn id', sfconnid);
   global.mysql.query(
     `SELECT title, config FROM sfconnections WHERE id='${sfconnid}'`,

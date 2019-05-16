@@ -45,7 +45,6 @@
 }
 
 .body {
-    position: relative;
     min-height: 24px;
     max-height: 350px;
     overflow-y: auto;

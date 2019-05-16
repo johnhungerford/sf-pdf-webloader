@@ -3,7 +3,7 @@ const ajax = require('./ajaxfunctions')
 const d = require('../components/state');
 
 const addDoc = function(stateSetter, fd) {
-	rn.renderLoadingStart(stateSetter, 'Loading document');
+	const popupId = rn.renderLoadingStart(stateSetter, 'Loading document');
 
 	if( !fd ) { return false; }
 
@@ -14,11 +14,11 @@ const addDoc = function(stateSetter, fd) {
 		'/doc/load',  
 		fd,
 		(data) => {
-			rn.renderLoadingEnd(stateSetter);
+			rn.renderLoadingEnd(stateSetter, poupId);
 			if ( data.err) {
 				rn.renderError(stateSetter, data.err);
 				return false;
-			}
+			} 
 			
 			if ( data.success && data.html ) {
 				d.doc.html = data.html;
@@ -27,6 +27,7 @@ const addDoc = function(stateSetter, fd) {
 			}
 		},
 		(err) => { 
+			rn.renderLoadingEnd(stateSetter, popupId)
 			rn.renderError(stateSetter, `Unable to post data to ${'/doc/load'}: ${err.message}`); 
 		}
 	);

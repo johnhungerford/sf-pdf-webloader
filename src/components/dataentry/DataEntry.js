@@ -19,6 +19,10 @@ export default class DataEntry extends Component {
 
     changeHandler = (e) => {
         d.fldentry.value = e.target.value;
+        if (e.target.tagName === 'SELECT') {
+            this.submit();
+            d.fldentry.oldval = e.target.value;
+        }
         this.props.stateSetter(d);
     };
 
@@ -231,8 +235,8 @@ export default class DataEntry extends Component {
                 {rmap.fields[d.fi].values.map((val,ind)=>{
                     return <option 
                         key={`input-picklist-${ind}`}
-                        value={val}
-                    >{val}</option>;
+                        value={val.value ? val.value : val}
+                    >{val.label ? val.label : val}</option>;
                 })}
             </select>;
             break;
