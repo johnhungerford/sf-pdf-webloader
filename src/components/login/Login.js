@@ -99,7 +99,7 @@ export default class DataEntry extends Component {
                                     this.props.stateSetter(d);
                                 }}
                             >
-                                Register
+                                New User
                             </Button>
                         </div>
                     </div>

@@ -8,6 +8,7 @@ export default class Button extends Component {
     }
 
     render() {
+        console.log(`Button: ${this.props.children}; disabled=${this.props.disabled}`);
         const dis = this.props.disabled === true ? true : false;
 
         const className = this.props.class ? this.props.option === 'small' ? `${styles.button} ${this.props.class} ${styles.small}` : `${styles.button} ${this.props.class}` : this.props.option === 'small' ? `${styles.button} ${styles.small}` : styles.button;

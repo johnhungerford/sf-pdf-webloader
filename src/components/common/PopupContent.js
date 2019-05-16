@@ -36,6 +36,7 @@ export default class PopupContent extends Component {
                     <React.Fragment>
                         {buttons.map((button, ind) => 
                             <Button 
+                                disabled={button.disabled === undefined ? false : button.disabled}
                                 clickHandler={()=>{
                                     if (this.props.children.closeHandler && button.close && button.clickHandler) {
                                         button.clickHandler(this.props.children.closeHandler);

@@ -413,7 +413,7 @@ export default class SetOrder extends Component {
         const hash = 'hash' + Math.random().toString(36).substring(7);
         d.popups.push((
             <PopupContent
-                hash={this.props.hash}
+                hash={hash}
             >
                 {{
                     header: `Select a Field:`,

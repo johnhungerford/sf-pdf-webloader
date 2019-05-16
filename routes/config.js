@@ -140,4 +140,31 @@ router.post('/addsfconn', jwtAuthenticate, function (req, res, next) {
     );    
 });
 
+router.post('/addsfschema', jwtAuthenticate, function (req, res, next) {
+    console.log(`/addsfschema; username: ${res.locals.username}`);
+    global.mysql.query(
+        `INSERT INTO sfschemas SET ?`, 
+        {
+            user: res.locals.id,
+            sfconnection: req.body.sfconnid,
+            title: req.body.title,
+            config: req.body.config,
+        },
+        (errQuery, resQuery)=>{
+            if (errQuery) {
+                return res.json({
+                    success: false,
+                    message: 'attempt to query sf connection configs failed',
+                    err: errQuery,
+                });
+            }
+
+            return res.json({ 
+                success: true, 
+                data: resQuery,
+            });
+        }
+    );  
+});
+
 module.exports = router;

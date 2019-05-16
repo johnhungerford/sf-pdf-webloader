@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 
 import * as ajax from '../../logic/ajaxfunctions';
+import * as cf from '../../logic/configfunctions';
 import * as rn from '../render';
+import * as d from '../state';
 
 import ObjectSelector from './ObjectSelector';
 import FieldSelector from './FieldSelector';
 import IndexConfigure from './IndexConfigure';
 import SetOrder from './SetOrder';
 import SetLayout from './SetLayout';
-
-import * as styles from './SchemaConfigure.module.css';
-import { normalize } from 'path';
 
 export default class SchemaConfigure extends Component {
     constructor(props) {
@@ -27,7 +26,38 @@ export default class SchemaConfigure extends Component {
             index: 0,
             field: null,
             substage: 'objects', // 'fields', 'indexconfig', 'entryorder', 'layout', 'listorder'
+            title: '',
         }
+    }
+
+    submit = () => {
+        ajax.postJSON(
+            this.props.stateSetter,
+            `/config/addsfschema`,
+            {
+                sfconnection: d.sfconfig.sfconns.list[d.sfconfig.sfconns.selected].id,
+                title: this.state.title,
+                config: JSON.stringify({ b: this.state.b, r: this.state.r, }),
+            },
+            (data) => {
+                if (!data.success) {
+                    rn.renderError(this.props.stateSetter, `Unable to submit configuration: ${data.message}`, this.submit);
+                }
+
+                cf.getSfSchemata(this.props.stateSetter, ()=>{
+                    for (let i in d.popups) {
+                        console.log(d.popups[i]);
+                        if (d.popups[i].props && d.popups[i].props.hash === this.props.hash) {
+                            d.popups.splice(i,1);
+                            this.props.stateSetter(d);
+                        }
+                    }
+                })
+            },
+            (err) => {
+                rn.renderError(this.props.stateSetter, `Err submitting configuration: ${err.message}`, this.submit)
+            }
+        );
     }
 
     copyAll = (oldThing) => {
@@ -332,6 +362,7 @@ export default class SchemaConfigure extends Component {
                         type={s} 
                         b={this.state.b}
                         r={this.state.r}
+                        submit={this.submit}
                         changeName={this.changeName}
                         getObjects={this.getObjects}
                         sObjects={this.state.sObjects}

@@ -51,7 +51,7 @@ module.exports = function(req, res, next) {
       const oauth = new jsforce.OAuth2(config.oauth);
 
       const sfconn =  new jsforce.Connection(oauth);
-      if (req.session.accessToken && req.session.instanceUrl) { 
+      if (req.session.accessToken && req.session.instanceUrl && req.session.sfconnid && req.session.sfconnid === sfconnid) {
         console.log(`sfAuthenticate(): session tokens found (${req.originalUrl})`);
         sfconn.initialize({
           instanceUrl : req.session.instanceUrl,
@@ -74,6 +74,9 @@ module.exports = function(req, res, next) {
           req.session.accessToken = sfconn.accessToken;
           req.session.instanceUrl = sfconn.instanceUrl;
           req.session.refreshToken = sfconn.refreshToken;
+          req.session.sfconnid = sfconnid;
+          req.session.sfauthcode = null;
+          delete req.session.sfauthcode;
           res.locals.sfconn = sfconn;
           return next();
         });
@@ -93,7 +96,7 @@ module.exports = function(req, res, next) {
           req.session.accessToken = sfconn.accessToken;
           req.session.instanceUrl = sfconn.instanceUrl;
           req.session.refreshToken = sfconn.refreshToken;
-
+          req.session.sfconnid = sfconnid;
           console.log(`sfAuthenticate(): Retrieved connection from login (${req.originalUrl})`);
           res.locals.sfconn = sfconn;
           return next();

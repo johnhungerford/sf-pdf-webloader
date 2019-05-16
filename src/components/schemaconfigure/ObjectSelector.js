@@ -19,8 +19,41 @@ export default class ObjectSelector extends Component {
 
         this.state = {
             filterText: '',
+            submittable: this.validate(),
         }
     }
+
+    validate = () => {
+        const r = this.props.r;
+        const b = this.props.b;
+
+        if (r.length === 0 && b.length === 0) return false;
+        for (let i in b) {
+            if (b[i].settings === undefined) return false;
+            if (!(b[i].settings.layout instanceof Array)) return false;
+            if (b[i].settings.layout.length === 0) return false;
+            if (!(b[i].settings.order instanceof Array)) return false;
+            if (b[i].settings.order.length === 0) return false;
+            if (b[i].fields.Id === undefined) return false;
+            let ctr = 0;
+            for (let i in b[i].fields) ctr++;
+            if (ctr < 2) return false;
+        }
+
+        for (let i in r) {
+            if (r[i].settings === undefined) return false;
+            if (!(r[i].settings.layout instanceof Array)) return false;
+            if (r[i].settings.layout.length === 0) return false;
+            if (!(r[i].settings.order instanceof Array)) return false;
+            if (r[i].settings.order.length === 0) return false;
+            if (r[i].fields.Id === undefined) return false;
+            let ctr = 0;
+            for (let i in r[i].fields) ctr++;
+            if (ctr < 2) return false;
+        }
+
+        return true;
+    };
 
     formObj = (sfname) => {
         let obj;
@@ -46,8 +79,8 @@ export default class ObjectSelector extends Component {
     }
 
     render = () => {
-        console.log(`sObjects:`);
-        console.log(this.props.sObjects);
+        console.log('Submittable??');
+        console.log(this.state.submittable);
         const header = `Select Salesforce Objects`;
         const body = (
             <div>
@@ -153,7 +186,12 @@ export default class ObjectSelector extends Component {
             {
                 name: 'Cancel',
                 close: true,
-            }
+            },
+            {
+                name: 'Create Config',
+                clickHandler: this.props.submit,
+                disabled: !(this.state.submittable),
+            },
         ];
 
         return (
