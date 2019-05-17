@@ -14,6 +14,8 @@ export default class SetLayout extends Component {
     }
 
     render = () => {
+        console.log('SetLayout state');
+        console.log(this.state);
         const header = null;
         const body = null;
         const buttons = null;

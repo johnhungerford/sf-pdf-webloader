@@ -79,7 +79,6 @@ var renderError = function(stateSetter, msg, callback) {
 
 
 const renderAlert = function(stateSetter, msg, callback) {
-  console.log('renderAlert!');
   const popup = {
     header: 'Alert',
     body: msg,
@@ -119,7 +118,6 @@ const renderAlert = function(stateSetter, msg, callback) {
     d.popups.pop();
     stateSetter(d);
     if (callback instanceof Function) {
-      console.log('RUN CONTINUE CALLBACK...');
       callback();
     }
   };
@@ -134,7 +132,6 @@ const renderLoadingStart = function(stateSetter, msg) {
   const hash = 'loadinghash' + Math.random().toString(36).substring(7);
   const popup =  <LoadingPopup keyprop={d.popups.length} hash={hash}>{msg}</LoadingPopup>;
   d.popups.push(popup);
-  console.log(`popup ID: ${hash}`);
 
   setTimeout(() => {
     for (let i = d.popups.length - 1; i >= 0; i--) {

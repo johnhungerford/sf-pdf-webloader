@@ -14,7 +14,6 @@ class SfRecordEntry extends Component {
     }
 
     deleteRecord = (e) => {
-        console.log('delete the record!')
         e.stopPropagation();
         if (d.r[this.props.ri].new) {
             d.r.splice(this.props.ri,1);

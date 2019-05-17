@@ -70,3 +70,17 @@
 .orderList {
     padding-left: 20px;
 }
+
+.invisAddBtnDiv {
+    text-align: center;
+    min-height: 21px;
+}
+
+.invisAddBtn {
+    display: none;
+    cursor: pointer;
+}
+
+.invisAddBtnDiv:hover > .invisAddBtn {
+    display: inline;
+}

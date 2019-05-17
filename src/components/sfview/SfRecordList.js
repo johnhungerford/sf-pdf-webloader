@@ -15,8 +15,6 @@ export default class SfRecordList extends Component {
     };
 
     componentDidUpdate = this.componentDidMount = () => {
-        console.log(this.activeEntryRef);
-        console.log(this.listScrollRef);
         if (this.activeEntryRef.current === null || this.listScrollRef.current === null) return;
 
         const listWinScrollTop = this.listScrollRef.current.scrollTop;
@@ -24,14 +22,11 @@ export default class SfRecordList extends Component {
         const activeEntryOffsetTop = this.activeEntryRef.current.offsetTop - this.listScrollRef.current.offsetTop;
         const activeEntryOffsetBottom = activeEntryOffsetTop + this.activeEntryRef.current.offsetHeight;    
 
-        console.log(`listWinScrollTop: ${listWinScrollTop}\nlistWinScrollBottom: ${listWinScrollBottom}\nactiveEntryOffsetTop: ${activeEntryOffsetTop}\nactiveEntryOffsetBottom: ${activeEntryOffsetBottom}`);
         if (activeEntryOffsetBottom > listWinScrollBottom) {
             this.listScrollRef.current.scrollTo(0, activeEntryOffsetBottom - this.listScrollRef.current.offsetHeight + 5);
         } else if (activeEntryOffsetTop < listWinScrollTop) {
             this.listScrollRef.current.scrollTo(0, activeEntryOffsetTop - 5);
-        }
-        
-        console.log(`listWinScrollTop: ${listWinScrollTop}\nlistWinScrollBottom: ${listWinScrollBottom}\nactiveEntryOffsetTop: ${activeEntryOffsetTop}\nactiveEntryOffsetBottom: ${activeEntryOffsetBottom}`);
+        }        
     };
 
     render() {

@@ -46,7 +46,6 @@ export default class SchemaConfigure extends Component {
 
                 cf.getSfSchemata(this.props.stateSetter, ()=>{
                     for (let i in d.popups) {
-                        console.log(d.popups[i]);
                         if (d.popups[i].props && d.popups[i].props.hash === this.props.hash) {
                             d.popups.splice(i,1);
                             this.props.stateSetter(d);
@@ -61,7 +60,6 @@ export default class SchemaConfigure extends Component {
     }
 
     copyAll = (oldThing) => {
-        console.log(oldThing);
         const newThing = oldThing instanceof Array ? 
             [...oldThing] : 
             oldThing instanceof Object ? { ...oldThing } : oldThing;
@@ -335,8 +333,6 @@ export default class SchemaConfigure extends Component {
                 nextSubstage = 'entryorder';
         }
 
-        console.log(`substage: ${this.state.substage}; nextSubstage: ${nextSubstage}`);
-
         this.setState((oldState) => {
             return {
                 ...oldState,
@@ -353,10 +349,10 @@ export default class SchemaConfigure extends Component {
         const i = this.state.index;
         const f = this.state.field;
         const hash = this.props.hash;
+        console.log('SchemaConfigure state:');
         console.log(this.state);
         switch(this.state.substage) {
             case 'objects':
-                console.log('objects!');
                 return (
                     <ObjectSelector 
                         type={s} 

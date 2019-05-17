@@ -56,10 +56,6 @@ export default class FieldSelector extends Component {
 
             newState.fields = {...oldState.fields};
             newState.fields[key].inuse = false;
-
-            console.log(`key: ${key}`);
-            console.log('newState:');
-            console.log(newState);
             return newState;
         });
     }
@@ -335,9 +331,9 @@ export default class FieldSelector extends Component {
     }
 
     render = () => {
+        console.log('FieldSelector state:');
+        console.log(this.state);
         if (Object.keys(this.props.state.fields) === 0) return <div></div>;
-        console.log(`fields:`);
-        console.log(this.props.state.fields);
         const header = `Select Fields for "${this.props.state.stage === 'base' ? this.props.state.b[this.props.state.index].appname : this.props.state.r[this.props.state.index].appname}"`;
         
         const selectedFields = {...this.props.state.stage === 'base' ?
@@ -570,7 +566,6 @@ export default class FieldSelector extends Component {
                     body: body,
                     buttons: buttons,
                     closeHandler: ()=>{
-                        console.log(`POPUP HASH: ${this.props.hash}`);
                         for (let i in d.popups) {
                             if (d.popups[i].props && d.popups[i].props.hash === this.props.hash) {
                                 d.popups.splice(i,1);

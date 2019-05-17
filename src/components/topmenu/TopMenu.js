@@ -30,7 +30,6 @@ export default class TopMenu extends Component {
                     { logout: true },
                     (data) => {
                         if (data.success) {
-                            console.log('Successfully logged out!');
                             location.reload();
                             return this.props.stateSetter(d);
                         }

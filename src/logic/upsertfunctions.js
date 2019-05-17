@@ -8,8 +8,6 @@ const ajax = require('./ajaxfunctions');
 const updateRecord = function(stateSetter, rin, callback) {
   if (d.r[rin].delete) {
     const fm = mf.getBorR(rin);
-    console.log(`Record to delete!!:`);
-    console.log(d.r[rin]);
     ajax.postJSON(
       stateSetter,
       "/api/delete",

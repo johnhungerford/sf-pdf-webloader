@@ -24,7 +24,6 @@ export default class SfView extends Component {
             <Panel outerClass={`${styles.outer} ${this.props.class}`}/>
         );
 
-        console.log(d);
         const map = mf.getBorR();
         if (d.stage === 'init') return (
             <Panel 

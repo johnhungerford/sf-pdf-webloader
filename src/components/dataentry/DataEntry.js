@@ -27,10 +27,8 @@ export default class DataEntry extends Component {
     };
 
     enterHandler = (e) => {
-        console.log('hello');
         if (e.key === 'Escape') this.inputRef.blur();
         if (e.key !== 'Enter') return;
-        console.log('hello2');
         e.preventDefault();
         this.submit(()=>{
             rf.nextf();
@@ -90,10 +88,6 @@ export default class DataEntry extends Component {
     };
 
     render() {
-        console.log(d);
-        console.log(`submit? ${d.fldentry.submit}`);
-        console.log(`focus on fldentry? ${d.fldentry.focus}`);
-
         if (d.fldentry.submit) {
             this.submit(() => {
                 if (d.fldentry.next) {

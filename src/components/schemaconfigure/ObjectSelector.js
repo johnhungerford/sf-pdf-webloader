@@ -79,8 +79,8 @@ export default class ObjectSelector extends Component {
     }
 
     render = () => {
-        console.log('Submittable??');
-        console.log(this.state.submittable);
+        console.log('ObjectSelector state:');
+        console.log(this.state);
         const header = `Select Salesforce Objects`;
         const body = (
             <div>
@@ -205,9 +205,7 @@ export default class ObjectSelector extends Component {
                     body: body,
                     buttons: buttons,
                     closeHandler: ()=>{
-                        console.log(`POPUP HASH: ${this.props.hash}`);
                         for (let i in d.popups) {
-                            console.log(d.popups[i]);
                             if (d.popups[i].props && d.popups[i].props.hash === this.props.hash) {
                                 d.popups.splice(i,1);
                                 this.props.stateSetter(d);

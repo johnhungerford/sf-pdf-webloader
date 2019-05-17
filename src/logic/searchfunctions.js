@@ -134,8 +134,6 @@ const searchIndexRecord = function(stateSetter, rin, fin, indmap, value, callbac
 };
 
 const loadAllRecords = function(stateSetter, callback) {
-  console.log('loading all records...');
-  console.log(d.r.length);
   const popupId = rn.renderLoadingStart(stateSetter, "Loading all records");
   let loaded = 0;
   for (let i = 0; i < d.dm.b.length; i++) {
@@ -168,8 +166,6 @@ const loadAllRecords = function(stateSetter, callback) {
           }
         }
         
-        console.log(`Numbers of record types loaded: ${loaded}`);
-
         if (loaded === d.dm.b.length + d.dm.r.length) {
           for (let k = 0; k < d.r.length; k++) {
             if (d.r[k].new) d.r.splice(k, 1);
@@ -229,8 +225,6 @@ const loadAllRecords = function(stateSetter, callback) {
             rf.addRecord(stateSetter, i, data[l]);
           }
         }
-
-        console.log(`Numbers of record types loaded: ${loaded}`);
 
         if (loaded === d.dm.b.length + d.dm.r.length) {
           for (let k = 0; k < d.r.length; k++) {

@@ -59,21 +59,17 @@ export default class IndexCreatePopup extends Component {
     }
 
     createHandler = () => {
-        console.log('CREATE HANDLER; props.children: ');
-        console.log(this.props.children);
         if (this.props.children.fm === undefined) return;
         const indmap = this.props.children.fm;
         const recordObj = {};
         recordObj.sobject = indmap.indexto;
         recordObj.record = {};
-        console.log('CREATING RECORD?');
         const apiObj = {
             sobject: indmap.indexto,
             records: [{}]
         }
         
         for(let j = 0; j < indmap.createfields.length; j++ ) {
-            console.log(`${indmap.createfields[j]}:`);
             if(this.state.fields[j].value !== '') {
                 if(this.state.fields[j].id) {
                     apiObj.records[0][indmap.createfields[j]] = this.state.fields[j].id;
@@ -88,9 +84,7 @@ export default class IndexCreatePopup extends Component {
             apiObj.records[0][k] = indmap.indexfields[k].value;
             }
         }
-    
-        console.log('API object for CREATE:');
-        console.log(apiObj);
+
         rn.renderLoadingStart(this.props.stateSetter, 'Creating '+indmap.indexto+' record');
         ajax.postJSON(
             this.props.stateSetter,
@@ -103,17 +97,12 @@ export default class IndexCreatePopup extends Component {
                     return false;
                 }
 
-                console.log(data[0]);
-        
                 if(this.props.children.callback instanceof Function) {
-                    console.log('CALLING CALLBACK');
                     return this.props.children.callback(data);
                 }
                 
                 d.r[d.ri].f[d.fi].value = data[0].id;
                 rf.updateIndexFields(this.props.stateSetter, () => {
-                    console.log('About to pop off the d\'s');
-                    console.log(d.popups);
                     d.fldentry.value = d.r[d.ri].f[d.fi].showval;
                     d.fldentry.oldval = d.fldentry.value;
                     d.fldentry.submit = false;
@@ -131,7 +120,6 @@ export default class IndexCreatePopup extends Component {
     render() {
         const { header, fields, buttons } = this.props.children;
 
-        console.log(this.props.children);
         const form = fields.map((val, ind) => {
             return (
                 <div key={`create-fields-${d.popups.length}-${ind}`}>

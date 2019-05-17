@@ -18,7 +18,6 @@ class EditCondition extends Component {
     }
 
     copyAll = (oldThing) => {
-        console.log(oldThing);
         const newThing = oldThing instanceof Array ? 
             [...oldThing] : 
             oldThing instanceof Object ? { ...oldThing } : oldThing;
@@ -31,13 +30,7 @@ class EditCondition extends Component {
         return newThing;
     }
 
-    submit = (cb) => {
-        console.log(`Submitting entry...`);
-        console.log(this.state.entry);
-        this.props.update(this.state.entry)();
-        d.popups.pop();
-        this.props.stateSetter(d,cb);
-    }
+    submit = (cb) => this.props.update(this.state.entry, cb)();
 
     setSwitchValuesCb = (switchInd, valuesInd) => (e) => {
         if (e.type === 'keypress' && e.key !== 'Enter') return;
@@ -135,24 +128,6 @@ class EditCondition extends Component {
     }
 
     render = () => {
-        const buttons = [
-            {
-                name: `Cancel`,
-                close: true,
-            },
-            {
-                name: `Update Condition`,
-                close: true,
-                clickHandler: (cb) => {
-                    rn.renderAlert(
-                        this.props.stateSetter, 
-                        `The field order configured for any existing cases that were removed or replaced in this window will be permanently deleted. Continue?`, 
-                        this.submit,
-                    );
-                }
-            }
-        ];
-
         const entry = this.state.entry;
         let optionsList;
         if (entry.condition === 'switch') {
@@ -245,25 +220,31 @@ class EditCondition extends Component {
             </div>
         );
 
-        const hash = 'hash' + Math.random().toString(36).substring(7);
+        const buttons = [
+            {
+                name: `Cancel`,
+                close: true,
+            },
+            {
+                name: `Update Condition`,
+                close: true,
+                clickHandler: (cb) => {
+                    rn.renderAlert(
+                        this.props.stateSetter, 
+                        `The field order configured for any existing cases that were removed or replaced in this window will be permanently deleted. Continue?`, 
+                        this.submit,
+                    );
+                }
+            }
+        ];
+
         return (
-            <PopupContent
-                hash={hash}
-            >
+            <PopupContent>
                 {{
                     header: this.props.entry.condition ? `Edit Condition` : `Add Condition`,
                     body: body,
                     buttons: buttons,
-                    closeHandler: ()=>{
-                        console.log(`POPUP HASH: ${hash}`);
-                        for (let i in d.popups) {
-                            console.log(d.popups[i]);
-                            if (d.popups[i].props && d.popups[i].props.hash === hash) {
-                                d.popups.splice(i,1);
-                                this.props.stateSetter(d);
-                            }
-                        }
-                    },
+                    closeHandler: this.props.closeHandler
                 }}
             </PopupContent>
         );
@@ -281,27 +262,42 @@ export default class SetOrder extends Component {
     }
 
     getOrderArr = (arr, p) => {
-        let ptr = arr === undefined ? this.getfOrder() : arr;
-        let ctr = 0;
-        while(ctr < p && ctr >= 0) {
-            for(let i in ptr) {
-                if (ptr[i].condition) {
-                    if (this.props.path[ctr] !== 0) {
-                        if (ptr[i].condition === 'switch') ptr = ptr[i].switch[this.props.path[ctr] - 1].order;
-                        else if (this.props.path[ctr] === 2) ptr = ptr[i].false;
-                        else if (ptr[i].true) ptr = ptr[i].true;
-                        else ptr = ptr[i].false;
-
-                        ctr++;
+        let ptrStack = [{ arr: arr === undefined ? this.getfOrder() : arr, i: 0}];
+        let pCtr = 0;
+        let arrCtr = 0;
+        console.log(`p to be returned: ${p}`);
+        console.log(`Path:`)
+        console.log(this.props.path);
+        while(pCtr < p && arrCtr >= 0) {
+            console.log(`arr length: ${ptrStack[arrCtr].arr.length}; arr:`);
+            console.log(ptrStack[arrCtr].arr);
+            for(let i = ptrStack[arrCtr].i; i < ptrStack[arrCtr].arr.length; i++) {
+                console.log(`pCtr: ${pCtr}; arrCtr: ${arrCtr}; i: ${i}`);
+                if (ptrStack[arrCtr].arr[i].condition) {
+                    let newPtr;
+                    if (this.props.path[pCtr] !== 0) {
+                        if (ptrStack[arrCtr].arr[i].condition === 'switch') newPtr = ptrStack[arrCtr].arr[i].switch[this.props.path[pCtr] - 1].order;
+                        else if (this.props.path[pCtr] === 2) newPtr = ptrStack[arrCtr].arr[i].false;
+                        else if (ptrStack[arrCtr].arr[i].true) newPtr = ptrStack[arrCtr].arr[i].true;
+                        else newPtr = ptrStack[arrCtr].arr[i].false;
+                        ptrStack.push({arr: newPtr, i: 0})
+                        pCtr++;
+                        arrCtr++;
                         break;
                     }
+
+                    pCtr++;
+                    if (pCtr === p) break;
                 }
 
-                if (i === ptr.length - 1) ctr--;
+                if (i === ptrStack[arrCtr].arr.length - 1) {
+                    arrCtr--;
+                    break;
+                }
             }
         }
 
-        return ptr;
+        return ptrStack[arrCtr].arr === undefined ? ptrStack[0].arr : ptrStack[arrCtr].arr;
     }
 
     getOrderEntry = (p, i) => {
@@ -310,8 +306,6 @@ export default class SetOrder extends Component {
 
     correctPath = (fOrder) => {
         let newPath = this.correctPathRecursive(fOrder)[1];
-        console.log(`NEWPATH:`);
-        console.log(newPath);
         return newPath;
     }
 
@@ -359,9 +353,9 @@ export default class SetOrder extends Component {
     }
 
     delEntryCb = (p, i, cb) => () => {
-        const fOrder = this.props.copyAll(this.props.fOrder);
+        const fOrder = this.getfOrder();
         this.getOrderArr(fOrder, p).splice(i,1);
-        this.updatefOrder(fOrder), cb
+        this.updatefOrder(fOrder, cb);
     }
 
     addEntryCb = (entry, p, i, cb) => () => {
@@ -373,8 +367,6 @@ export default class SetOrder extends Component {
     }
 
     changeEntryCb = (entry, p, i, cb) => () => {
-        console.log(`Inserting entry into fOrder; p=${p}, i=${i}`);
-        console.log(entry);
         const fOrder = this.getfOrder();
         const arr = this.getOrderArr(fOrder, p);
         if (i === undefined || i >= arr.length) return;
@@ -422,9 +414,7 @@ export default class SetOrder extends Component {
                     ),
                     buttons: [{name: `Cancel`, close: true, }],
                     closeHandler: ()=>{
-                        console.log(`POPUP HASH: ${hash}`);
                         for (let i in d.popups) {
-                            console.log(d.popups[i]);
                             if (d.popups[i].props && d.popups[i].props.hash === hash) {
                                 d.popups.splice(i,1);
                                 this.props.stateSetter(d);
@@ -438,12 +428,22 @@ export default class SetOrder extends Component {
     } 
 
     editConditionPopup = (entry, p, i) => () => {
+        const hash = 'hash' + Math.random().toString(36).substring(7);
         d.popups.push((
             <EditCondition
                 entry={entry}
+                hash={hash}
                 update={this.changeEntryGenCb(p, i)}
                 stateSetter={this.props.stateSetter}
                 sObj={this.props.sObj}
+                closeHandler={()=>{
+                    for (let i in d.popups) {
+                        if (d.popups[i].props && d.popups[i].props.hash === hash) {
+                            d.popups.splice(i,1);
+                            this.props.stateSetter(d);
+                        }
+                    }
+                }}
             />
         ));
         this.props.stateSetter(d);
@@ -452,7 +452,7 @@ export default class SetOrder extends Component {
     orderEntryElem = (entry, p, i) => {
         return (
             <div  key={`order-entry-${p}-${this.props.path[p]}-${i}`}>
-                <div>
+                <div className={styles.invisAddBtnDiv}>
                     <span 
                         className={styles.invisAddBtn}
                         onClick={this.addEntryPopup(p, i)}
@@ -511,13 +511,10 @@ export default class SetOrder extends Component {
     getAllEntriesRec = (arrIn, pIn) => {
         let arr = arrIn;
         let p = pIn;
+        let pMap = pIn;
         const entries = [];
         for (let i in arr) {
-            console.log(`p: ${p}, i: ${i}, path:`);
-            console.log(this.props.path);
-            console.log('current order array:');
-            console.log(arr);
-            entries.push(this.orderEntryElem(arr[i], p, i));
+            entries.push(this.orderEntryElem(arr[i], pMap, i));
             if (arr[i].condition) {
                 entries.push(this.orderHeadingElem(arr[i], p, i));
                 if (this.props.path[p] == 0) {
@@ -536,17 +533,15 @@ export default class SetOrder extends Component {
             }
         }
 
-        entries.push(this.addEntryButton(p));
+        entries.push(this.addEntryButton(pMap));
         return [(
             <div className={styles.orderList}>{entries}</div>
         ), p];
     }
 
     render = () => {
-        console.log(`path:`);
-        console.log(this.props.path);
-        console.log(`order:`);
-        console.log(this.props.fOrder);
+        console.log('SetOrder state:');
+        console.log(this.state);
         const header = `Set Field Order for ${this.props.substage === 'searchorder' ? 'Initial Search' : 'Data Entry'}`;
         const buttons = [
             {
@@ -572,6 +567,7 @@ export default class SetOrder extends Component {
         return (
             <PopupContent
                 keyprop={d.popups.length}
+                class={styles.window}
                 hash={this.props.hash}
             >
                 {{
@@ -579,7 +575,6 @@ export default class SetOrder extends Component {
                     body: body,
                     buttons: buttons,
                     closeHandler: ()=>{
-                        console.log(`POPUP HASH: ${this.props.hash}`);
                         for (let i in d.popups) {
                             if (d.popups[i].props && d.popups[i].props.hash === this.props.hash) {
                                 d.popups.splice(i,1);

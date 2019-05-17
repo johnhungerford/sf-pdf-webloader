@@ -14,6 +14,8 @@ export default class IndexConfigure extends Component {
     }
 
     render = () => {
+        console.log('IndexConfigure state:');
+        console.log(this.state);
         const header = null;
         const body = null;
         const buttons = null;

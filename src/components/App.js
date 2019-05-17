@@ -46,7 +46,6 @@ export default class App extends Component {
                 return;
         }
 
-        console.log(`KEYPRESS: key="${e.keyCode}"; element="${document.activeElement.tagName}"`);
         switch(e.keyCode) {
             case 13:
                 e.preventDefault();
