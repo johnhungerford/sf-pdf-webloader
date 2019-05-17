@@ -347,7 +347,6 @@ const nextrNoAdd = function(stateSetter) {
 
   const oldri = d.ri;
   if (d.r[d.ri].delete) {
-    console.log('DELETE!!');
     nextr(stateSetter);
     if (d.ri === oldri) return prevr();
     setFldInput();
@@ -495,7 +494,6 @@ const jumpTo = function(rin) {
   d.ri = rin;
   d.fi = d.r[rin].order[0];
   setFldInput();
-  console.log(`Setting fldentry:\n \tValue: ${d.fldentry.value}\n\tOld Value: ${d.fldentry.oldval}`);
   return true;
 }
 
