@@ -16,6 +16,7 @@ export default class SchemaConfigure extends Component {
         super(props);
 
         this.state = {
+            layout: [],
             path: [],
             sObjects: [],
             sObjMap: {},
