@@ -483,7 +483,6 @@ const prevf = function(stateSetter) {
 
 const submit = function(stateSetter) {
   setValue(stateSetter, d.ri, d.fi, d.fldentry.value);
-  d.fldentry.focus = true;
   nextr;
   stateSetter(d);
 }
@@ -504,7 +503,7 @@ const setOrder = function(rInd) {
     let out = [];
     for (let i = 0; i < om.length; i++) {
       out.push(om[i].field);
-      if (om[i].autofill && !f[om[i].field].origval) {
+      if (om[i].autofill && !f[om[i].field].changed) {
         if (om[i].autofill.condition === "filled") {
           if (f[om[i].autofill.conditionfield].value && om[i].autofill.true) {
             f[om[i].field].value = om[i].autofill.true;
@@ -645,6 +644,7 @@ const addBaseRecord = function(stateSetter, bInd, bRec) {
       for (let j in d.dm.b[i].fields) {
         d.r[i].f[j] = {
           sfname: d.dm.b[i].fields[j].sfname,
+          changed: false,
         };
         if(bRec) {
           d.r[i].f[j].value = bRec[d.dm.b[i].fields[j].sfname];
@@ -734,6 +734,7 @@ const addRecord = function(stateSetter, rInd, rec) {
     d.r[i].f[j] = {};
 
     d.r[i].f[j].sfname = d.dm.r[rInd].fields[j].sfname;
+    d.r[i].f[j].changed = false;
 
     if (d.r[i].new) {
       if (d.dm.r[rInd].fields[j].inherits) {

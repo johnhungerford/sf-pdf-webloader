@@ -20,9 +20,17 @@ export default class DataEntry extends Component {
     changeHandler = (e) => {
         d.fldentry.value = e.target.value;
         if (e.target.tagName === 'SELECT') {
-            this.submit();
-            d.fldentry.oldval = e.target.value;
+            console.log('Select S')
+            this.submit(()=>{
+                rf.nextf();
+                this.inputRef.current.blur();
+                this.props.stateSetter(d);
+            });
+
+            return;
         }
+
+        d.fldentry.oldval = e.target.value;
         this.props.stateSetter(d);
     };
 
@@ -32,6 +40,7 @@ export default class DataEntry extends Component {
         e.preventDefault();
         this.submit(()=>{
             rf.nextf();
+            this.inputRef.current.blur();
             this.props.stateSetter(d);
         });
     };
@@ -45,9 +54,12 @@ export default class DataEntry extends Component {
     }
 
     submit = (callback) => {
+        console.log('SUBMITTING');
         if (d.fldentry.value === d.fldentry.oldval) {
             return callback instanceof Function ? callback() : null;
         }
+
+        this.inputRef.current.blur();
 
         const rmap = mf.getBorR();
         const rin = d.ri;
@@ -71,23 +83,34 @@ export default class DataEntry extends Component {
             d.r[rin].f[fin].value = d.fldentry.value;
             rf.updateR(this.props.stateSetter);
             rf.setOrder();
+            d.fldentry.oldval = d.fldentry.value;
             return callback instanceof Function ? callback() : null;;
         }
 
         if (rf.setValue(this.props.stateSetter, rin, fin, d.fldentry.value)) {
+            console.log('Set value for regular field');
             rf.updateR(this.props.stateSetter);
             rf.setOrder();
+            d.fldentry.oldval = d.fldentry.value;
             return callback instanceof Function ? callback() : null;;
         }
     };
 
     componentDidMount = this.componentDidUpdate = () => {
         if (d.stage === 'off') return;
-        if (d.fldentry.focus === true) this.inputRef.current.focus();
-        if (d.fldentry.focus === false) this.inputRef.current.blur(); 
+        if (d.fldentry.focus === true) {
+            console.log('focus')
+            this.inputRef.current.focus();
+        }
+
+        if (d.fldentry.focus === false) {
+            console.log('blur!!');
+            this.inputRef.current.blur(); 
+        }
     };
 
     render() {
+        console.log(d);
         if (d.fldentry.submit) {
             this.submit(() => {
                 if (d.fldentry.next) {

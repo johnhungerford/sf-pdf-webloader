@@ -14,7 +14,7 @@ const addDoc = function(stateSetter, fd) {
 		'/doc/load',  
 		fd,
 		(data) => {
-			rn.renderLoadingEnd(stateSetter, poupId);
+			rn.renderLoadingEnd(stateSetter, popupId);
 			if ( data.err) {
 				rn.renderError(stateSetter, data.err);
 				return false;

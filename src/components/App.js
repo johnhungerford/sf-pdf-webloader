@@ -41,12 +41,15 @@ export default class App extends Component {
 
         switch(document.activeElement.tagName) {
             case 'INPUT':
-            case 'TEXTAREA':
+            case 'TEXTAREA': 
                 if (e.keyCode === 27) document.activeElement.blur();
                 return;
         }
 
         switch(e.keyCode) {
+            case 27:
+                if (document.activeElement.tagName === 'SELECT') document.activeElement.blur();
+                break;
             case 13:
                 e.preventDefault();
                 d.fldentry.submit = true;
