@@ -16,6 +16,7 @@ module.exports.getSfConns = function(stateSetter, callback) {
 
             d.sfconfig.sfconns.list = data.list;
             d.sfconfig.sfconns.selected = null;
+            
             d.sfconfig.queryconns = false;
             for (let i = d.sfconfig.sfconns.list.length-1; i >= 0; i--) {
                 if (d.sfconfig.sfconns.list[i].title === 'Sample Connection' &&
@@ -30,6 +31,11 @@ module.exports.getSfConns = function(stateSetter, callback) {
             }
 
             for (let i in d.sfconfig.sfconns.list) {
+                if (d.sfconfig.sfconns.list[i].id === data.default) {
+                    d.sfconfig.sfconns.selected = i;
+                    module.exports.getSfSchemata(stateSetter);
+                }
+
                 d.sfconfig.sfconns.list[i].handler = (e) => {
                     if (d.sfconfig.sfconns.selected === i) return;
                     d.sfconfig.sfconns.selected = i;
@@ -51,6 +57,7 @@ module.exports.getSfConns = function(stateSetter, callback) {
                 }
             })
             stateSetter(d);
+            console.log(`d.sfconfig.sfconns.selected: ${d.sfconfig.sfconns.selected}`);
 
             if(callback instanceof Function) callback(data);
         },
@@ -94,8 +101,8 @@ module.exports.getSfSchemata = function(stateSetter, callback) {
                 return;
             }
 
+            d.sfconfig.sfschemata.selected = null;
             d.sfconfig.sfschemata.list = data.list;
-            if (data.list.length === 0) d.sfconfig.sfschemata.selected = null;
             for (let i = d.sfconfig.sfschemata.list.length - 1; i >= 0; i--) {
                 if (d.sfconfig.sfschemata.list[i].title === 'Sample Schema Config' &&
                     i !== d.sfconfig.sfschemata.list.length-1) {
@@ -109,6 +116,11 @@ module.exports.getSfSchemata = function(stateSetter, callback) {
             }
 
             for (let i in d.sfconfig.sfschemata.list) {
+                if (data.default !== null && d.sfconfig.sfschemata.list[i].id === data.default) {
+                    d.sfconfig.sfschemata.selected = i;
+                    if (data.dm) d.dm = JSON.parse(data.dm);
+                }
+
                 d.sfconfig.sfschemata.list[i].handler = (e) => {
                     if (d.sfconfig.sfschemata.selected === i) return;
                     d.sfconfig.sfschemata.selected = i;
@@ -175,13 +187,14 @@ module.exports.getDm = function(stateSetter, callback) {
     );
 }
 
-module.exports.createConnection = function(stateSetter, config, title, callback) {
+module.exports.createConnection = function(stateSetter, config, title, isDefault, callback) {
     ajax.postJSON(
         stateSetter,
         `/config/addsfconn/`, 
         {
             title: title,
             config: JSON.stringify(config),
+            default: isDefault,
         },
         function(data) {
             if (!data.success) {

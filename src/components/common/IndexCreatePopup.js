@@ -154,7 +154,10 @@ export default class IndexCreatePopup extends Component {
         });
 
         return (
-            <React.Fragment>
+            <div 
+                className={`${this.props.class === undefined ? styles.popup : this.props.class}`}
+                key={`popup-content-${this.props.keyprop}`}
+            >
                 <div 
                     className={styles.closeBox}
                     onClick={this.closePopup}
@@ -189,7 +192,7 @@ export default class IndexCreatePopup extends Component {
                         return button.name === 'Create' ? createButton : normalButton;
                     })}
                 </div>
-            </React.Fragment>
+            </div>
         );
     }
 }

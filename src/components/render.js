@@ -7,6 +7,7 @@ const cf = require('../logic/configfunctions');
 const PopupContent = require('../components/common/PopupContent').default;
 const FormPopup = require('../components/common/FormPopup').default;
 const LoadingPopup = require('../components/common/LoadingPopup').default;
+const IndexCreatePopup = require('../components/common/IndexCreatePopup').default;
 const ajax = require('../logic/ajaxfunctions');
 
 const renderSelectionErr = function(ifr) {
@@ -345,6 +346,11 @@ renderAddConnection = function(stateSetter) {
                 type: 'password',
                 label: 'Password',
               },
+              {
+                type: 'checkbox',
+                label: 'Make this connection default',
+                value: false,
+              },
             ],
             buttons: [
               {
@@ -375,7 +381,7 @@ renderAddConnection = function(stateSetter) {
               };
       
               renderLoadingStart(stateSetter, 'Submitting Configuration')
-              cf.createConnection(stateSetter, config, fields[0].value, ()=>{
+              cf.createConnection(stateSetter, config, fields[0].value, fields[8].value, ()=>{
                 renderLoadingEnd();
                 d.popups.pop();
                 stateSetter(d);

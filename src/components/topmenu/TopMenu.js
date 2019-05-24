@@ -94,7 +94,6 @@ export default class TopMenu extends Component {
                 this.props.stateSetter, 
                 (data)=>{
                     d.sfconfig.sfconns.list = data.list;
-                    d.sfconfig.sfconns.selected = null;
                     d.sfconfig.queryconns = false;
                     this.props.stateSetter(d);
                 }

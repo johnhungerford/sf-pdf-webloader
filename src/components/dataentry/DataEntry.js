@@ -30,7 +30,6 @@ export default class DataEntry extends Component {
             return;
         }
 
-        d.fldentry.oldval = e.target.value;
         this.props.stateSetter(d);
     };
 
@@ -56,6 +55,7 @@ export default class DataEntry extends Component {
     submit = (callback) => {
         console.log('SUBMITTING');
         if (d.fldentry.value === d.fldentry.oldval) {
+            console.log('No change...');
             return callback instanceof Function ? callback() : null;
         }
 

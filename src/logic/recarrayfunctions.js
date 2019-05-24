@@ -251,6 +251,10 @@ const setValue = function(stateSetter, rin, fin, value) {
   const fm = mf.getFm(rin, fin);
   let valout;
 
+  console.log(`setValue(); fm:`);
+  console.log(fm);
+  console.log(`value: ${value}`);
+
   switch (fm.type) {
     case "text":
     case "picklist":
