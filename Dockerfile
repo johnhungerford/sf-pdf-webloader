@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
+RUN npm install
+
 # Install pdf2htmlex
 RUN apt-get update -y && apt-get install pdf2htmlex -y
 
