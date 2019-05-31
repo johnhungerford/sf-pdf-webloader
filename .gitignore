@@ -1,5 +1,5 @@
 node_modules/
-mysql/generate_configs.sql
+mysql/add_rows.sql
 sf.config-dev.json
 sf.config.json
 sql.config.json
