@@ -1,6 +1,6 @@
 node_modules/
 public/javascripts/
-mysql/
+mysql/add_rows.sql
 sf.config-dev.json
 sf.config.json
 sql.config.json
