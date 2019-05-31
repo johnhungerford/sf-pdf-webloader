@@ -33,7 +33,8 @@ module.exports = function(req, res, next) {
   const sfconnid = req.params.sfconnid === undefined ? req.body.sfconnid === undefined ? req.query.sfconnid : req.body.sfconnid : req.params.sfconnid;
   console.log('sfconn id', sfconnid);
   global.mysql.query(
-    `SELECT title, config FROM sfconnections WHERE id='${sfconnid}'`,
+    `SELECT title, config FROM sfconnections WHERE id=?`,
+    [sfconnid],
     (errQuery, resQuery)=>{
       if (errQuery) return next(errQuery);
       if (resQuery.length != 1) return res.json({ success: false, message: 'no Salesforce connection config found!' });

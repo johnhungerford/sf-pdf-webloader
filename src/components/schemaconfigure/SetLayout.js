@@ -10,18 +10,22 @@ export default class SetLayout extends Component {
     }
 
     getAllFields = () => {
-
+        return getFieldsRecursive(this.props.layout, []);
     }
 
     getFieldsRecursive = (objIn, pathIn) => {
-        const path = [...pathIn];
-        const before = typeof(objIn.before) === 'string' ?
-            (
+        const getFragment = (field, pathIn, type) => {
+            if (typeof(field) === 'string') return (
                 <React.Fragment>
-                    <input key={`layout-field-before-${path.join('-')}`} type='text' value={this.getVal([...path, 'b'])}/>
-                    <span>{this.editConditionBtnElem([...path, 'b'])}</span>
+                    <input key={`layout-field-before-${path.join('-')}`} type='text' value={this.getVal([...pathIn, 'b'])}/>
+                    <span>{this.editConditionBtnElem([...pathIn, 'b'])}</span>
                 </React.Fragment>
-            ) : this.getFieldsRecursive(objIn.before, [...pathIn, 'b']);
+            );
+
+            return this.getFieldsRecursive(field, [...pathIn, type]);
+        };
+
+        const before = getFragment(pathIn.before, pathIn, 'b');
 
         if (objIn.condition === undefined) {
             return (
@@ -31,18 +35,20 @@ export default class SetLayout extends Component {
             );
         }
 
-        const after = tyepeof(objIn.after) === 'string' ?
-            (
-                <React.Fragment>
-                    <input key={`layout-field-after-${path.join('-')}`} type='text' value={this.getVal([...path, 'a'])}/>
-                    <span>{this.editConditionBtnElem([...path, 'a'])}</span>
-                </React.Fragment>
-            ) : this.getFieldsRecursive(objIn.before, [...pathIn, 'a']);
+        const after = getFragment(pathIn.after, pathIn, 'a');
 
-        const condition = null;
-        const trueElem = null;
-        const falseEelm = null;
-        const conditionDiv = null;
+        const condition = <span>{objIn.condition === 'filled' ? `${objIn.conditionField} has vallue` : `${objIn.conditionField} equals ${objIn.equals}`}</span>;
+        const trueElem = getFragment(objIn.true, pathIn, 't');
+        const falseEelm = getFragment(objIn.false, pathIn, 'f');
+        const conditionDiv = (
+            <div>
+                {condition}
+                <div className={styles.inlineBlock}>
+                    <div>{trueElem}</div>
+                    <div>{falseElem}</div>
+                </div>
+            </div>
+        );
 
         return (
             <React.Fragment>

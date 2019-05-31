@@ -52,7 +52,9 @@ router.post('/', function(req, res, next) {
             });
         }
 
-        global.mysql.query(`SELECT * FROM users WHERE username="${username}"`, function (err2, resQuery) {
+        global.mysql.query(`SELECT * FROM users WHERE username=?`,
+            [username],
+            function (err2, resQuery) {
             if (err2) {
                 return res.json({
                     success: false,
@@ -141,7 +143,8 @@ router.post('/register', function(req, res, next) {
     ) return res.json({ success: false, message: 'Missing or invalid email'})
 
     global.mysql.query(
-        `SELECT EXISTS(SELECT * FROM users WHERE username="${req.body.username}");`,
+        `SELECT EXISTS(SELECT * FROM users WHERE username=?);`,
+        [req.body.username],
         (errValidate, resValidate) => {
             if (errValidate) return res.json({ success: false, message: 'Unable to validate user', err: errValidate });
             let valid = false;
@@ -157,11 +160,12 @@ router.post('/register', function(req, res, next) {
             bcrypt.hash(req.body.password, 12, function(errHash, resHash) {
                 if (errHash) return res.json({ success: false, message: 'Unable to encrypt password' , err: errHash});
                 global.mysql.query(
-                    `INSERT INTO users (username, password, email) VALUES (
-                        '${req.body.username}',
-                        '${resHash}',
-                        '${req.body.email}'
-                    );`,
+                    `INSERT INTO users SET ?`,
+                    {
+                        username: req.body.username,
+                        password: resHash,
+                        email: req.body.email,
+                    },
                     (errInsert, resInsert) => {
                         if (errInsert) return res.json({ success: false, message: 'Unable to create user', err: errInsert});
                         return res.json({ success: true, data: resInsert });

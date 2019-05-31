@@ -16,7 +16,7 @@ export default class SchemaConfigure extends Component {
         super(props);
 
         this.state = {
-            layout: [],
+            layout: {},
             path: [],
             sObjects: [],
             sObjMap: {},
@@ -277,6 +277,8 @@ export default class SchemaConfigure extends Component {
 
     next = (cb) => {
         let nextSubstage;
+        let layout = this.state.layout;
+        let path = this.state.path;
         switch(this.state.substage) {
             case 'objects':
                 nextSubstage = 'fields';
@@ -288,15 +290,19 @@ export default class SchemaConfigure extends Component {
             case 'indexconfig':
                 if (this.state.stage === 'base') nextSubstage = 'searchorder';
                 else nextSubstage = 'entryorder';
+                path = this.getPath(nextSubstage);
                 break;
             case 'searchorder':
                 nextSubstage = 'searchlayout';
+                layout = this.getLayout(nextSubstage);
                 break;
             case 'searchlayout':
                 nextSubstage = 'entryorder';
+                path = this.getPath(nextSubstage);
                 break;
             case 'entryorder':
                 nextSubstage = 'entrylayout';
+                layout = this.getLayout(nextSubstage);
                 break;
             case 'entrylayout':
                 nextSubstage = 'objects'
@@ -307,8 +313,17 @@ export default class SchemaConfigure extends Component {
             return {
                 ...oldState,
                 substage: nextSubstage,
+                layout: layout,
             };
         }, cb);
+    }
+
+    getPath = (substage) => {
+        
+    }
+
+    getLayout = (substage) => {
+
     }
 
     prev = (cb) => {

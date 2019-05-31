@@ -11,7 +11,8 @@ router.get('/sfschema/:sfconnid', jwtAuthenticate, function(req, res, next) {
     console.log(`/config/sfschema/${req.params.sfconnid}`);
     console.log(res.locals);
     global.mysql.query(
-        `SELECT default_sfschema FROM sfconnections WHERE id=${req.params.sfconnid}`,
+        `SELECT default_sfschema FROM sfconnections WHERE id=?`,
+        req.params.sfconnid,
         (err, resDefault) => {
             console.log(`resDefault:`);
             console.log(resDefault);
@@ -24,7 +25,8 @@ router.get('/sfschema/:sfconnid', jwtAuthenticate, function(req, res, next) {
             if (resDefault.length > 0) outObj.default = resDefault[0].default_sfschema;
             
             global.mysql.query(
-                `SELECT id, title, config FROM sfschemas WHERE (user=${res.locals.id} OR user IS NULL) AND sfconnection=${req.params.sfconnid}`, 
+                `SELECT id, title, config FROM sfschemas WHERE (user=? OR user IS NULL) AND sfconnection=?`,
+                [res.locals.id, req.params.sfconnid], 
                 (err2, resQuery)=>{
                     if (err2) {
                         console.log(err2);
@@ -44,13 +46,14 @@ router.get('/sfschema/:sfconnid', jwtAuthenticate, function(req, res, next) {
                     }
 
                     outObj.list = resQuery.map((val, index)=>{
-                        if (val.id = outObj.default) outObj.dm = val.config;
+                        if (val.id === outObj.default) outObj.dm = val.config;
                         return {
                             title: val.title,
                             id: val.id
                         };
                     });
                     
+                    console.log(outObj);
                     return res.json(outObj);
                 }
             );
@@ -61,7 +64,8 @@ router.get('/sfschema/:sfconnid', jwtAuthenticate, function(req, res, next) {
 // choose a sf schema config
 router.get('/sfschema/:sfconnid/:schemaid', jwtAuthenticate, function(req, res, next) {
     global.mysql.query(
-        `SELECT config FROM sfschemas WHERE sfconnection=${req.params.sfconnid} AND id=${req.params.schemaid}`,
+        `SELECT config FROM sfschemas WHERE sfconnection=? AND id=?`,
+        [req.params.sfconnid, req.params.schemaid],
         (err, result) => {
             if (err) {
                 return res.json({
@@ -95,7 +99,8 @@ router.get('/sfconn', jwtAuthenticate, function(req,res,next) {
     console.log(`/config/sfconn: ${res.locals.username}`);
 
     global.mysql.query(
-        `SELECT default_conn FROM users WHERE id=${res.locals.id}`,
+        `SELECT default_conn FROM users WHERE id=?`,
+        [res.locals.id],
         (err, resDefault) => {
             console.log(`resDefault:`);
             console.log(resDefault);
@@ -108,7 +113,8 @@ router.get('/sfconn', jwtAuthenticate, function(req,res,next) {
             if (resDefault.length > 0) outObj.default = resDefault[0].default_conn;
 
             global.mysql.query(
-                `SELECT id, title FROM sfconnections WHERE user=${res.locals.id} OR user IS NULL`, 
+                `SELECT id, title FROM sfconnections WHERE user=? OR user IS NULL`, 
+                [res.locals.id],
                 (err2, resQuery)=>{
                     if (err2) {
                         return res.json({
@@ -158,7 +164,8 @@ router.post('/addsfconn', jwtAuthenticate, function (req, res, next) {
 
             if (req.body.default === true) {
                 global.mysql.query(
-                    `UPDATE users SET default_conn=${resQuery.id} WHERE id=${res.locals.id}`, 
+                    `UPDATE users SET default_conn=? WHERE id=?`,
+                    [resQuery.id, res.locals.id],
                     (errQuery2, resQuery2)=>{
                         if (errQuery2) {
                             return res.json({

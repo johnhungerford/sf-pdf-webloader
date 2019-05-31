@@ -107,7 +107,8 @@ const queryFile = (hash, filePath, req, res, next) => {
 	console.log('querying file (do we already have it?');
 	console.log(`hash: ${hash}`);
 	global.mysql.query(
-		`SELECT id, html FROM documents WHERE filehash="${hash}"`,
+		`SELECT id, html FROM documents WHERE filehash=?`,
+		[hash],
 		(err, result) => {
 			if (err) return res.json({success: false, message: `Could not execute document query: ${err}`});
 			if (result.length > 1) return res.json({success: false, message: 'sql err: file not unique!'});
