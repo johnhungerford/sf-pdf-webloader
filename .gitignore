@@ -1,4 +1,7 @@
 node_modules/
+public/javascripts/
+mysql/
 sf.config-dev.json
 sf.config.json
 sql.config.json
+config.json
