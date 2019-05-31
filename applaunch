@@ -1,0 +1,5 @@
+#! /bin/bash
+cd $HOME/"Dropbox (Jack Miller Center)/sf-cvloader"
+open -a "Google Chrome" http://localhost:3000
+npm start
+exit

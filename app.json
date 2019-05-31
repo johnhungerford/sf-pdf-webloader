@@ -1,0 +1,15 @@
+{
+    "name": "Salesforce PDF Webloader",
+    "description": "A data entry system for Salesforce.",
+    "website": "http://sfwebloader.herokuapp.com",
+    "success_url": "/",
+    "repository": "https://github.com/johnhungerford/sf-pdf-webloader",
+    "buildpacks": [
+        {
+            "url": "https://github.com/ddollar/heroku-buildpack-apt.git"
+        },
+        {
+            "url": "heroku/nodejs"
+        }
+      ]
+}
