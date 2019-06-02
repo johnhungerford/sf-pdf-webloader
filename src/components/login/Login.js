@@ -8,9 +8,8 @@ import * as rn from '../render';
 import * as ajax from '../../logic/ajaxfunctions';
 
 import styles from './Login.module.css';
-import { runInNewContext } from 'vm';
 
-export default class DataEntry extends Component {
+export default class Login extends Component {
     constructor(props) {
         super(props);
 
@@ -44,6 +43,7 @@ export default class DataEntry extends Component {
 
                 d.auth.loggedin = true;
                 d.auth.promptlogin = false;
+                d.auth.password = '';
                 this.props.stateSetter(d);
             },
             (err) => { return rn.renderErr(this.props.stateSetter, err.message) }
