@@ -8,6 +8,7 @@ WORKDIR /app
 COPY . /app
 
 RUN npm install
+RUN npm run build
 
 # Install pdf2htmlex
 RUN apt-get update -y && apt-get install pdf2htmlex -y

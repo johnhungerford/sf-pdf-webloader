@@ -165,6 +165,7 @@ router.post('/register', function(req, res, next) {
                         username: req.body.username,
                         password: resHash,
                         email: req.body.email,
+                        default_conn: 1,
                     },
                     (errInsert, resInsert) => {
                         if (errInsert) return res.json({ success: false, message: 'Unable to create user', err: errInsert});

@@ -1,4 +1,5 @@
-node_modules
+node_modules/
+public/javascripts/
 sf.config-dev.json
 sf.config.json
 config.json
