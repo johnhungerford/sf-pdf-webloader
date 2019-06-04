@@ -287,6 +287,7 @@ var renderIndexCreate = function(stateSetter, indmap, value, callback) {
   d.popups.push(
     <IndexCreatePopup
       keyprop={d.popups.length}
+      stateSetter={stateSetter}
     >
       {popupChildren}
     </IndexCreatePopup>
