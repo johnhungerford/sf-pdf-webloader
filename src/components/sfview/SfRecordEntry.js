@@ -16,8 +16,11 @@ class SfRecordEntry extends Component {
     deleteRecord = (e) => {
         e.stopPropagation();
         if (d.r[this.props.ri].new) {
+            if (d.ri >= this.props.ri) {
+                d.ri -= 1;
+                d.fi = d.r[d.ri].order[0];
+            }
             d.r.splice(this.props.ri,1);
-            if (d.ri >= this.props.ri) rf.prevrNoAdd();
             this.props.stateSetter(d);
             return;
         }

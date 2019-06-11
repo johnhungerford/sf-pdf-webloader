@@ -16,7 +16,7 @@ const updateRecord = function(stateSetter, rin, callback) {
         sObject: fm.sobject,
       },
       (data) => {
-        if (data.success) {
+        /*if (data.success) {
           d.r.splice(rin,1);
           if (d.ri >= rin) {
             d.r.splice(this.props.ri,1);
@@ -24,7 +24,7 @@ const updateRecord = function(stateSetter, rin, callback) {
             this.props.stateSetter(d);
             return;
           }
-        }
+        }*/
 
         if (callback) callback(data);
       },
