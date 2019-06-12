@@ -14,7 +14,7 @@ export default class Button extends Component {
 
         if (this.props.type === 'file' && !dis) {
             return (
-                <span className={className}>
+                <div className={className}>
                     {this.props.children}
                     <input 
                         className={styles.fileInput}
@@ -24,7 +24,7 @@ export default class Button extends Component {
                         ref={this.props.setRef}
                         disabled={dis}
                     />
-                </span>
+                </div>
             )
         }
 
