@@ -14,7 +14,7 @@ router.post('/find', jwtAuthenticate, sfAuthenticate, function(req, res, next) {
 	console.log(req.body);
 	conn.sobject(req.body.sobject)
 		.find(req.body.conditions, req.body.fields)
-		.limit(100)
+		.limit(500)
 		.execute(function(err,records) {
 			console.log('Executed sf "find" request');
 			if(err) { return next(err); }
