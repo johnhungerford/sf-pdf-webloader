@@ -919,15 +919,17 @@ const setFldInput = function() {
           }
       } else if ( rmap.fields[d.fi].type == 'date' ) {
           value = rn.convertDate(d.r[d.ri].f[d.fi].value);
-      } else if(rmap.fields[d.fi].type == 'boolean' ) {
-          if ( d.r[d.ri].f[d.fi].value ) { 
-              value = true; 
-          } else { 
-              value = false; 
-          }
       } else {
           value = d.r[d.ri].f[d.fi].value;
       }
+  }
+
+  if(rmap.fields[d.fi].type === 'boolean') {
+    if (d.r[d.ri].f[d.fi].value === true) { 
+      value = true;
+    } else if (d.r[d.ri].f[d.fi].value !== null) {
+      value = false;
+    }
   }
 
   d.fldentry = {

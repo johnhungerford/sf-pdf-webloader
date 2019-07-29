@@ -18,6 +18,7 @@ export default class DataEntry extends Component {
     };
 
     changeHandler = (e) => {
+        console.log(e.target);
         d.fldentry.value = e.target.value;
         if (e.target.tagName === 'SELECT') {
             console.log('Select S')
@@ -32,6 +33,11 @@ export default class DataEntry extends Component {
 
         this.props.stateSetter(d);
     };
+
+    booleanHandler = (e) => {
+        d.fldentry.value = e.target.checked;
+        this.props.stateSetter(d);
+    }
 
     enterHandler = (e) => {
         if (e.key === 'Escape') this.inputRef.blur();
@@ -54,7 +60,11 @@ export default class DataEntry extends Component {
 
     submit = (callback) => {
         console.log('SUBMITTING');
-        if (d.fldentry.value === d.fldentry.oldval) {
+        if (
+            d.fldentry.value === d.fldentry.oldval ||
+            (d.fldentry.value === false && d.fldentry.oldval === null) ||
+            (d.fldentry.value === '' && d.fldentry.oldval === null)
+        ) {
             console.log('No change...');
             return callback instanceof Function ? callback() : null;
         }
@@ -77,14 +87,6 @@ export default class DataEntry extends Component {
             d.r[rin].f[fin].showval = d.fldentry.value;
             sf.searchIndexRecord(this.props.stateSetter, rin, fin);
             return;
-        }
-
-        if(rmap.fields[fin].type == 'boolean') {
-            d.r[rin].f[fin].value = d.fldentry.value;
-            rf.updateR(this.props.stateSetter);
-            rf.setOrder();
-            d.fldentry.oldval = d.fldentry.value;
-            return callback instanceof Function ? callback() : null;;
         }
 
         if (rf.setValue(this.props.stateSetter, rin, fin, d.fldentry.value)) {
@@ -288,9 +290,9 @@ export default class DataEntry extends Component {
             dataInput = <input 
                 className={styles.dataInput} 
                 type='checkbox'
-                checked={d.fldentry.value}
+                checked={d.fldentry.value === null ? false : d.fldentry.value}
                 onKeyPress={this.enterHandler}
-                onChange={this.enterHandler}
+                onChange={this.booleanHandler}
                 onFocus={this.focusHandler}
                 onBlur={this.blurHandler}
                 ref={this.inputRef}
